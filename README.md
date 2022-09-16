@@ -1,9 +1,10 @@
 [!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/samderlust)
 
-# Calendar Day View
+# Calendar Day View - A fully customizable Calendar day view library
 
 This package is dedicated to calendar day view. While there are many calendar package out there.
-It seems that not many of them support Day view well. This library clearly is not a replace calendar but rather to be used with calendar in the app that need better day views
+It seems that not many of them support Day view well. This library clearly is not a replace calendar but rather to be used with calendar in the app that need better day views.
+This package also give you all permission on how an event item should be render
 
 ## Features
 

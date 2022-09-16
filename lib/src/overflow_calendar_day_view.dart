@@ -47,7 +47,7 @@ class OverFlowCalendarDayView<T extends Object> extends StatefulWidget {
   final Color? dividerColor;
 
   /// builder for single item
-  final OverflowItemBuilder overflowItemBuilder;
+  final OverflowItemBuilder<T> overflowItemBuilder;
 
   @override
   State<OverFlowCalendarDayView> createState() =>
