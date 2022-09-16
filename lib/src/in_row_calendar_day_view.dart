@@ -32,6 +32,7 @@ class InRowCalendarDayView<T extends Object> extends StatefulWidget {
     this.dividerColor,
     this.timeRowBuilder,
   })  : assert(timeRowBuilder != null || itemBuilder != null),
+        assert(timeRowBuilder == null || itemBuilder == null),
         super(key: key);
 
   /// List of events to be display in the day view

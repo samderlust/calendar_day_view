@@ -24,14 +24,29 @@ class OverFlowCalendarDayView<T extends Object> extends StatefulWidget {
     this.dividerColor,
     required this.overflowItemBuilder,
   }) : super(key: key);
+
+  /// List of events to be display in the day view
   final List<DayEvent<T>> events;
+
+  /// To set the start time of the day view
   final TimeOfDay startOfDay;
+
+  /// To set the end time of the day view
   final TimeOfDay? endOfDay;
 
+  /// time gap/duration of a row.
   final int timeGap;
+
+  /// color of time point label
   final Color? timeTextColor;
+
+  /// style of time point label
   final TextStyle? timeTextStyle;
+
+  /// time slot divider color
   final Color? dividerColor;
+
+  /// builder for single item
   final OverflowItemBuilder overflowItemBuilder;
 
   @override
@@ -43,7 +58,6 @@ class _OverFlowCalendarDayViewState<T extends Object>
     extends State<OverFlowCalendarDayView<T>> {
   List<TimeOfDay> _timesInDay = [];
   double _heightPerMin = 1.0;
-
   List<OverflowEventsRow<T>> _overflowEvents = [];
 
   @override
@@ -141,7 +155,11 @@ class _OverFlowCalendarDayViewState<T extends Object>
                                     child: SizedBox(
                                       width: 50,
                                       child: Text(
-                                          "${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, "0")}"),
+                                        "${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, "0")}",
+                                        style: widget.timeTextStyle ??
+                                            TextStyle(
+                                                color: widget.timeTextColor),
+                                      ),
                                     ),
                                   ),
                                 ],
