@@ -1,39 +1,35 @@
-<!--
-This README describes the package. If you publish this package to pub.dev,
-this README's contents appear on the landing page for your package.
+[!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/samderlust)
 
-For information about how to write a good package README, see the guide for
-[writing package pages](https://dart.dev/guides/libraries/writing-package-pages).
+# Calendar Day View
 
-For general information about developing packages, see the Dart guide for
-[creating packages](https://dart.dev/guides/libraries/create-library-packages)
-and the Flutter guide for
-[developing packages and plugins](https://flutter.dev/developing-packages).
--->
-
-TODO: Put a short description of the package here that helps potential users
-know whether this package might be useful for them.
+This package is dedicated to calendar day view. While there are many calendar package out there.
+It seems that not many of them support Day view well. This library clearly is not a replace calendar but rather to be used with calendar in the app that need better day views
 
 ## Features
 
-TODO: List what your package can do. Maybe include images, gifs, or videos.
+- In row day view: show all events that start in the same time gap in a row
+- Event day view: show all events in day
+- Over flow day view: like normal calendar where event is displayed expanded on multiple time row to indicate its duration
 
-## Getting started
+## Installing the library:
 
-TODO: List prerequisites and provide or point to information on how to
-start using the package.
+Like any other package, add the library to your pubspec.yaml dependencies:
+
+```
+dependencies:
+    calendar_day_view: <latest_version>
+```
+
+Then import it wherever you want to use it:
+
+```
+import 'package:fetching_state/calendar_day_view.dart';
+```
 
 ## Usage
 
-TODO: Include short and useful examples for package users. Add longer examples
-to `/example` folder.
+look at example folder
 
-```dart
-const like = 'sample';
-```
+## Appreciate Your Feedbacks and Contributes
 
-## Additional information
-
-TODO: Tell users more about the package: where to find more information, how to
-contribute to the package, how to file issues, what response they can expect
-from the package authors, and more.
+If you find anything need to be improve or want to request a feature. Please go ahead and create an issue in the [Github](https://github.com/samderlust/calendar_day_view) repo

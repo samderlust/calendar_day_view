@@ -1,6 +1,6 @@
 import 'package:calendar_day_view/calendar_day_view.dart';
 import 'package:example/tabs/event_day_view_tab.dart';
-import 'package:example/tabs/in_line_day_view_tab.dart';
+import 'package:example/tabs/in_row_day_view_tab.dart';
 import 'package:example/tabs/overflow_day_view_tab.dart';
 import 'package:flutter/material.dart';
 
@@ -36,7 +36,7 @@ class CalendarDayViewExample extends StatelessWidget {
             title: const Text('Calendar Day Views'),
             bottom: const TabBar(
               tabs: [
-                Tab(text: 'InLine'),
+                Tab(text: 'In Row'),
                 Tab(text: 'Event Only'),
                 Tab(text: 'Overflow'),
               ],
@@ -46,7 +46,7 @@ class CalendarDayViewExample extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 10),
             child: TabBarView(
               children: [
-                InLineDayViewTab(
+                InRowDayViewTab(
                   events: fakeEvents,
                 ),
                 EventDayViewTab(events: fakeEvents),

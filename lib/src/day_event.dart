@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 
 class DayEvent<T extends Object> {
@@ -67,4 +65,12 @@ extension DayEventExtension on DayEvent {
 
   bool startAt(TimeOfDay timePoint) =>
       start.hour == timePoint.hour && timePoint.minute == start.minute;
+
+  int compare(DayEvent other) {
+    if (start.hour > other.start.hour) return 1;
+    if (start.hour == other.start.hour && start.minute > other.start.minute) {
+      return 1;
+    }
+    return -1;
+  }
 }
