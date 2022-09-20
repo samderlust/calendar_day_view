@@ -1,6 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
+import 'package:calendar_day_view/src/utils.dart';
+
 import 'day_event.dart';
+import 'widgets/current_time_line_widget.dart';
 
 typedef DayViewItemBuilder<T extends Object> = Widget Function(
   BuildContext context,
@@ -31,9 +36,21 @@ class InRowCalendarDayView<T extends Object> extends StatefulWidget {
     this.itemBuilder,
     this.dividerColor,
     this.timeRowBuilder,
+    this.heightPerMin = 2.0,
+    this.showCurrentTimeLine = false,
+    this.currentTimeLineColor,
   })  : assert(timeRowBuilder != null || itemBuilder != null),
         assert(timeRowBuilder == null || itemBuilder == null),
         super(key: key);
+
+  /// To show a line that indicate current hour and minute;
+  final bool showCurrentTimeLine;
+
+  /// Color of the current time line
+  final Color? currentTimeLineColor;
+
+  /// height in pixel per minute
+  final double heightPerMin;
 
   /// List of events to be display in the day view
   final List<DayEvent<T>> events;
@@ -72,12 +89,23 @@ class InRowCalendarDayView<T extends Object> extends StatefulWidget {
 class _InRowCalendarDayViewState<T extends Object>
     extends State<InRowCalendarDayView<T>> {
   List<TimeOfDay> _timesInDay = [];
-  double heightPerMin = 1;
+  double _heightPerMin = 1;
+  TimeOfDay _currentTime = TimeOfDay.now();
+  Timer? _timer;
 
   @override
   void initState() {
     super.initState();
+    _heightPerMin = widget.heightPerMin;
     _timesInDay = getTimeList();
+
+    if (widget.showCurrentTimeLine) {
+      _timer = Timer.periodic(const Duration(minutes: 1), (_) {
+        setState(() {
+          _currentTime = TimeOfDay.now();
+        });
+      });
+    }
   }
 
   List<TimeOfDay> getTimeList() {
@@ -101,21 +129,29 @@ class _InRowCalendarDayViewState<T extends Object>
     // if (widget.timeGap != oldWidget.timeGap) {
     setState(() {
       _timesInDay = getTimeList();
+      _heightPerMin = widget.heightPerMin;
     });
     // }
   }
 
   @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: (context, constraints) {
-      final double rowHeight = 60.0 * heightPerMin;
+      final double rowHeight = widget.timeGap * _heightPerMin;
       final viewWidth = constraints.maxWidth;
 
       return SafeArea(
         child: GestureDetector(
           onScaleUpdate: (details) {
             setState(() {
-              heightPerMin = (heightPerMin * details.scale).clamp(0.5, 3);
+              _heightPerMin = (_heightPerMin * details.scale)
+                  .clamp(widget.heightPerMin, widget.heightPerMin * 5);
             });
           },
           child: ListView(
@@ -134,10 +170,12 @@ class _InRowCalendarDayViewState<T extends Object>
                 return ConstrainedBox(
                   constraints: BoxConstraints(
                     minHeight: rowHeight,
+                    maxHeight: rowHeight,
                     maxWidth: viewWidth,
                   ),
                   child: Stack(
-                    clipBehavior: Clip.none,
+                    // clipBehavior: Clip.none,
+                    // fit: StackFit.expand,
                     children: [
                       Divider(
                         color: widget.dividerColor ?? Colors.amber,
@@ -193,6 +231,14 @@ class _InRowCalendarDayViewState<T extends Object>
                           ),
                         ],
                       ),
+                      if (widget.showCurrentTimeLine &&
+                          inTheGap(_currentTime, time, widget.timeGap))
+                        CurrentTimeLineWidget(
+                          top: (_currentTime.minute - time.minute) *
+                              _heightPerMin,
+                          color: widget.currentTimeLineColor,
+                          width: viewWidth,
+                        ),
                     ],
                   ),
                 );

@@ -17,6 +17,8 @@ class InRowDayViewTab extends HookWidget {
         Expanded(
           child: InRowCalendarDayView<String>(
             events: events,
+            heightPerMin: 1,
+            showCurrentTimeLine: true,
             timeGap: timeGap.value,
             showWithEventOnly: withEventOnly.value,
             startOfDay: const TimeOfDay(hour: 00, minute: 0),

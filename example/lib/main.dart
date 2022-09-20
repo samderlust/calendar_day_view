@@ -55,7 +55,9 @@ class CalendarDayViewExample extends StatelessWidget {
                   events: fakeEvents
                       .map(
                         (e) => e.copyWith(
-                            end: TimeOfDay(hour: e.start.hour + 2, minute: 0)),
+                          end: TimeOfDay(
+                              hour: e.start.hour, minute: e.start.minute + 16),
+                        ),
                       )
                       .toList(),
                 ),

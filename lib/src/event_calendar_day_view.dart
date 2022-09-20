@@ -55,7 +55,6 @@ class EventCalendarDayView<T extends Object> extends StatefulWidget {
 class _EventCalendarDayViewState<T extends Object>
     extends State<EventCalendarDayView<T>> {
   List<TimeOfDay> _timesInDay = [];
-  double heightPerMin = 1;
 
   @override
   void initState() {
@@ -80,75 +79,67 @@ class _EventCalendarDayViewState<T extends Object>
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: (context, constraints) {
       return SafeArea(
-        child: GestureDetector(
-          onScaleUpdate: (details) {
-            setState(() {
-              heightPerMin = (heightPerMin * details.scale).clamp(0.5, 3);
-            });
-          },
-          child: ListView(
-            padding: const EdgeInsets.only(top: 20, bottom: 20),
-            children: _timesInDay.map(
-              (time) {
-                final events = widget.events.where(
-                  (event) => event.startAt(time),
-                );
+        child: ListView(
+          padding: const EdgeInsets.only(top: 20, bottom: 20),
+          children: _timesInDay.map(
+            (time) {
+              final events = widget.events.where(
+                (event) => event.startAt(time),
+              );
 
-                return Padding(
-                  padding: widget.timeSlotPadding ??
-                      const EdgeInsets.symmetric(vertical: 5),
-                  child: Stack(
-                    clipBehavior: Clip.none,
-                    children: [
-                      Divider(
-                        color: widget.dividerColor ?? Colors.amber,
-                        height: 0,
-                        thickness: 1,
-                        indent: 40,
-                      ),
-                      Row(
-                        mainAxisSize: MainAxisSize.max,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Transform(
-                            transform: Matrix4.translationValues(0, -10, 0),
-                            child: SizedBox(
-                              width: 50,
-                              child: Text(
-                                "${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, "0")}",
-                                style: widget.timeTextStyle ??
-                                    TextStyle(color: widget.timeTextColor),
-                              ),
+              return Padding(
+                padding: widget.timeSlotPadding ??
+                    const EdgeInsets.symmetric(vertical: 5),
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    Divider(
+                      color: widget.dividerColor ?? Colors.amber,
+                      height: 0,
+                      thickness: 1,
+                      indent: 40,
+                    ),
+                    Row(
+                      mainAxisSize: MainAxisSize.max,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Transform(
+                          transform: Matrix4.translationValues(0, -10, 0),
+                          child: SizedBox(
+                            width: 50,
+                            child: Text(
+                              "${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, "0")}",
+                              style: widget.timeTextStyle ??
+                                  TextStyle(color: widget.timeTextColor),
                             ),
                           ),
-                          Expanded(
-                            child: Padding(
-                              padding:
-                                  widget.rowPadding ?? const EdgeInsets.all(0),
-                              child: ListView.separated(
-                                physics: const NeverScrollableScrollPhysics(),
-                                shrinkWrap: true,
-                                itemCount: events.length,
-                                separatorBuilder: widget.itemSeparatorBuilder ??
-                                    (context, index) =>
-                                        const SizedBox(height: 5),
-                                itemBuilder: (context, index) {
-                                  return widget.eventDayViewItemBuilder(
-                                    context,
-                                    events.elementAt(index),
-                                  );
-                                },
-                              ),
+                        ),
+                        Expanded(
+                          child: Padding(
+                            padding:
+                                widget.rowPadding ?? const EdgeInsets.all(0),
+                            child: ListView.separated(
+                              physics: const NeverScrollableScrollPhysics(),
+                              shrinkWrap: true,
+                              itemCount: events.length,
+                              separatorBuilder: widget.itemSeparatorBuilder ??
+                                  (context, index) => const SizedBox(height: 5),
+                              itemBuilder: (context, index) {
+                                return widget.eventDayViewItemBuilder(
+                                  context,
+                                  events.elementAt(index),
+                                );
+                              },
                             ),
                           ),
-                        ],
-                      ),
-                    ],
-                  ),
-                );
-              },
-            ).toList(),
-          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              );
+            },
+          ).toList(),
         ),
       );
     });
