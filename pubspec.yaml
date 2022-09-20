@@ -1,6 +1,6 @@
 name: calendar_day_view
 description: This package is dedicated to calendar day view. This library is to be used with calendar in the app that need better day views
-version: 1.1.1
+version: 1.1.2
 homepage: https://github.com/samderlust/calendar_day_view
 
 environment:

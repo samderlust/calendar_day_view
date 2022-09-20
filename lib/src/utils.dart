@@ -44,7 +44,7 @@ bool lt(TimeOfDay a, TimeOfDay b) {
 
 bool inTheGap(TimeOfDay a, TimeOfDay b, int gap) {
   return a.hour == b.hour &&
-      (a.minute >= b.minute && a.minute <= (b.minute + gap));
+      (a.minute >= b.minute && a.minute < (b.minute + gap));
 }
 
 int minuteFrom(TimeOfDay timePoint, TimeOfDay start) {

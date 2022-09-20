@@ -1,3 +1,7 @@
+## 1.1.2
+
+- fix time line gap calculation
+
 ## 1.1.1
 
 - fix time line issue,
