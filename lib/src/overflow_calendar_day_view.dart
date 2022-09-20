@@ -152,9 +152,7 @@ class _OverFlowCalendarDayViewState<T extends Object>
         child: GestureDetector(
           onScaleUpdate: (details) {
             setState(() {
-              _rowScale = details.scale
-                  .clamp(widget.heightPerMin, widget.heightPerMin * 5);
-
+              _rowScale = details.scale.clamp(1, 5);
               _rowHeight = widget.timeGap * _heightPerMin * _rowScale;
             });
           },

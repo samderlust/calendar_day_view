@@ -1,3 +1,7 @@
+## 1.1.3
+
+- fix scale issue
+
 ## 1.1.2
 
 - fix time line gap calculation
