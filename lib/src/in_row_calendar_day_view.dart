@@ -92,12 +92,15 @@ class _InRowCalendarDayViewState<T extends Object>
   double _heightPerMin = 1;
   TimeOfDay _currentTime = TimeOfDay.now();
   Timer? _timer;
+  double _rowHeight = 60.0;
+  double _rowScale = 1;
 
   @override
   void initState() {
     super.initState();
     _heightPerMin = widget.heightPerMin;
     _timesInDay = getTimeList();
+    _rowHeight = widget.timeGap * _heightPerMin * _rowScale;
 
     if (widget.showCurrentTimeLine) {
       _timer = Timer.periodic(const Duration(minutes: 1), (_) {
@@ -130,6 +133,7 @@ class _InRowCalendarDayViewState<T extends Object>
     setState(() {
       _timesInDay = getTimeList();
       _heightPerMin = widget.heightPerMin;
+      _rowHeight = widget.timeGap * _heightPerMin * _rowScale;
     });
     // }
   }
@@ -143,15 +147,15 @@ class _InRowCalendarDayViewState<T extends Object>
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: (context, constraints) {
-      final double rowHeight = widget.timeGap * _heightPerMin;
       final viewWidth = constraints.maxWidth;
 
       return SafeArea(
         child: GestureDetector(
           onScaleUpdate: (details) {
             setState(() {
-              _heightPerMin = (_heightPerMin * details.scale)
+              _rowScale = details.scale
                   .clamp(widget.heightPerMin, widget.heightPerMin * 5);
+              _rowHeight = widget.timeGap * _heightPerMin * _rowScale;
             });
           },
           child: ListView(
@@ -169,8 +173,8 @@ class _InRowCalendarDayViewState<T extends Object>
 
                 return ConstrainedBox(
                   constraints: BoxConstraints(
-                    minHeight: rowHeight,
-                    maxHeight: rowHeight,
+                    minHeight: _rowHeight,
+                    maxHeight: _rowHeight,
                     maxWidth: viewWidth,
                   ),
                   child: Stack(
@@ -202,7 +206,7 @@ class _InRowCalendarDayViewState<T extends Object>
                             child: LayoutBuilder(
                               builder: (context, constrains) {
                                 return SizedBox(
-                                  height: rowHeight,
+                                  height: _rowHeight,
                                   child: Builder(
                                     builder: (context) {
                                       if (widget.timeRowBuilder != null) {

@@ -1,3 +1,8 @@
+## 1.1.1
+
+- fix time line issue,
+- fix row height consistency
+
 ## 1.1.0
 
 - alow to set height per minute in [InRowCalendarDayView] and [OverflowItemBuilder]

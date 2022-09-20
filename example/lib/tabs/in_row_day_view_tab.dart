@@ -11,7 +11,6 @@ class InRowDayViewTab extends HookWidget {
   Widget build(BuildContext context) {
     final timeGap = useState<int>(60);
     final withEventOnly = useState<bool>(false);
-
     return Column(
       children: [
         Expanded(

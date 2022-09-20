@@ -76,12 +76,16 @@ class _OverFlowCalendarDayViewState<T extends Object>
   double _heightPerMin = 1.0;
   TimeOfDay _currentTime = TimeOfDay.now();
   Timer? _timer;
+  double _rowHeight = 60.0;
+  double _rowScale = 1;
 
   @override
   void initState() {
     super.initState();
     _heightPerMin = widget.heightPerMin;
     _timesInDay = getTimeList();
+    _rowHeight = widget.timeGap * _heightPerMin * _rowScale;
+
     _overflowEvents = processOverflowEvents(widget.events
       ..sort(
         (a, b) => a.compare(b),
@@ -101,6 +105,7 @@ class _OverFlowCalendarDayViewState<T extends Object>
     super.didUpdateWidget(oldWidget);
 
     setState(() {
+      _rowHeight = widget.timeGap * _heightPerMin * _rowScale;
       _timesInDay = getTimeList();
       _overflowEvents = processOverflowEvents(widget.events
         ..sort(
@@ -136,9 +141,8 @@ class _OverFlowCalendarDayViewState<T extends Object>
   @override
   Widget build(BuildContext context) {
     final List fixedList = Iterable<int>.generate(_timesInDay.length).toList();
-    double rowHeight = _heightPerMin * widget.timeGap;
 
-    // final heightUnit = (rowHeight / widget.timeGap);
+    final heightUnit = _heightPerMin * _rowScale;
 
     return LayoutBuilder(builder: (context, constraints) {
       final viewWidth = constraints.maxWidth;
@@ -148,14 +152,17 @@ class _OverFlowCalendarDayViewState<T extends Object>
         child: GestureDetector(
           onScaleUpdate: (details) {
             setState(() {
-              _heightPerMin = (_heightPerMin * details.scale).clamp(0.5, 3);
+              _rowScale = details.scale
+                  .clamp(widget.heightPerMin, widget.heightPerMin * 5);
+
+              _rowHeight = widget.timeGap * _heightPerMin * _rowScale;
             });
           },
           child: SingleChildScrollView(
             physics: const AlwaysScrollableScrollPhysics(),
             padding: const EdgeInsets.only(top: 10, bottom: 20),
             child: SizedBox(
-              height: _timesInDay.length * rowHeight,
+              height: _timesInDay.length * _rowHeight,
               child: Stack(
                 clipBehavior: Clip.none,
                 // padding: const EdgeInsets.only(top: 20, bottom: 20),
@@ -165,10 +172,10 @@ class _OverFlowCalendarDayViewState<T extends Object>
                       final time = _timesInDay.elementAt(index);
 
                       return Positioned(
-                        top: (index) * rowHeight,
+                        top: (index) * _rowHeight,
                         // top: 0,
                         child: SizedBox(
-                          height: rowHeight,
+                          height: _rowHeight,
                           width: viewWidth,
                           child: Stack(
                             children: [
@@ -219,7 +226,7 @@ class _OverFlowCalendarDayViewState<T extends Object>
                                     top: event
                                             .minutesFrom(widget.startOfDay)
                                             .toDouble() *
-                                        _heightPerMin,
+                                        heightUnit,
                                     child: widget.overflowItemBuilder(
                                         context,
                                         BoxConstraints(
@@ -242,7 +249,7 @@ class _OverFlowCalendarDayViewState<T extends Object>
                     CurrentTimeLineWidget(
                       top: minuteFrom(_currentTime, widget.startOfDay)
                               .toDouble() *
-                          _heightPerMin,
+                          heightUnit,
                       width: constraints.maxWidth,
                       color: widget.currentTimeLineColor,
                     ),
