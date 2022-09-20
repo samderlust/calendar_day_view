@@ -76,6 +76,12 @@ class _EventCalendarDayViewState<T extends Object>
   }
 
   @override
+  void didUpdateWidget(covariant EventCalendarDayView<T> oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _timesInDay = getTimeList();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: (context, constraints) {
       return SafeArea(

@@ -1,3 +1,7 @@
+## 1.1.4
+
+- fix `didUpdateWidget`
+
 ## 1.1.3
 
 - fix scale issue

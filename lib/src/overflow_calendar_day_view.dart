@@ -103,16 +103,13 @@ class _OverFlowCalendarDayViewState<T extends Object>
   @override
   void didUpdateWidget(covariant OverFlowCalendarDayView<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
-
-    setState(() {
-      _rowHeight = widget.timeGap * _heightPerMin * _rowScale;
-      _timesInDay = getTimeList();
-      _overflowEvents = processOverflowEvents(widget.events
-        ..sort(
-          (a, b) => a.compare(b),
-        ));
-      _heightPerMin = widget.heightPerMin;
-    });
+    _rowHeight = widget.timeGap * _heightPerMin * _rowScale;
+    _timesInDay = getTimeList();
+    _overflowEvents = processOverflowEvents(widget.events
+      ..sort(
+        (a, b) => a.compare(b),
+      ));
+    _heightPerMin = widget.heightPerMin;
   }
 
   @override

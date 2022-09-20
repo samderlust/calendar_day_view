@@ -129,13 +129,9 @@ class _InRowCalendarDayViewState<T extends Object>
   @override
   void didUpdateWidget(covariant InRowCalendarDayView<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
-    // if (widget.timeGap != oldWidget.timeGap) {
-    setState(() {
-      _timesInDay = getTimeList();
-      _heightPerMin = widget.heightPerMin;
-      _rowHeight = widget.timeGap * _heightPerMin * _rowScale;
-    });
-    // }
+    _timesInDay = getTimeList();
+    _heightPerMin = widget.heightPerMin;
+    _rowHeight = widget.timeGap * _heightPerMin * _rowScale;
   }
 
   @override
