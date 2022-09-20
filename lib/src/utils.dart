@@ -46,3 +46,7 @@ bool inTheGap(TimeOfDay a, TimeOfDay b, int gap) {
   return a.hour == b.hour &&
       (a.minute >= b.minute && a.minute <= (b.minute + gap));
 }
+
+int minuteFrom(TimeOfDay timePoint, TimeOfDay start) {
+  return (timePoint.hour - start.hour) * 60 + (timePoint.minute - start.minute);
+}

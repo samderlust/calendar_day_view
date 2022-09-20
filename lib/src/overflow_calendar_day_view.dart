@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:calendar_day_view/src/utils.dart';
+import 'package:calendar_day_view/src/widgets/current_time_line_widget.dart';
 import 'package:flutter/material.dart';
 
 import 'day_event.dart';
@@ -22,8 +25,20 @@ class OverFlowCalendarDayView<T extends Object> extends StatefulWidget {
     this.timeTextColor,
     this.timeTextStyle,
     this.dividerColor,
+    this.heightPerMin = 1.0,
+    this.showCurrentTimeLine = false,
+    this.currentTimeLineColor,
     required this.overflowItemBuilder,
   }) : super(key: key);
+
+  /// To show a line that indicate current hour and minute;
+  final bool showCurrentTimeLine;
+
+  /// Color of the current time line
+  final Color? currentTimeLineColor;
+
+  /// height in pixel per minute
+  final double heightPerMin;
 
   /// List of events to be display in the day view
   final List<DayEvent<T>> events;
@@ -57,17 +72,28 @@ class OverFlowCalendarDayView<T extends Object> extends StatefulWidget {
 class _OverFlowCalendarDayViewState<T extends Object>
     extends State<OverFlowCalendarDayView<T>> {
   List<TimeOfDay> _timesInDay = [];
-  double _heightPerMin = 1.0;
   List<OverflowEventsRow<T>> _overflowEvents = [];
+  double _heightPerMin = 1.0;
+  TimeOfDay _currentTime = TimeOfDay.now();
+  Timer? _timer;
 
   @override
   void initState() {
     super.initState();
+    _heightPerMin = widget.heightPerMin;
     _timesInDay = getTimeList();
     _overflowEvents = processOverflowEvents(widget.events
       ..sort(
         (a, b) => a.compare(b),
       ));
+
+    if (widget.showCurrentTimeLine) {
+      _timer = Timer.periodic(const Duration(minutes: 1), (_) {
+        setState(() {
+          _currentTime = TimeOfDay.now();
+        });
+      });
+    }
   }
 
   @override
@@ -80,7 +106,14 @@ class _OverFlowCalendarDayViewState<T extends Object>
         ..sort(
           (a, b) => a.compare(b),
         ));
+      _heightPerMin = widget.heightPerMin;
     });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
   }
 
   List<TimeOfDay> getTimeList() {
@@ -103,9 +136,9 @@ class _OverFlowCalendarDayViewState<T extends Object>
   @override
   Widget build(BuildContext context) {
     final List fixedList = Iterable<int>.generate(_timesInDay.length).toList();
-    double rowHeight = 60.0 * _heightPerMin;
+    double rowHeight = _heightPerMin * widget.timeGap;
 
-    final heightUnit = (rowHeight / widget.timeGap);
+    // final heightUnit = (rowHeight / widget.timeGap);
 
     return LayoutBuilder(builder: (context, constraints) {
       final viewWidth = constraints.maxWidth;
@@ -186,14 +219,14 @@ class _OverFlowCalendarDayViewState<T extends Object>
                                     top: event
                                             .minutesFrom(widget.startOfDay)
                                             .toDouble() *
-                                        heightUnit,
+                                        _heightPerMin,
                                     child: widget.overflowItemBuilder(
                                         context,
                                         BoxConstraints(
-                                          maxHeight:
-                                              event.durationInMins * heightUnit,
-                                          minHeight:
-                                              event.durationInMins * heightUnit,
+                                          maxHeight: event.durationInMins *
+                                              _heightPerMin,
+                                          minHeight: event.durationInMins *
+                                              _heightPerMin,
                                           minWidth: width,
                                           maxWidth: eventColumnWith,
                                         ),
@@ -205,6 +238,14 @@ class _OverFlowCalendarDayViewState<T extends Object>
                       );
                     },
                   ),
+                  if (widget.showCurrentTimeLine)
+                    CurrentTimeLineWidget(
+                      top: minuteFrom(_currentTime, widget.startOfDay)
+                              .toDouble() *
+                          _heightPerMin,
+                      width: constraints.maxWidth,
+                      color: widget.currentTimeLineColor,
+                    ),
                 ],
               ),
             ),
