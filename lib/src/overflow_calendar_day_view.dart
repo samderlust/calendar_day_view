@@ -1,9 +1,10 @@
 import 'dart:async';
 
-import 'package:calendar_day_view/src/utils.dart';
-import 'package:calendar_day_view/src/widgets/current_time_line_widget.dart';
 import 'package:flutter/material.dart';
 
+import 'time_of_day_extension.dart';
+import 'utils.dart';
+import 'widgets/current_time_line_widget.dart';
 import 'day_event.dart';
 import 'overflow_event.dart';
 
@@ -12,8 +13,6 @@ typedef OverflowItemBuilder<T extends Object> = Widget Function(
   BoxConstraints constraints,
   DayEvent<T> event,
 );
-// const int timeGap = 60;
-// const int timeCount = minutesPerDay ~/ timeGap;
 
 class OverFlowCalendarDayView<T extends Object> extends StatefulWidget {
   const OverFlowCalendarDayView({
@@ -28,7 +27,8 @@ class OverFlowCalendarDayView<T extends Object> extends StatefulWidget {
     this.heightPerMin = 1.0,
     this.showCurrentTimeLine = false,
     this.currentTimeLineColor,
-    required this.overflowItemBuilder,
+    this.overflowItemBuilder,
+    this.renderRowAsListView = false,
   }) : super(key: key);
 
   /// To show a line that indicate current hour and minute;
@@ -61,8 +61,11 @@ class OverFlowCalendarDayView<T extends Object> extends StatefulWidget {
   /// time slot divider color
   final Color? dividerColor;
 
-  /// builder for single item
-  final OverflowItemBuilder<T> overflowItemBuilder;
+  /// builder for single event
+  final OverflowItemBuilder<T>? overflowItemBuilder;
+
+  // allow render an events row as a ListView
+  final bool renderRowAsListView;
 
   @override
   State<OverFlowCalendarDayView> createState() =>
@@ -149,8 +152,10 @@ class _OverFlowCalendarDayViewState<T extends Object>
         child: GestureDetector(
           onScaleUpdate: (details) {
             setState(() {
-              _rowScale = details.scale.clamp(1, 5);
-              _rowHeight = widget.timeGap * _heightPerMin * _rowScale;
+              if (details.scale >= 1 && details.scale <= 10) {
+                _rowScale = details.scale;
+                _rowHeight = widget.timeGap * _heightPerMin * _rowScale;
+              }
             });
           },
           child: SingleChildScrollView(
@@ -205,44 +210,16 @@ class _OverFlowCalendarDayViewState<T extends Object>
                       );
                     },
                   ),
-                  Builder(
-                    builder: (context) {
-                      return Stack(
-                        children: [
-                          for (final oEvents in _overflowEvents)
-                            for (final event in oEvents.events)
-                              Builder(
-                                builder: (context) {
-                                  final width =
-                                      eventColumnWith / oEvents.events.length;
-                                  return Positioned(
-                                    left: 50.0 +
-                                        oEvents.events.indexOf(event) * width,
-                                    top: event
-                                            .minutesFrom(widget.startOfDay)
-                                            .toDouble() *
-                                        heightUnit,
-                                    child: widget.overflowItemBuilder(
-                                        context,
-                                        BoxConstraints(
-                                          maxHeight: event.durationInMins *
-                                              _heightPerMin,
-                                          minHeight: event.durationInMins *
-                                              _heightPerMin,
-                                          minWidth: width,
-                                          maxWidth: eventColumnWith,
-                                        ),
-                                        event),
-                                  );
-                                },
-                              ),
-                        ],
-                      );
-                    },
+                  Stack(
+                    fit: StackFit.expand,
+                    children: widget.renderRowAsListView
+                        ? renderAsListView(heightUnit, eventColumnWith)
+                        : renderWithFixedWidth(heightUnit, eventColumnWith),
                   ),
                   if (widget.showCurrentTimeLine)
                     CurrentTimeLineWidget(
-                      top: minuteFrom(_currentTime, widget.startOfDay)
+                      top: _currentTime
+                              .minuteFrom(widget.startOfDay)
                               .toDouble() *
                           heightUnit,
                       width: constraints.maxWidth,
@@ -255,5 +232,82 @@ class _OverFlowCalendarDayViewState<T extends Object>
         ),
       );
     });
+  }
+
+  List<Widget> renderWithFixedWidth(double heightUnit, double eventColumnWith) {
+    return [
+      for (final oEvents in _overflowEvents)
+        for (final event in oEvents.events)
+          Builder(
+            builder: (context) {
+              final width = eventColumnWith / oEvents.events.length;
+              return Positioned(
+                left: 50.0 + oEvents.events.indexOf(event) * width,
+                top: event.minutesFrom(widget.startOfDay).toDouble() *
+                    heightUnit,
+                child: widget.overflowItemBuilder!(
+                  context,
+                  BoxConstraints(
+                    maxHeight: event.durationInMins * heightUnit,
+                    minHeight: event.durationInMins * heightUnit,
+                    minWidth: width,
+                    maxWidth: eventColumnWith,
+                  ),
+                  event,
+                ),
+              );
+            },
+          ),
+    ];
+  }
+
+  List<Widget> renderAsListView(double heightUnit, double eventColumnWith) {
+    return [
+      for (final oEvents in _overflowEvents)
+        Positioned(
+          top: oEvents.start.minuteFrom(widget.startOfDay) * heightUnit,
+          left: 50,
+          child: Container(
+            width: eventColumnWith,
+            height: heightUnit * oEvents.start.minuteUntil(oEvents.end),
+            constraints: BoxConstraints(
+              maxHeight: heightUnit * oEvents.start.minuteUntil(oEvents.end),
+              minHeight: heightUnit * oEvents.start.minuteUntil(oEvents.end),
+            ),
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              shrinkWrap: true,
+              itemCount: oEvents.events.length,
+              itemBuilder: (context, index) {
+                final event = oEvents.events.elementAt(index);
+                final width = eventColumnWith / oEvents.events.length;
+                return Column(
+                  children: [
+                    SizedBox(
+                      height:
+                          event.start.minuteFrom(oEvents.start) * heightUnit,
+                    ),
+                    ConstrainedBox(
+                      constraints: BoxConstraints(
+                        maxHeight: event.durationInMins * heightUnit,
+                      ),
+                      child: widget.overflowItemBuilder!(
+                        context,
+                        BoxConstraints(
+                          maxHeight: event.durationInMins * heightUnit,
+                          minHeight: event.durationInMins * heightUnit,
+                          minWidth: width,
+                          maxWidth: eventColumnWith,
+                        ),
+                        event,
+                      ),
+                    ),
+                  ],
+                );
+              },
+            ),
+          ),
+        ),
+    ];
   }
 }
