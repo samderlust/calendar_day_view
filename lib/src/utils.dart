@@ -1,7 +1,8 @@
-import 'package:calendar_day_view/src/overflow_event.dart';
 import 'package:flutter/material.dart';
 
-import '../calendar_day_view.dart';
+import 'day_event.dart';
+import 'overflow_event.dart';
+import 'time_of_day_extension.dart';
 
 List<OverflowEventsRow<T>> processOverflowEvents<T extends Object>(
     List<DayEvent<T>> sortedEvents) {
@@ -11,8 +12,7 @@ List<OverflowEventsRow<T>> processOverflowEvents<T extends Object>(
   final Map<TimeOfDay, OverflowEventsRow<T>> oM = {};
 
   for (final event in sortedEvents) {
-    if (lt(event.start, end)) {
-      // oM[start] = [...(oM[start] ?? []), event];
+    if (event.start.earlierThan(end)) {
       oM.update(
         start,
         (value) => value.copyWith(events: [...value.events, event]),
@@ -20,7 +20,7 @@ List<OverflowEventsRow<T>> processOverflowEvents<T extends Object>(
             events: [event], start: event.start, end: event.end!),
       );
 
-      if (lt(end, event.end!)) {
+      if (event.end!.laterThan(end)) {
         end = event.end!;
         oM[start] = oM[start]!.copyWith(end: event.end!);
       }
@@ -32,21 +32,4 @@ List<OverflowEventsRow<T>> processOverflowEvents<T extends Object>(
     }
   }
   return oM.values.toList();
-}
-
-bool le(TimeOfDay a, TimeOfDay b) {
-  return a.hour < b.hour || ((a.hour == b.hour) && a.minute <= b.minute);
-}
-
-bool lt(TimeOfDay a, TimeOfDay b) {
-  return a.hour < b.hour || ((a.hour == b.hour) && a.minute < b.minute);
-}
-
-bool inTheGap(TimeOfDay a, TimeOfDay b, int gap) {
-  return a.hour == b.hour &&
-      (a.minute >= b.minute && a.minute < (b.minute + gap));
-}
-
-int minuteFrom(TimeOfDay timePoint, TimeOfDay start) {
-  return (timePoint.hour - start.hour) * 60 + (timePoint.minute - start.minute);
 }

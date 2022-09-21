@@ -2,8 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
-import 'package:calendar_day_view/src/utils.dart';
-
+import 'time_of_day_extension.dart';
 import 'day_event.dart';
 import 'widgets/current_time_line_widget.dart';
 
@@ -231,7 +230,7 @@ class _InRowCalendarDayViewState<T extends Object>
                         ],
                       ),
                       if (widget.showCurrentTimeLine &&
-                          inTheGap(_currentTime, time, widget.timeGap))
+                          _currentTime.inTheGap(time, widget.timeGap))
                         CurrentTimeLineWidget(
                           top: (_currentTime.minute - time.minute) *
                               _heightPerMin,

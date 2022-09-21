@@ -1,9 +1,12 @@
+import 'dart:math';
+
 import 'package:calendar_day_view/calendar_day_view.dart';
 import 'package:example/tabs/event_day_view_tab.dart';
 import 'package:example/tabs/in_row_day_view_tab.dart';
 import 'package:example/tabs/overflow_day_view_tab.dart';
 import 'package:flutter/material.dart';
 
+final rd = Random();
 void main() {
   runApp(const MyApp());
 }
@@ -56,7 +59,9 @@ class CalendarDayViewExample extends StatelessWidget {
                       .map(
                         (e) => e.copyWith(
                           end: TimeOfDay(
-                              hour: e.start.hour, minute: e.start.minute + 16),
+                            hour: e.start.hour + 1,
+                            minute: e.start.minute + 30 + rd.nextInt(50),
+                          ),
                         ),
                       )
                       .toList(),
@@ -119,7 +124,7 @@ final List<DayEvent<String>> fakeEvents = [
   ),
   DayEvent(
     start: TimeOfDay.fromDateTime(
-        DateTime(now.year, now.month, now.day, now.hour - 4)),
+        DateTime(now.year, now.month, now.day, now.hour - 3)),
     value: UniqueKey().toString(),
   ),
   DayEvent(

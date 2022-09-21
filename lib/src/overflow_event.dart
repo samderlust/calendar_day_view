@@ -1,6 +1,7 @@
-import 'package:calendar_day_view/calendar_day_view.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+
+import 'day_event.dart';
 
 class OverflowEventsRow<T extends Object> {
   final List<DayEvent<T>> events;
