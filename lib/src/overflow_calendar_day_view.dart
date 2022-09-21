@@ -13,11 +13,6 @@ typedef OverflowItemBuilder<T extends Object> = Widget Function(
   BoxConstraints constraints,
   DayEvent<T> event,
 );
-typedef OverflowEventsRowBuilder<T extends Object> = Widget Function(
-  BuildContext context,
-  BoxConstraints constraints,
-  List<DayEvent<T>> event,
-);
 
 class OverFlowCalendarDayView<T extends Object> extends StatefulWidget {
   const OverFlowCalendarDayView({
@@ -33,10 +28,8 @@ class OverFlowCalendarDayView<T extends Object> extends StatefulWidget {
     this.showCurrentTimeLine = false,
     this.currentTimeLineColor,
     this.overflowItemBuilder,
-    this.overflowEventsRowBuilder,
-  })  : assert(overflowItemBuilder == null || overflowEventsRowBuilder == null),
-        assert(overflowItemBuilder != null || overflowEventsRowBuilder != null),
-        super(key: key);
+    this.renderRowAsListView = false,
+  }) : super(key: key);
 
   /// To show a line that indicate current hour and minute;
   final bool showCurrentTimeLine;
@@ -71,8 +64,8 @@ class OverFlowCalendarDayView<T extends Object> extends StatefulWidget {
   /// builder for single event
   final OverflowItemBuilder<T>? overflowItemBuilder;
 
-  /// builder for a row that container list of events
-  final OverflowEventsRowBuilder<T>? overflowEventsRowBuilder;
+  // allow render an events row as a ListView
+  final bool renderRowAsListView;
 
   @override
   State<OverFlowCalendarDayView> createState() =>
@@ -219,89 +212,9 @@ class _OverFlowCalendarDayViewState<T extends Object>
                   ),
                   Stack(
                     fit: StackFit.expand,
-                    children: [
-                      for (final oEvents in _overflowEvents)
-                        Positioned(
-                          top: oEvents.start.minuteFrom(widget.startOfDay) *
-                              heightUnit,
-                          left: 50,
-                          child: Container(
-                            width: eventColumnWith,
-                            height: heightUnit *
-                                oEvents.start.minuteUntil(oEvents.end),
-                            constraints: BoxConstraints(
-                              maxHeight: heightUnit *
-                                  oEvents.start.minuteUntil(oEvents.end),
-                              minHeight: heightUnit *
-                                  oEvents.start.minuteUntil(oEvents.end),
-                            ),
-                            child: ListView.builder(
-                              scrollDirection: Axis.horizontal,
-                              shrinkWrap: true,
-                              itemCount: oEvents.events.length,
-                              itemBuilder: (context, index) {
-                                final event = oEvents.events.elementAt(index);
-                                final width =
-                                    eventColumnWith / oEvents.events.length;
-                                return Column(
-                                  children: [
-                                    SizedBox(
-                                      height: event.start
-                                              .minuteFrom(oEvents.start) *
-                                          heightUnit,
-                                    ),
-                                    ConstrainedBox(
-                                      constraints: BoxConstraints(
-                                        maxHeight:
-                                            event.durationInMins * heightUnit,
-                                      ),
-                                      child: widget.overflowItemBuilder!(
-                                        context,
-                                        BoxConstraints(
-                                          maxHeight:
-                                              event.durationInMins * heightUnit,
-                                          minHeight:
-                                              event.durationInMins * heightUnit,
-                                          minWidth: width,
-                                          maxWidth: eventColumnWith,
-                                        ),
-                                        event,
-                                      ),
-                                    ),
-                                  ],
-                                );
-                              },
-                            ),
-                          ),
-                        )
-                      // for (final event in oEvents.events)
-                      //   Builder(
-                      //     builder: (context) {
-                      //       final width =
-                      //           eventColumnWith / oEvents.events.length;
-                      //       return Positioned(
-                      //         left: 50.0 +
-                      //             oEvents.events.indexOf(event) * width,
-                      //         top: event
-                      //                 .minutesFrom(widget.startOfDay)
-                      //                 .toDouble() *
-                      //             heightUnit,
-                      //         child: widget.overflowItemBuilder!(
-                      //           context,
-                      //           BoxConstraints(
-                      //             maxHeight:
-                      //                 event.durationInMins * heightUnit,
-                      //             minHeight:
-                      //                 event.durationInMins * heightUnit,
-                      //             minWidth: width,
-                      //             maxWidth: eventColumnWith,
-                      //           ),
-                      //           event,
-                      //         ),
-                      //       );
-                      //     },
-                      //   ),
-                    ],
+                    children: widget.renderRowAsListView
+                        ? renderAsListView(heightUnit, eventColumnWith)
+                        : renderWithFixedWidth(heightUnit, eventColumnWith),
                   ),
                   if (widget.showCurrentTimeLine)
                     CurrentTimeLineWidget(
@@ -319,5 +232,82 @@ class _OverFlowCalendarDayViewState<T extends Object>
         ),
       );
     });
+  }
+
+  List<Widget> renderWithFixedWidth(double heightUnit, double eventColumnWith) {
+    return [
+      for (final oEvents in _overflowEvents)
+        for (final event in oEvents.events)
+          Builder(
+            builder: (context) {
+              final width = eventColumnWith / oEvents.events.length;
+              return Positioned(
+                left: 50.0 + oEvents.events.indexOf(event) * width,
+                top: event.minutesFrom(widget.startOfDay).toDouble() *
+                    heightUnit,
+                child: widget.overflowItemBuilder!(
+                  context,
+                  BoxConstraints(
+                    maxHeight: event.durationInMins * heightUnit,
+                    minHeight: event.durationInMins * heightUnit,
+                    minWidth: width,
+                    maxWidth: eventColumnWith,
+                  ),
+                  event,
+                ),
+              );
+            },
+          ),
+    ];
+  }
+
+  List<Widget> renderAsListView(double heightUnit, double eventColumnWith) {
+    return [
+      for (final oEvents in _overflowEvents)
+        Positioned(
+          top: oEvents.start.minuteFrom(widget.startOfDay) * heightUnit,
+          left: 50,
+          child: Container(
+            width: eventColumnWith,
+            height: heightUnit * oEvents.start.minuteUntil(oEvents.end),
+            constraints: BoxConstraints(
+              maxHeight: heightUnit * oEvents.start.minuteUntil(oEvents.end),
+              minHeight: heightUnit * oEvents.start.minuteUntil(oEvents.end),
+            ),
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              shrinkWrap: true,
+              itemCount: oEvents.events.length,
+              itemBuilder: (context, index) {
+                final event = oEvents.events.elementAt(index);
+                final width = eventColumnWith / oEvents.events.length;
+                return Column(
+                  children: [
+                    SizedBox(
+                      height:
+                          event.start.minuteFrom(oEvents.start) * heightUnit,
+                    ),
+                    ConstrainedBox(
+                      constraints: BoxConstraints(
+                        maxHeight: event.durationInMins * heightUnit,
+                      ),
+                      child: widget.overflowItemBuilder!(
+                        context,
+                        BoxConstraints(
+                          maxHeight: event.durationInMins * heightUnit,
+                          minHeight: event.durationInMins * heightUnit,
+                          minWidth: width,
+                          maxWidth: eventColumnWith,
+                        ),
+                        event,
+                      ),
+                    ),
+                  ],
+                );
+              },
+            ),
+          ),
+        ),
+    ];
   }
 }
