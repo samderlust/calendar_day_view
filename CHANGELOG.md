@@ -1,3 +1,10 @@
+## 1.2.0
+
+- allow to render events rows as ListView in [OverFlowCalendarDayView].
+  this can be achieve by set `renderRowAsListView = true`. This brings more flexibility to you to customize your Overflow event presentation.
+- fix event height issue in [OverFlowCalendarDayView]
+- refactor code base
+
 ## 1.1.4
 
 - fix `didUpdateWidget`
