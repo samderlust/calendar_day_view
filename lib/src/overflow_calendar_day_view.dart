@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:calendar_day_view/src/widgets/overflow_list_view_row.dart';
 import 'package:flutter/material.dart';
 
 import 'time_of_day_extension.dart';
@@ -140,8 +141,6 @@ class _OverFlowCalendarDayViewState<T extends Object>
 
   @override
   Widget build(BuildContext context) {
-    final List fixedList = Iterable<int>.generate(_timesInDay.length).toList();
-
     final heightUnit = _heightPerMin * _rowScale;
 
     return LayoutBuilder(builder: (context, constraints) {
@@ -167,45 +166,42 @@ class _OverFlowCalendarDayViewState<T extends Object>
                 clipBehavior: Clip.none,
                 // padding: const EdgeInsets.only(top: 20, bottom: 20),
                 children: [
-                  ...fixedList.map(
-                    (index) {
+                  ListView.builder(
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: _timesInDay.length,
+                    itemBuilder: (context, index) {
                       final time = _timesInDay.elementAt(index);
-
-                      return Positioned(
-                        top: (index) * _rowHeight,
-                        // top: 0,
-                        child: SizedBox(
-                          height: _rowHeight,
-                          width: viewWidth,
-                          child: Stack(
-                            children: [
-                              Divider(
-                                color: widget.dividerColor ?? Colors.amber,
-                                height: 0,
-                                thickness: time.minute == 0 ? 1 : .5,
-                                indent: 50,
-                              ),
-                              Row(
-                                mainAxisSize: MainAxisSize.max,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Transform(
-                                    transform:
-                                        Matrix4.translationValues(0, -10, 0),
-                                    child: SizedBox(
-                                      width: 50,
-                                      child: Text(
-                                        "${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, "0")}",
-                                        style: widget.timeTextStyle ??
-                                            TextStyle(
-                                                color: widget.timeTextColor),
-                                      ),
+                      return SizedBox(
+                        height: _rowHeight,
+                        width: viewWidth,
+                        child: Stack(
+                          children: [
+                            Divider(
+                              color: widget.dividerColor ?? Colors.amber,
+                              height: 0,
+                              thickness: time.minute == 0 ? 1 : .5,
+                              indent: 50,
+                            ),
+                            Row(
+                              mainAxisSize: MainAxisSize.max,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Transform(
+                                  transform:
+                                      Matrix4.translationValues(0, -10, 0),
+                                  child: SizedBox(
+                                    width: 50,
+                                    child: Text(
+                                      "${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, "0")}",
+                                      style: widget.timeTextStyle ??
+                                          TextStyle(
+                                              color: widget.timeTextColor),
                                     ),
                                   ),
-                                ],
-                              ),
-                            ],
-                          ),
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
                       );
                     },
@@ -267,45 +263,11 @@ class _OverFlowCalendarDayViewState<T extends Object>
         Positioned(
           top: oEvents.start.minuteFrom(widget.startOfDay) * heightUnit,
           left: 50,
-          child: Container(
-            width: eventColumnWith,
-            height: heightUnit * oEvents.start.minuteUntil(oEvents.end),
-            constraints: BoxConstraints(
-              maxHeight: heightUnit * oEvents.start.minuteUntil(oEvents.end),
-              minHeight: heightUnit * oEvents.start.minuteUntil(oEvents.end),
-            ),
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              shrinkWrap: true,
-              itemCount: oEvents.events.length,
-              itemBuilder: (context, index) {
-                final event = oEvents.events.elementAt(index);
-                final width = eventColumnWith / oEvents.events.length;
-                return Column(
-                  children: [
-                    SizedBox(
-                      height:
-                          event.start.minuteFrom(oEvents.start) * heightUnit,
-                    ),
-                    ConstrainedBox(
-                      constraints: BoxConstraints(
-                        maxHeight: event.durationInMins * heightUnit,
-                      ),
-                      child: widget.overflowItemBuilder!(
-                        context,
-                        BoxConstraints(
-                          maxHeight: event.durationInMins * heightUnit,
-                          minHeight: event.durationInMins * heightUnit,
-                          minWidth: width,
-                          maxWidth: eventColumnWith,
-                        ),
-                        event,
-                      ),
-                    ),
-                  ],
-                );
-              },
-            ),
+          child: OverflowListViewRow(
+            oEvents: oEvents,
+            overflowItemBuilder: widget.overflowItemBuilder!,
+            heightUnit: heightUnit,
+            eventColumnWith: eventColumnWith,
           ),
         ),
     ];

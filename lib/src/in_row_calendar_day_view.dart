@@ -152,96 +152,93 @@ class _InRowCalendarDayViewState<T extends Object>
               _rowHeight = widget.timeGap * _heightPerMin * _rowScale;
             });
           },
-          child: ListView(
-            // clipBehavior: Clip.none,
+          child: ListView.builder(
             padding: const EdgeInsets.only(top: 20, bottom: 20),
-            children: _timesInDay.map(
-              (time) {
-                final events = widget.events.where(
-                  (event) => event.isInThisGap(time, widget.timeGap),
-                );
+            itemCount: _timesInDay.length,
+            itemBuilder: (context, index) {
+              final time = _timesInDay.elementAt(index);
+              final events = widget.events.where(
+                (event) => event.isInThisGap(time, widget.timeGap),
+              );
 
-                if (events.isEmpty && widget.showWithEventOnly) {
-                  return const SizedBox.shrink();
-                }
+              if (events.isEmpty && widget.showWithEventOnly) {
+                return const SizedBox.shrink();
+              }
 
-                return ConstrainedBox(
-                  constraints: BoxConstraints(
-                    minHeight: _rowHeight,
-                    maxHeight: _rowHeight,
-                    maxWidth: viewWidth,
-                  ),
-                  child: Stack(
-                    // clipBehavior: Clip.none,
-                    // fit: StackFit.expand,
-                    children: [
-                      Divider(
-                        color: widget.dividerColor ?? Colors.amber,
-                        height: 0,
-                        thickness: time.minute == 0 ? 1 : .5,
-                        indent: 50,
-                      ),
-                      Row(
-                        mainAxisSize: MainAxisSize.max,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Transform(
-                            transform: Matrix4.translationValues(0, -10, 0),
-                            child: SizedBox(
-                              width: 50,
-                              child: Text(
-                                "${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, "0")}",
-                                style: widget.timeTextStyle ??
-                                    TextStyle(color: widget.timeTextColor),
-                              ),
+              return ConstrainedBox(
+                constraints: BoxConstraints(
+                  minHeight: _rowHeight,
+                  maxHeight: _rowHeight,
+                  maxWidth: viewWidth,
+                ),
+                child: Stack(
+                  children: [
+                    Divider(
+                      color: widget.dividerColor ?? Colors.amber,
+                      height: 0,
+                      thickness: time.minute == 0 ? 1 : .5,
+                      indent: 50,
+                    ),
+                    Row(
+                      mainAxisSize: MainAxisSize.max,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Transform(
+                          transform: Matrix4.translationValues(0, -10, 0),
+                          child: SizedBox(
+                            width: 50,
+                            child: Text(
+                              "${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, "0")}",
+                              style: widget.timeTextStyle ??
+                                  TextStyle(color: widget.timeTextColor),
                             ),
                           ),
-                          Expanded(
-                            child: LayoutBuilder(
-                              builder: (context, constrains) {
-                                return SizedBox(
-                                  height: _rowHeight,
-                                  child: Builder(
-                                    builder: (context) {
-                                      if (widget.timeRowBuilder != null) {
-                                        return widget.timeRowBuilder!(
-                                          context,
-                                          constrains,
-                                          events.toList(),
-                                        );
-                                      } else {
-                                        return Row(
-                                          children: [
-                                            for (final event in events)
-                                              widget.itemBuilder!(
-                                                context,
-                                                constrains,
-                                                event,
-                                              )
-                                          ],
-                                        );
-                                      }
-                                    },
-                                  ),
-                                );
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
-                      if (widget.showCurrentTimeLine &&
-                          _currentTime.inTheGap(time, widget.timeGap))
-                        CurrentTimeLineWidget(
-                          top: (_currentTime.minute - time.minute) *
-                              _heightPerMin,
-                          color: widget.currentTimeLineColor,
-                          width: viewWidth,
                         ),
-                    ],
-                  ),
-                );
-              },
-            ).toList(),
+                        Expanded(
+                          child: LayoutBuilder(
+                            builder: (context, constrains) {
+                              return SizedBox(
+                                height: _rowHeight,
+                                child: Builder(
+                                  builder: (context) {
+                                    if (widget.timeRowBuilder != null) {
+                                      return widget.timeRowBuilder!(
+                                        context,
+                                        constrains,
+                                        events.toList(),
+                                      );
+                                    } else {
+                                      return Row(
+                                        children: [
+                                          for (final event in events)
+                                            widget.itemBuilder!(
+                                              context,
+                                              constrains,
+                                              event,
+                                            )
+                                        ],
+                                      );
+                                    }
+                                  },
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                    if (widget.showCurrentTimeLine &&
+                        _currentTime.inTheGap(time, widget.timeGap))
+                      CurrentTimeLineWidget(
+                        top:
+                            (_currentTime.minute - time.minute) * _heightPerMin,
+                        color: widget.currentTimeLineColor,
+                        width: viewWidth,
+                      ),
+                  ],
+                ),
+              );
+            },
           ),
         ),
       );

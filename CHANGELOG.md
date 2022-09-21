@@ -1,3 +1,8 @@
+## 1.3.0
+
+- refactor code of day views to use ListView.
+- add indicator for more item in overflow List view row.
+
 ## 1.2.0
 
 - allow to render events rows as ListView in [OverFlowCalendarDayView].

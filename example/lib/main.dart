@@ -60,7 +60,7 @@ class CalendarDayViewExample extends StatelessWidget {
                         (e) => e.copyWith(
                           end: TimeOfDay(
                             hour: e.start.hour + 1,
-                            minute: e.start.minute + 30 + rd.nextInt(50),
+                            minute: e.start.minute + 30 + rd.nextInt(30),
                           ),
                         ),
                       )

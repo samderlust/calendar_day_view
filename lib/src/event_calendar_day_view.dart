@@ -83,12 +83,14 @@ class _EventCalendarDayViewState<T extends Object>
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(builder: (context, constraints) {
-      return SafeArea(
-        child: ListView(
-          padding: const EdgeInsets.only(top: 20, bottom: 20),
-          children: _timesInDay.map(
-            (time) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return SafeArea(
+          child: ListView.builder(
+            padding: const EdgeInsets.only(top: 20, bottom: 20),
+            itemCount: _timesInDay.length,
+            itemBuilder: (context, index) {
+              final time = _timesInDay.elementAt(index);
               final events = widget.events.where(
                 (event) => event.startAt(time),
               );
@@ -145,9 +147,9 @@ class _EventCalendarDayViewState<T extends Object>
                 ),
               );
             },
-          ).toList(),
-        ),
-      );
-    });
+          ),
+        );
+      },
+    );
   }
 }
