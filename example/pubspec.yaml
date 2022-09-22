@@ -38,6 +38,7 @@ dependencies:
   calendar_day_view:
     path: ../
   flutter_hooks: ^0.18.5+1
+  english_words: ^4.0.0
 
 dev_dependencies:
   flutter_test:

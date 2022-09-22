@@ -30,6 +30,8 @@ class OverFlowCalendarDayView<T extends Object> extends StatefulWidget {
     this.currentTimeLineColor,
     this.overflowItemBuilder,
     this.renderRowAsListView = false,
+    this.showMoreOnRowButton = false,
+    this.moreOnRowButton,
   }) : super(key: key);
 
   /// To show a line that indicate current hour and minute;
@@ -65,8 +67,15 @@ class OverFlowCalendarDayView<T extends Object> extends StatefulWidget {
   /// builder for single event
   final OverflowItemBuilder<T>? overflowItemBuilder;
 
-  // allow render an events row as a ListView
+  /// allow render an events row as a ListView
   final bool renderRowAsListView;
+
+  /// allow render button indicate there are more events on the row
+  /// also tap to scroll the list to the right
+  final bool showMoreOnRowButton;
+
+  /// customized button that indicate there are more events on the row
+  final Widget? moreOnRowButton;
 
   @override
   State<OverFlowCalendarDayView> createState() =>
@@ -268,6 +277,8 @@ class _OverFlowCalendarDayViewState<T extends Object>
             overflowItemBuilder: widget.overflowItemBuilder!,
             heightUnit: heightUnit,
             eventColumnWith: eventColumnWith,
+            showMoreOnRowButton: widget.showMoreOnRowButton,
+            moreOnRowButton: widget.moreOnRowButton,
           ),
         ),
     ];

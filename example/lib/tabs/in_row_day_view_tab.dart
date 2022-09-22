@@ -18,6 +18,7 @@ class InRowDayViewTab extends HookWidget {
             events: events,
             heightPerMin: 1,
             showCurrentTimeLine: true,
+            dividerColor: Colors.black,
             timeGap: timeGap.value,
             showWithEventOnly: withEventOnly.value,
             startOfDay: const TimeOfDay(hour: 00, minute: 0),
@@ -31,6 +32,12 @@ class InRowDayViewTab extends HookWidget {
                   child: Center(
                     child: Text(
                       event.value,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: constraints.maxWidth < 100 ? 10 : 15,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ),

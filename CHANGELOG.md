@@ -2,6 +2,7 @@
 
 - refactor code of day views to use ListView.
 - add indicator for more item in overflow List view row.
+- update example and readme
 
 ## 1.2.0
 

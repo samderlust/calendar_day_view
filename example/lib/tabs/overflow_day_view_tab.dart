@@ -18,18 +18,36 @@ class OverflowDayViewTab extends HookWidget {
         Expanded(
           child: OverFlowCalendarDayView(
             events: events,
+            dividerColor: Colors.black,
             startOfDay: const TimeOfDay(hour: 00, minute: 0),
             endOfDay: const TimeOfDay(hour: 23, minute: 0),
             timeGap: timeGap.value,
             renderRowAsListView: true,
             showCurrentTimeLine: true,
+            showMoreOnRowButton: true,
             overflowItemBuilder: (context, constraints, event) {
               return Container(
+                margin: const EdgeInsets.only(right: 3),
                 key: ValueKey(event.hashCode),
-                width: constraints.minWidth < 100 ? 100 : constraints.minWidth,
+                width: constraints.minWidth < 100
+                    ? 100
+                    :
+                    // -3 for the margin
+                    constraints.minWidth - 3,
                 height: constraints.maxHeight,
-                color: getRandomColor(),
-                child: Text(event.value.toString()),
+                decoration: BoxDecoration(
+                  color: getRandomColor(),
+                  borderRadius: const BorderRadius.all(Radius.circular(10)),
+                ),
+                child: Center(
+                  child: Text(
+                    event.value,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
               );
             },
           ),

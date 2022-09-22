@@ -16,9 +16,20 @@ class EventDayViewTab extends StatelessWidget {
       events: events,
       eventDayViewItemBuilder: (context, event) {
         return Container(
-          color: getRandomColor(),
+          decoration: BoxDecoration(
+            color: getRandomColor(),
+            borderRadius: const BorderRadius.all(Radius.circular(10)),
+          ),
           height: 50,
-          child: Text(event.value),
+          child: Center(
+            child: Text(
+              event.value,
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
         );
       },
     );

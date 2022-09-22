@@ -213,7 +213,11 @@ class _InRowCalendarDayViewState<T extends Object>
                                           for (final event in events)
                                             widget.itemBuilder!(
                                               context,
-                                              constrains,
+                                              BoxConstraints(
+                                                maxHeight: _rowHeight,
+                                                maxWidth: constrains.maxWidth /
+                                                    events.length,
+                                              ),
                                               event,
                                             )
                                         ],
