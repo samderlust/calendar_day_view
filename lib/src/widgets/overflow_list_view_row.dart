@@ -52,7 +52,7 @@ class _OverflowListViewRowState<T extends Object>
       }
     });
 
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+    WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
       if (_scrollCtrl.hasClients &&
           _scrollCtrl.position.pixels >= _scrollCtrl.position.maxScrollExtent) {
         setState(() {
