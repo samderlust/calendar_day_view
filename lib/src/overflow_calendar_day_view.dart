@@ -2,18 +2,14 @@ import 'dart:async';
 
 import 'package:calendar_day_view/src/widgets/overflow_list_view_row.dart';
 import 'package:flutter/material.dart';
+import 'package:transparent_pointer/transparent_pointer.dart';
 
 import 'time_of_day_extension.dart';
+import 'typedef.dart';
 import 'utils.dart';
 import 'widgets/current_time_line_widget.dart';
 import 'day_event.dart';
 import 'overflow_event.dart';
-
-typedef OverflowItemBuilder<T extends Object> = Widget Function(
-  BuildContext context,
-  BoxConstraints constraints,
-  DayEvent<T> event,
-);
 
 class OverFlowCalendarDayView<T extends Object> extends StatefulWidget {
   const OverFlowCalendarDayView({
@@ -32,6 +28,7 @@ class OverFlowCalendarDayView<T extends Object> extends StatefulWidget {
     this.renderRowAsListView = false,
     this.showMoreOnRowButton = false,
     this.moreOnRowButton,
+    this.onTap,
   }) : super(key: key);
 
   /// To show a line that indicate current hour and minute;
@@ -65,7 +62,7 @@ class OverFlowCalendarDayView<T extends Object> extends StatefulWidget {
   final Color? dividerColor;
 
   /// builder for single event
-  final OverflowItemBuilder<T>? overflowItemBuilder;
+  final DayViewItemBuilder<T>? overflowItemBuilder;
 
   /// allow render an events row as a ListView
   final bool renderRowAsListView;
@@ -76,6 +73,9 @@ class OverFlowCalendarDayView<T extends Object> extends StatefulWidget {
 
   /// customized button that indicate there are more events on the row
   final Widget? moreOnRowButton;
+
+  /// allow user to tap on Day view
+  final OnTimeTap? onTap;
 
   @override
   State<OverFlowCalendarDayView> createState() =>
@@ -180,46 +180,46 @@ class _OverFlowCalendarDayViewState<T extends Object>
                     itemCount: _timesInDay.length,
                     itemBuilder: (context, index) {
                       final time = _timesInDay.elementAt(index);
-                      return SizedBox(
-                        height: _rowHeight,
-                        width: viewWidth,
-                        child: Stack(
-                          children: [
-                            Divider(
-                              color: widget.dividerColor ?? Colors.amber,
-                              height: 0,
-                              thickness: time.minute == 0 ? 1 : .5,
-                              indent: 50,
-                            ),
-                            Row(
-                              mainAxisSize: MainAxisSize.max,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Transform(
-                                  transform:
-                                      Matrix4.translationValues(0, -10, 0),
-                                  child: SizedBox(
-                                    width: 50,
-                                    child: Text(
-                                      "${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, "0")}",
-                                      style: widget.timeTextStyle ??
-                                          TextStyle(
-                                              color: widget.timeTextColor),
-                                    ),
+                      return GestureDetector(
+                        behavior: HitTestBehavior.opaque,
+                        onTap: widget.onTap == null
+                            ? null
+                            : () => widget.onTap!(time),
+                        child: SizedBox(
+                          height: _rowHeight,
+                          width: viewWidth,
+                          child: Stack(
+                            children: [
+                              Divider(
+                                color: widget.dividerColor ?? Colors.amber,
+                                height: 0,
+                                thickness: time.minute == 0 ? 1 : .5,
+                                indent: 50,
+                              ),
+                              Transform(
+                                transform: Matrix4.translationValues(0, -10, 0),
+                                child: SizedBox(
+                                  width: 50,
+                                  child: Text(
+                                    "${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, "0")}",
+                                    style: widget.timeTextStyle ??
+                                        TextStyle(color: widget.timeTextColor),
                                   ),
                                 ),
-                              ],
-                            ),
-                          ],
+                              ),
+                            ],
+                          ),
                         ),
                       );
                     },
                   ),
-                  Stack(
-                    fit: StackFit.expand,
-                    children: widget.renderRowAsListView
-                        ? renderAsListView(heightUnit, eventColumnWith)
-                        : renderWithFixedWidth(heightUnit, eventColumnWith),
+                  TransparentPointer(
+                    child: Stack(
+                      fit: StackFit.expand,
+                      children: widget.renderRowAsListView
+                          ? renderAsListView(heightUnit, eventColumnWith)
+                          : renderWithFixedWidth(heightUnit, eventColumnWith),
+                    ),
                   ),
                   if (widget.showCurrentTimeLine)
                     CurrentTimeLineWidget(

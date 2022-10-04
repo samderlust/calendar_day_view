@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../calendar_day_view.dart';
 import '../overflow_event.dart';
 import '../time_of_day_extension.dart';
+import '../typedef.dart';
 
 class OverflowListViewRow<T extends Object> extends StatefulWidget {
   const OverflowListViewRow({
@@ -16,7 +17,7 @@ class OverflowListViewRow<T extends Object> extends StatefulWidget {
   }) : super(key: key);
 
   final OverflowEventsRow<T> oEvents;
-  final OverflowItemBuilder<T> overflowItemBuilder;
+  final DayViewItemBuilder<T> overflowItemBuilder;
   final double heightUnit;
   final double eventColumnWith;
   final Widget? moreOnRowButton;

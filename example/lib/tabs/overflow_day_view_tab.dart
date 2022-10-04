@@ -17,6 +17,7 @@ class OverflowDayViewTab extends HookWidget {
       children: [
         Expanded(
           child: OverFlowCalendarDayView(
+            onTap: print,
             events: events,
             dividerColor: Colors.black,
             startOfDay: const TimeOfDay(hour: 00, minute: 0),
@@ -26,25 +27,30 @@ class OverflowDayViewTab extends HookWidget {
             showCurrentTimeLine: true,
             showMoreOnRowButton: true,
             overflowItemBuilder: (context, constraints, event) {
-              return Container(
-                margin: const EdgeInsets.only(right: 3),
-                key: ValueKey(event.hashCode),
-                width: constraints.minWidth < 100
-                    ? 100
-                    :
-                    // -3 for the margin
-                    constraints.minWidth - 3,
-                height: constraints.maxHeight,
-                decoration: BoxDecoration(
-                  color: getRandomColor(),
-                  borderRadius: const BorderRadius.all(Radius.circular(10)),
-                ),
-                child: Center(
-                  child: Text(
-                    event.value,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
+              return GestureDetector(
+                onTap: () {
+                  print(event.value);
+                },
+                child: Container(
+                  margin: const EdgeInsets.only(right: 3),
+                  key: ValueKey(event.hashCode),
+                  width: constraints.minWidth < 100
+                      ? 100
+                      :
+                      // -3 for the margin
+                      constraints.minWidth - 3,
+                  height: constraints.maxHeight,
+                  decoration: BoxDecoration(
+                    color: getRandomColor(),
+                    borderRadius: const BorderRadius.all(Radius.circular(10)),
+                  ),
+                  child: Center(
+                    child: Text(
+                      event.value,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ),

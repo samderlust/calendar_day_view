@@ -60,7 +60,7 @@ OverFlowCalendarDayView(
 
 ### Event Only Day View
 
-- For Viewing events only and their starts time
+- For Viewing events only and their start times
 
 <img src="https://raw.githubusercontent.com/samderlust/images/main/eventonly.png" alt="event only day view" style="width:300px;"/>
 
@@ -79,7 +79,7 @@ OverFlowCalendarDayView(
 
 ### In Row Day View
 
-- For viewing events that starts in a same time window (15min, 30mins,...)
+- For viewing events that start in a same time window (15min, 30mins,...)
 
 <img src="https://raw.githubusercontent.com/samderlust/images/main/ir.png" alt="In Row Day View" style="width:300px;"/>
 

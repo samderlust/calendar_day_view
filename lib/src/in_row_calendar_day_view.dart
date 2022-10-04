@@ -4,19 +4,8 @@ import 'package:flutter/material.dart';
 
 import 'time_of_day_extension.dart';
 import 'day_event.dart';
+import 'typedef.dart';
 import 'widgets/current_time_line_widget.dart';
-
-typedef DayViewItemBuilder<T extends Object> = Widget Function(
-  BuildContext context,
-  BoxConstraints constraints,
-  DayEvent<T> event,
-);
-
-typedef DayViewTimeRowBuilder<T extends Object> = Widget Function(
-  BuildContext,
-  BoxConstraints constraints,
-  List<DayEvent<T>>,
-);
 
 /// Show events in a time gap window in a single row
 ///
@@ -38,6 +27,7 @@ class InRowCalendarDayView<T extends Object> extends StatefulWidget {
     this.heightPerMin = 2.0,
     this.showCurrentTimeLine = false,
     this.currentTimeLineColor,
+    this.onTap,
   })  : assert(timeRowBuilder != null || itemBuilder != null),
         assert(timeRowBuilder == null || itemBuilder == null),
         super(key: key);
@@ -80,6 +70,9 @@ class InRowCalendarDayView<T extends Object> extends StatefulWidget {
 
   /// builder for single time row (this and [itemBuilder] can not exist at the same time)
   final DayViewTimeRowBuilder<T>? timeRowBuilder;
+
+  /// allow user to tap on Day view
+  final OnTimeTap? onTap;
 
   @override
   State<InRowCalendarDayView> createState() => _InRowCalendarDayViewState<T>();
@@ -146,13 +139,17 @@ class _InRowCalendarDayViewState<T extends Object>
 
       return SafeArea(
         child: GestureDetector(
+          behavior: HitTestBehavior.translucent,
           onScaleUpdate: (details) {
             setState(() {
-              _rowScale = details.scale.clamp(1, 5);
-              _rowHeight = widget.timeGap * _heightPerMin * _rowScale;
+              _rowScale =
+                  details.verticalScale; //.clamp(1, widget.heightPerMin * 4);
+              _rowHeight =
+                  widget.timeGap * _heightPerMin * details.verticalScale;
             });
           },
           child: ListView.builder(
+            physics: const ClampingScrollPhysics(),
             padding: const EdgeInsets.only(top: 20, bottom: 20),
             itemCount: _timesInDay.length,
             itemBuilder: (context, index) {
@@ -170,6 +167,7 @@ class _InRowCalendarDayViewState<T extends Object>
                   minHeight: _rowHeight,
                   maxHeight: _rowHeight,
                   maxWidth: viewWidth,
+                  minWidth: 0,
                 ),
                 child: Stack(
                   children: [
@@ -195,38 +193,44 @@ class _InRowCalendarDayViewState<T extends Object>
                           ),
                         ),
                         Expanded(
-                          child: LayoutBuilder(
-                            builder: (context, constrains) {
-                              return SizedBox(
-                                height: _rowHeight,
-                                child: Builder(
-                                  builder: (context) {
-                                    if (widget.timeRowBuilder != null) {
-                                      return widget.timeRowBuilder!(
-                                        context,
-                                        constrains,
-                                        events.toList(),
-                                      );
-                                    } else {
-                                      return Row(
-                                        children: [
-                                          for (final event in events)
-                                            widget.itemBuilder!(
-                                              context,
-                                              BoxConstraints(
-                                                maxHeight: _rowHeight,
-                                                maxWidth: constrains.maxWidth /
-                                                    events.length,
-                                              ),
-                                              event,
-                                            )
-                                        ],
-                                      );
-                                    }
-                                  },
-                                ),
-                              );
-                            },
+                          child: GestureDetector(
+                            onTap: widget.onTap == null
+                                ? null
+                                : () => widget.onTap!(time),
+                            child: LayoutBuilder(
+                              builder: (context, constrains) {
+                                return SizedBox(
+                                  height: _rowHeight,
+                                  child: Builder(
+                                    builder: (context) {
+                                      if (widget.timeRowBuilder != null) {
+                                        return widget.timeRowBuilder!(
+                                          context,
+                                          constrains,
+                                          events.toList(),
+                                        );
+                                      } else {
+                                        return Row(
+                                          children: [
+                                            for (final event in events)
+                                              widget.itemBuilder!(
+                                                context,
+                                                BoxConstraints(
+                                                  maxHeight: _rowHeight,
+                                                  maxWidth:
+                                                      constrains.maxWidth /
+                                                          events.length,
+                                                ),
+                                                event,
+                                              )
+                                          ],
+                                        );
+                                      }
+                                    },
+                                  ),
+                                );
+                              },
+                            ),
                           ),
                         ),
                       ],
