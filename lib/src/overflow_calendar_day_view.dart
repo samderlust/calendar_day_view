@@ -1,8 +1,8 @@
 import 'dart:async';
 
+import 'package:calendar_day_view/src/background_ignore_pointer.dart';
 import 'package:calendar_day_view/src/widgets/overflow_list_view_row.dart';
 import 'package:flutter/material.dart';
-import 'package:transparent_pointer/transparent_pointer.dart';
 
 import 'time_of_day_extension.dart';
 import 'typedef.dart';
@@ -181,6 +181,7 @@ class _OverFlowCalendarDayViewState<T extends Object>
                     itemBuilder: (context, index) {
                       final time = _timesInDay.elementAt(index);
                       return GestureDetector(
+                        key: ValueKey(time.toString()),
                         behavior: HitTestBehavior.opaque,
                         onTap: widget.onTap == null
                             ? null
@@ -213,7 +214,7 @@ class _OverFlowCalendarDayViewState<T extends Object>
                       );
                     },
                   ),
-                  TransparentPointer(
+                  BackgroundIgnorePointer(
                     child: Stack(
                       fit: StackFit.expand,
                       children: widget.renderRowAsListView

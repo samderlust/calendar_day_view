@@ -1,3 +1,4 @@
+import 'package:calendar_day_view/src/background_ignore_pointer.dart';
 import 'package:flutter/material.dart';
 
 import '../../calendar_day_view.dart';
@@ -101,15 +102,17 @@ class _OverflowListViewRowState<T extends Object>
                     constraints: BoxConstraints(
                       maxHeight: event.durationInMins * widget.heightUnit,
                     ),
-                    child: widget.overflowItemBuilder(
-                      context,
-                      BoxConstraints(
-                        maxHeight: event.durationInMins * widget.heightUnit,
-                        minHeight: event.durationInMins * widget.heightUnit,
-                        minWidth: width,
-                        maxWidth: widget.eventColumnWith,
+                    child: StopBackgroundIgnorePointer(
+                      child: widget.overflowItemBuilder(
+                        context,
+                        BoxConstraints(
+                          maxHeight: event.durationInMins * widget.heightUnit,
+                          minHeight: event.durationInMins * widget.heightUnit,
+                          minWidth: width,
+                          maxWidth: widget.eventColumnWith,
+                        ),
+                        event,
                       ),
-                      event,
                     ),
                   ),
                 ],

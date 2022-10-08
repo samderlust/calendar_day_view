@@ -170,13 +170,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.4.12"
-  transparent_pointer:
-    dependency: transitive
-    description:
-      name: transparent_pointer
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.0.0"
   vector_math:
     dependency: transitive
     description:
