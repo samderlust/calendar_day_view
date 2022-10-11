@@ -5,18 +5,35 @@ class BackgroundIgnorePointer extends SingleChildRenderObjectWidget {
   const BackgroundIgnorePointer({
     Key? key,
     required Widget child,
+    this.ignored = true,
   }) : super(key: key, child: child);
+  final bool ignored;
 
   @override
   BackgroundIgnoreRenderBox createRenderObject(BuildContext context) {
-    return BackgroundIgnoreRenderBox();
+    return BackgroundIgnoreRenderBox(ignored: ignored);
+  }
+
+  @override
+  void updateRenderObject(
+      BuildContext context, BackgroundIgnoreRenderBox renderObject) {
+    renderObject..ignored = ignored;
   }
 }
 
-class BackgroundIgnoreRenderBox extends RenderProxyBoxWithHitTestBehavior {
+class BackgroundIgnoreRenderBox extends RenderProxyBox {
+  bool _ignored;
+
+  BackgroundIgnoreRenderBox({
+    bool ignored = true,
+  }) : _ignored = ignored;
+
+  bool get ignored => _ignored;
+  set ignored(bool val) => _ignored = val;
+
   @override
   bool hitTest(BoxHitTestResult result, {required Offset position}) {
-    return super.hitTest(result, position: position) && false;
+    return super.hitTest(result, position: position) && !ignored;
   }
 }
 
@@ -24,45 +41,20 @@ class StopBackgroundIgnorePointer extends StatelessWidget {
   const StopBackgroundIgnorePointer({
     Key? key,
     required this.child,
+    required this.ignored,
   }) : super(key: key);
 
   final Widget child;
+  final bool ignored;
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {},
-      child: child,
-    );
+    if (ignored) {
+      return GestureDetector(
+        onTap: () {},
+        child: child,
+      );
+    }
+    return child;
   }
 }
-
-// class StopBackgroundIgnorePointer extends SingleChildRenderObjectWidget {
-//   const StopBackgroundIgnorePointer({
-//     Key? key,
-//     required Widget child,
-//   }) : super(key: key, child: child);
-
-//   @override
-//   StopBackgroundIgnoreRenderBox createRenderObject(BuildContext context) {
-//     return StopBackgroundIgnoreRenderBox();
-//   }
-
-//   @override
-//   void handleEvent(PointerEvent event, HitTestEntry entry) {
-//     if (event is PointerDownEvent) {}
-//   }
-// }
-
-// class StopBackgroundIgnoreRenderBox extends RenderPointerListener {
-//   @override
-//   Size computeSizeForNoChild(BoxConstraints constraints) {
-//     return constraints.biggest;
-//   }
-
-//   @override
-//   bool hitTestChildren(BoxHitTestResult result, {required Offset position}) {
-//     // TODO: implement hitTestChildren
-//     return super.hitTestChildren(result, position: position) && true;
-//   }
-// }

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:calendar_day_view/src/background_ignore_pointer.dart';
+import 'package:calendar_day_view/src/day_view_provider.dart';
 import 'package:calendar_day_view/src/widgets/overflow_list_view_row.dart';
 import 'package:flutter/material.dart';
 
@@ -28,7 +29,7 @@ class OverFlowCalendarDayView<T extends Object> extends StatefulWidget {
     this.renderRowAsListView = false,
     this.showMoreOnRowButton = false,
     this.moreOnRowButton,
-    this.onTap,
+    this.onTimeTap,
   }) : super(key: key);
 
   /// To show a line that indicate current hour and minute;
@@ -75,7 +76,7 @@ class OverFlowCalendarDayView<T extends Object> extends StatefulWidget {
   final Widget? moreOnRowButton;
 
   /// allow user to tap on Day view
-  final OnTimeTap? onTap;
+  final OnTimeTap? onTimeTap;
 
   @override
   State<OverFlowCalendarDayView> createState() =>
@@ -95,6 +96,7 @@ class _OverFlowCalendarDayViewState<T extends Object>
   @override
   void initState() {
     super.initState();
+
     _heightPerMin = widget.heightPerMin;
     _timesInDay = getTimeList();
     _rowHeight = widget.timeGap * _heightPerMin * _rowScale;
@@ -157,82 +159,81 @@ class _OverFlowCalendarDayViewState<T extends Object>
       final eventColumnWith = viewWidth - 50;
 
       return SafeArea(
-        child: GestureDetector(
-          onScaleUpdate: (details) {
-            setState(() {
-              if (details.scale >= 1 && details.scale <= 10) {
-                _rowScale = details.scale;
-                _rowHeight = widget.timeGap * _heightPerMin * _rowScale;
-              }
-            });
-          },
-          child: SingleChildScrollView(
-            physics: const AlwaysScrollableScrollPhysics(),
-            padding: const EdgeInsets.only(top: 10, bottom: 20),
-            child: SizedBox(
-              height: _timesInDay.length * _rowHeight,
-              child: Stack(
-                clipBehavior: Clip.none,
-                // padding: const EdgeInsets.only(top: 20, bottom: 20),
-                children: [
-                  ListView.builder(
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: _timesInDay.length,
-                    itemBuilder: (context, index) {
-                      final time = _timesInDay.elementAt(index);
-                      return GestureDetector(
-                        key: ValueKey(time.toString()),
-                        behavior: HitTestBehavior.opaque,
-                        onTap: widget.onTap == null
-                            ? null
-                            : () => widget.onTap!(time),
-                        child: SizedBox(
-                          height: _rowHeight,
-                          width: viewWidth,
-                          child: Stack(
-                            children: [
-                              Divider(
-                                color: widget.dividerColor ?? Colors.amber,
-                                height: 0,
-                                thickness: time.minute == 0 ? 1 : .5,
-                                indent: 50,
-                              ),
-                              Transform(
-                                transform: Matrix4.translationValues(0, -10, 0),
-                                child: SizedBox(
-                                  width: 50,
-                                  child: Text(
-                                    "${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, "0")}",
-                                    style: widget.timeTextStyle ??
-                                        TextStyle(color: widget.timeTextColor),
-                                  ),
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          padding: const EdgeInsets.only(top: 10, bottom: 20),
+          child: SizedBox(
+            height: _timesInDay.length * _rowHeight,
+            child: Stack(
+              clipBehavior: Clip.none,
+              // padding: const EdgeInsets.only(top: 20, bottom: 20),
+              children: [
+                ListView.builder(
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: _timesInDay.length,
+                  itemBuilder: (context, index) {
+                    final time = _timesInDay.elementAt(index);
+                    return GestureDetector(
+                      key: ValueKey(time.toString()),
+                      behavior: HitTestBehavior.opaque,
+                      onTap: widget.onTimeTap == null
+                          ? null
+                          : () => widget.onTimeTap!(time),
+                      child: SizedBox(
+                        height: _rowHeight,
+                        width: viewWidth,
+                        child: Stack(
+                          children: [
+                            Divider(
+                              color: widget.dividerColor ?? Colors.amber,
+                              height: 0,
+                              thickness: time.minute == 0 ? 1 : .5,
+                              indent: 50,
+                            ),
+                            Transform(
+                              transform: Matrix4.translationValues(0, -10, 0),
+                              child: SizedBox(
+                                width: 50,
+                                child: Text(
+                                  "${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, "0")}",
+                                  style: widget.timeTextStyle ??
+                                      TextStyle(color: widget.timeTextColor),
                                 ),
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
-                      );
-                    },
+                      ),
+                    );
+                  },
+                ),
+                BackgroundIgnorePointer(
+                  ignored: widget.onTimeTap != null,
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: widget.renderRowAsListView
+                        ? renderAsListView(heightUnit, eventColumnWith)
+                        : renderWithFixedWidth(heightUnit, eventColumnWith),
                   ),
-                  BackgroundIgnorePointer(
-                    child: Stack(
-                      fit: StackFit.expand,
-                      children: widget.renderRowAsListView
-                          ? renderAsListView(heightUnit, eventColumnWith)
-                          : renderWithFixedWidth(heightUnit, eventColumnWith),
-                    ),
+                ),
+                if (widget.showCurrentTimeLine)
+                  CurrentTimeLineWidget(
+                    top: _currentTime.minuteFrom(widget.startOfDay).toDouble() *
+                        heightUnit,
+                    width: constraints.maxWidth,
+                    color: widget.currentTimeLineColor,
                   ),
-                  if (widget.showCurrentTimeLine)
-                    CurrentTimeLineWidget(
-                      top: _currentTime
-                              .minuteFrom(widget.startOfDay)
-                              .toDouble() *
-                          heightUnit,
-                      width: constraints.maxWidth,
-                      color: widget.currentTimeLineColor,
-                    ),
-                ],
-              ),
+                // GestureDetector(
+                //   onScaleUpdate: (details) {
+                //     setState(() {
+                //       if (details.scale >= 1 && details.scale <= 10) {
+                //         _rowScale = details.scale;
+                //         _rowHeight = widget.timeGap * _heightPerMin * _rowScale;
+                //       }
+                //     });
+                //   },
+                // )
+              ],
             ),
           ),
         ),
@@ -275,6 +276,7 @@ class _OverFlowCalendarDayViewState<T extends Object>
           left: 50,
           child: OverflowListViewRow(
             oEvents: oEvents,
+            ignored: widget.onTimeTap != null,
             overflowItemBuilder: widget.overflowItemBuilder!,
             heightUnit: heightUnit,
             eventColumnWith: eventColumnWith,

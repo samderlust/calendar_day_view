@@ -15,6 +15,7 @@ class OverflowListViewRow<T extends Object> extends StatefulWidget {
     required this.eventColumnWith,
     required this.showMoreOnRowButton,
     this.moreOnRowButton,
+    required this.ignored,
   }) : super(key: key);
 
   final OverflowEventsRow<T> oEvents;
@@ -23,6 +24,7 @@ class OverflowListViewRow<T extends Object> extends StatefulWidget {
   final double eventColumnWith;
   final Widget? moreOnRowButton;
   final bool showMoreOnRowButton;
+  final bool ignored;
 
   @override
   State<OverflowListViewRow<T>> createState() => _OverflowListViewRowState<T>();
@@ -103,6 +105,7 @@ class _OverflowListViewRowState<T extends Object>
                       maxHeight: event.durationInMins * widget.heightUnit,
                     ),
                     child: StopBackgroundIgnorePointer(
+                      ignored: widget.ignored,
                       child: widget.overflowItemBuilder(
                         context,
                         BoxConstraints(

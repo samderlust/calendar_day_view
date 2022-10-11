@@ -17,7 +17,7 @@ class OverflowDayViewTab extends HookWidget {
       children: [
         Expanded(
           child: OverFlowCalendarDayView(
-            onTap: print,
+            onTimeTap: print,
             events: events,
             dividerColor: Colors.black,
             startOfDay: const TimeOfDay(hour: 00, minute: 0),
