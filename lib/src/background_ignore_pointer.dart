@@ -17,7 +17,7 @@ class BackgroundIgnorePointer extends SingleChildRenderObjectWidget {
   @override
   void updateRenderObject(
       BuildContext context, BackgroundIgnoreRenderBox renderObject) {
-    renderObject..ignored = ignored;
+    renderObject.ignored = ignored;
   }
 }
 
@@ -28,12 +28,11 @@ class BackgroundIgnoreRenderBox extends RenderProxyBox {
     bool ignored = true,
   }) : _ignored = ignored;
 
-  bool get ignored => _ignored;
   set ignored(bool val) => _ignored = val;
 
   @override
   bool hitTest(BoxHitTestResult result, {required Offset position}) {
-    return super.hitTest(result, position: position) && !ignored;
+    return super.hitTest(result, position: position) && !_ignored;
   }
 }
 

@@ -1,16 +1,15 @@
 import 'dart:async';
 
 import 'package:calendar_day_view/src/background_ignore_pointer.dart';
-import 'package:calendar_day_view/src/day_view_provider.dart';
 import 'package:calendar_day_view/src/widgets/overflow_list_view_row.dart';
 import 'package:flutter/material.dart';
 
+import 'day_event.dart';
+import 'overflow_event.dart';
 import 'time_of_day_extension.dart';
 import 'typedef.dart';
 import 'utils.dart';
 import 'widgets/current_time_line_widget.dart';
-import 'day_event.dart';
-import 'overflow_event.dart';
 
 class OverFlowCalendarDayView<T extends Object> extends StatefulWidget {
   const OverFlowCalendarDayView({
@@ -225,14 +224,17 @@ class _OverFlowCalendarDayViewState<T extends Object>
                   ),
                 // GestureDetector(
                 //   onScaleUpdate: (details) {
-                //     setState(() {
-                //       if (details.scale >= 1 && details.scale <= 10) {
-                //         _rowScale = details.scale;
-                //         _rowHeight = widget.timeGap * _heightPerMin * _rowScale;
-                //       }
-                //     });
+                //     if (details.horizontalScale != _rowScale) {
+                //       setState(() {
+                //         if (details.scale >= 1 && details.scale <= 10) {
+                //           _rowScale = details.scale;
+                //           _rowHeight =
+                //               widget.timeGap * _heightPerMin * _rowScale;
+                //         }
+                //       });
+                //     }
                 //   },
-                // )
+                // ),
               ],
             ),
           ),

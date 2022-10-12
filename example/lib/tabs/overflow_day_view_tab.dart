@@ -28,9 +28,9 @@ class OverflowDayViewTab extends HookWidget {
             showMoreOnRowButton: true,
             overflowItemBuilder: (context, constraints, event) {
               return GestureDetector(
-                // onTap: () {
-                //   print(event.value);
-                // },
+                onTap: () {
+                  print(event.value);
+                },
                 child: Container(
                   margin: const EdgeInsets.only(right: 3),
                   key: ValueKey(event.hashCode),

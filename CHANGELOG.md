@@ -1,5 +1,6 @@
-## 1.3.1
+## 1.4.0
 
+- add onTimeTap in OverflowDayView. Allow user to tap on day view (ex: tap to create event at that time)
 - fix typo in readme
 
 ## 1.3.0
