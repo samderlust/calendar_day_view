@@ -136,7 +136,7 @@ class _OverFlowCalendarDayViewState<T extends Object>
   }
 
   List<TimeOfDay> getTimeList() {
-    final timeEnd = widget.endOfDay ?? const TimeOfDay(hour: 24, minute: 0);
+    final timeEnd = widget.endOfDay ?? const TimeOfDay(hour: 23, minute: 0);
 
     final timeCount =
         (((timeEnd.hour + 1) - widget.startOfDay.hour) * 60) ~/ widget.timeGap -

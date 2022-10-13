@@ -13,6 +13,7 @@ This package aims to give user most customization they want.
 - Option to change start of day and end of day in day view
 - Option to change time gap(duration that a single row represent) in day view.
 - Option to show current time on day view as a line
+- Allow user to tap on day view (ex: to create event at that specific time)
 
 ## Installing and import the library:
 
