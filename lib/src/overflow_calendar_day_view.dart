@@ -15,6 +15,7 @@ class OverFlowCalendarDayView<T extends Object> extends StatefulWidget {
   const OverFlowCalendarDayView({
     Key? key,
     required this.events,
+    this.timeTitleColumnWidth = 50.0,
     this.startOfDay = const TimeOfDay(hour: 8, minute: 0),
     this.endOfDay,
     this.timeGap = 60,
@@ -30,6 +31,9 @@ class OverFlowCalendarDayView<T extends Object> extends StatefulWidget {
     this.moreOnRowButton,
     this.onTimeTap,
   }) : super(key: key);
+
+  /// The width of the column that contain list of time points
+  final double timeTitleColumnWidth;
 
   /// To show a line that indicate current hour and minute;
   final bool showCurrentTimeLine;
@@ -94,6 +98,7 @@ class _OverFlowCalendarDayViewState<T extends Object>
   @override
   void initState() {
     super.initState();
+    _rowScale = 1;
 
     _heightPerMin = widget.heightPerMin;
     _timesInDay = getTimeList();
@@ -134,13 +139,14 @@ class _OverFlowCalendarDayViewState<T extends Object>
     final timeEnd = widget.endOfDay ?? const TimeOfDay(hour: 24, minute: 0);
 
     final timeCount =
-        ((timeEnd.hour - widget.startOfDay.hour) * 60) ~/ widget.timeGap;
+        (((timeEnd.hour + 1) - widget.startOfDay.hour) * 60) ~/ widget.timeGap -
+            1;
 
     DateTime first = DateTime.parse(
         "2012-02-27T${widget.startOfDay.hour.toString().padLeft(2, '0')}:00");
 
     List<TimeOfDay> list = [];
-    for (var i = 1; i <= timeCount; i++) {
+    for (var i = 0; i <= timeCount; i++) {
       list.add(TimeOfDay.fromDateTime(first));
       first = first.add(Duration(minutes: widget.timeGap));
     }
@@ -154,7 +160,7 @@ class _OverFlowCalendarDayViewState<T extends Object>
 
     return LayoutBuilder(builder: (context, constraints) {
       final viewWidth = constraints.maxWidth;
-      final eventColumnWith = viewWidth - 50;
+      final eventColumnWith = viewWidth - widget.timeTitleColumnWidth;
 
       return SafeArea(
         child: SingleChildScrollView(
@@ -186,12 +192,12 @@ class _OverFlowCalendarDayViewState<T extends Object>
                               color: widget.dividerColor ?? Colors.amber,
                               height: 0,
                               thickness: time.minute == 0 ? 1 : .5,
-                              indent: 50,
+                              indent: widget.timeTitleColumnWidth,
                             ),
                             Transform(
                               transform: Matrix4.translationValues(0, -10, 0),
                               child: SizedBox(
-                                width: 50,
+                                width: widget.timeTitleColumnWidth,
                                 child: Text(
                                   "${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, "0")}",
                                   style: widget.timeTextStyle ??
@@ -248,7 +254,8 @@ class _OverFlowCalendarDayViewState<T extends Object>
             builder: (context) {
               final width = eventColumnWith / oEvents.events.length;
               return Positioned(
-                left: 50.0 + oEvents.events.indexOf(event) * width,
+                left: widget.timeTitleColumnWidth +
+                    oEvents.events.indexOf(event) * width,
                 top: event.minutesFrom(widget.startOfDay).toDouble() *
                     heightUnit,
                 child: widget.overflowItemBuilder!(
@@ -272,7 +279,7 @@ class _OverFlowCalendarDayViewState<T extends Object>
       for (final oEvents in _overflowEvents)
         Positioned(
           top: oEvents.start.minuteFrom(widget.startOfDay) * heightUnit,
-          left: 50,
+          left: widget.timeTitleColumnWidth,
           child: OverflowListViewRow(
             oEvents: oEvents,
             ignored: widget.onTimeTap != null,
