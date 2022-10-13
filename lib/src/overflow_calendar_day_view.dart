@@ -1,24 +1,21 @@
 import 'dart:async';
 
+import 'package:calendar_day_view/src/background_ignore_pointer.dart';
 import 'package:calendar_day_view/src/widgets/overflow_list_view_row.dart';
 import 'package:flutter/material.dart';
 
-import 'time_of_day_extension.dart';
-import 'utils.dart';
-import 'widgets/current_time_line_widget.dart';
 import 'day_event.dart';
 import 'overflow_event.dart';
-
-typedef OverflowItemBuilder<T extends Object> = Widget Function(
-  BuildContext context,
-  BoxConstraints constraints,
-  DayEvent<T> event,
-);
+import 'time_of_day_extension.dart';
+import 'typedef.dart';
+import 'utils.dart';
+import 'widgets/current_time_line_widget.dart';
 
 class OverFlowCalendarDayView<T extends Object> extends StatefulWidget {
   const OverFlowCalendarDayView({
     Key? key,
     required this.events,
+    this.timeTitleColumnWidth = 50.0,
     this.startOfDay = const TimeOfDay(hour: 8, minute: 0),
     this.endOfDay,
     this.timeGap = 60,
@@ -32,7 +29,11 @@ class OverFlowCalendarDayView<T extends Object> extends StatefulWidget {
     this.renderRowAsListView = false,
     this.showMoreOnRowButton = false,
     this.moreOnRowButton,
+    this.onTimeTap,
   }) : super(key: key);
+
+  /// The width of the column that contain list of time points
+  final double timeTitleColumnWidth;
 
   /// To show a line that indicate current hour and minute;
   final bool showCurrentTimeLine;
@@ -65,7 +66,7 @@ class OverFlowCalendarDayView<T extends Object> extends StatefulWidget {
   final Color? dividerColor;
 
   /// builder for single event
-  final OverflowItemBuilder<T>? overflowItemBuilder;
+  final DayViewItemBuilder<T>? overflowItemBuilder;
 
   /// allow render an events row as a ListView
   final bool renderRowAsListView;
@@ -76,6 +77,9 @@ class OverFlowCalendarDayView<T extends Object> extends StatefulWidget {
 
   /// customized button that indicate there are more events on the row
   final Widget? moreOnRowButton;
+
+  /// allow user to tap on Day view
+  final OnTimeTap? onTimeTap;
 
   @override
   State<OverFlowCalendarDayView> createState() =>
@@ -89,15 +93,15 @@ class _OverFlowCalendarDayViewState<T extends Object>
   double _heightPerMin = 1.0;
   TimeOfDay _currentTime = TimeOfDay.now();
   Timer? _timer;
-  double _rowHeight = 60.0;
   double _rowScale = 1;
 
   @override
   void initState() {
     super.initState();
+    _rowScale = 1;
+
     _heightPerMin = widget.heightPerMin;
     _timesInDay = getTimeList();
-    _rowHeight = widget.timeGap * _heightPerMin * _rowScale;
 
     _overflowEvents = processOverflowEvents(widget.events
       ..sort(
@@ -116,7 +120,7 @@ class _OverFlowCalendarDayViewState<T extends Object>
   @override
   void didUpdateWidget(covariant OverFlowCalendarDayView<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
-    _rowHeight = widget.timeGap * _heightPerMin * _rowScale;
+
     _timesInDay = getTimeList();
     _overflowEvents = processOverflowEvents(widget.events
       ..sort(
@@ -132,16 +136,17 @@ class _OverFlowCalendarDayViewState<T extends Object>
   }
 
   List<TimeOfDay> getTimeList() {
-    final timeEnd = widget.endOfDay ?? const TimeOfDay(hour: 24, minute: 0);
+    final timeEnd = widget.endOfDay ?? const TimeOfDay(hour: 23, minute: 0);
 
     final timeCount =
-        ((timeEnd.hour - widget.startOfDay.hour) * 60) ~/ widget.timeGap;
+        (((timeEnd.hour + 1) - widget.startOfDay.hour) * 60) ~/ widget.timeGap -
+            1;
 
     DateTime first = DateTime.parse(
         "2012-02-27T${widget.startOfDay.hour.toString().padLeft(2, '0')}:00");
 
     List<TimeOfDay> list = [];
-    for (var i = 1; i <= timeCount; i++) {
+    for (var i = 0; i <= timeCount; i++) {
       list.add(TimeOfDay.fromDateTime(first));
       first = first.add(Duration(minutes: widget.timeGap));
     }
@@ -151,37 +156,35 @@ class _OverFlowCalendarDayViewState<T extends Object>
   @override
   Widget build(BuildContext context) {
     final heightUnit = _heightPerMin * _rowScale;
+    final rowHeight = widget.timeGap * _heightPerMin * _rowScale;
 
     return LayoutBuilder(builder: (context, constraints) {
       final viewWidth = constraints.maxWidth;
-      final eventColumnWith = viewWidth - 50;
+      final eventColumnWith = viewWidth - widget.timeTitleColumnWidth;
 
       return SafeArea(
-        child: GestureDetector(
-          onScaleUpdate: (details) {
-            setState(() {
-              if (details.scale >= 1 && details.scale <= 10) {
-                _rowScale = details.scale;
-                _rowHeight = widget.timeGap * _heightPerMin * _rowScale;
-              }
-            });
-          },
-          child: SingleChildScrollView(
-            physics: const AlwaysScrollableScrollPhysics(),
-            padding: const EdgeInsets.only(top: 10, bottom: 20),
-            child: SizedBox(
-              height: _timesInDay.length * _rowHeight,
-              child: Stack(
-                clipBehavior: Clip.none,
-                // padding: const EdgeInsets.only(top: 20, bottom: 20),
-                children: [
-                  ListView.builder(
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: _timesInDay.length,
-                    itemBuilder: (context, index) {
-                      final time = _timesInDay.elementAt(index);
-                      return SizedBox(
-                        height: _rowHeight,
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          padding: const EdgeInsets.only(top: 10, bottom: 20),
+          child: SizedBox(
+            height: _timesInDay.length * rowHeight,
+            child: Stack(
+              clipBehavior: Clip.none,
+              // padding: const EdgeInsets.only(top: 20, bottom: 20),
+              children: [
+                ListView.builder(
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: _timesInDay.length,
+                  itemBuilder: (context, index) {
+                    final time = _timesInDay.elementAt(index);
+                    return GestureDetector(
+                      key: ValueKey(time.toString()),
+                      behavior: HitTestBehavior.opaque,
+                      onTap: widget.onTimeTap == null
+                          ? null
+                          : () => widget.onTimeTap!(time),
+                      child: SizedBox(
+                        height: rowHeight,
                         width: viewWidth,
                         child: Stack(
                           children: [
@@ -189,49 +192,53 @@ class _OverFlowCalendarDayViewState<T extends Object>
                               color: widget.dividerColor ?? Colors.amber,
                               height: 0,
                               thickness: time.minute == 0 ? 1 : .5,
-                              indent: 50,
+                              indent: widget.timeTitleColumnWidth,
                             ),
-                            Row(
-                              mainAxisSize: MainAxisSize.max,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Transform(
-                                  transform:
-                                      Matrix4.translationValues(0, -10, 0),
-                                  child: SizedBox(
-                                    width: 50,
-                                    child: Text(
-                                      "${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, "0")}",
-                                      style: widget.timeTextStyle ??
-                                          TextStyle(
-                                              color: widget.timeTextColor),
-                                    ),
-                                  ),
+                            Transform(
+                              transform: Matrix4.translationValues(0, -10, 0),
+                              child: SizedBox(
+                                width: widget.timeTitleColumnWidth,
+                                child: Text(
+                                  "${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, "0")}",
+                                  style: widget.timeTextStyle ??
+                                      TextStyle(color: widget.timeTextColor),
                                 ),
-                              ],
+                              ),
                             ),
                           ],
                         ),
-                      );
-                    },
-                  ),
-                  Stack(
+                      ),
+                    );
+                  },
+                ),
+                BackgroundIgnorePointer(
+                  ignored: widget.onTimeTap != null,
+                  child: Stack(
                     fit: StackFit.expand,
                     children: widget.renderRowAsListView
                         ? renderAsListView(heightUnit, eventColumnWith)
                         : renderWithFixedWidth(heightUnit, eventColumnWith),
                   ),
-                  if (widget.showCurrentTimeLine)
-                    CurrentTimeLineWidget(
-                      top: _currentTime
-                              .minuteFrom(widget.startOfDay)
-                              .toDouble() *
-                          heightUnit,
-                      width: constraints.maxWidth,
-                      color: widget.currentTimeLineColor,
-                    ),
-                ],
-              ),
+                ),
+                if (widget.showCurrentTimeLine)
+                  CurrentTimeLineWidget(
+                    top: _currentTime.minuteFrom(widget.startOfDay).toDouble() *
+                        heightUnit,
+                    width: constraints.maxWidth,
+                    color: widget.currentTimeLineColor,
+                  ),
+                // GestureDetector(
+                //   onScaleUpdate: (details) {
+                //     if (details.horizontalScale != _rowScale) {
+                //       setState(() {
+                //         if (details.scale >= 1 && details.scale <= 10) {
+                //           _rowScale = details.scale;
+                //         }
+                //       });
+                //     }
+                //   },
+                // ),
+              ],
             ),
           ),
         ),
@@ -247,7 +254,8 @@ class _OverFlowCalendarDayViewState<T extends Object>
             builder: (context) {
               final width = eventColumnWith / oEvents.events.length;
               return Positioned(
-                left: 50.0 + oEvents.events.indexOf(event) * width,
+                left: widget.timeTitleColumnWidth +
+                    oEvents.events.indexOf(event) * width,
                 top: event.minutesFrom(widget.startOfDay).toDouble() *
                     heightUnit,
                 child: widget.overflowItemBuilder!(
@@ -271,9 +279,10 @@ class _OverFlowCalendarDayViewState<T extends Object>
       for (final oEvents in _overflowEvents)
         Positioned(
           top: oEvents.start.minuteFrom(widget.startOfDay) * heightUnit,
-          left: 50,
+          left: widget.timeTitleColumnWidth,
           child: OverflowListViewRow(
             oEvents: oEvents,
+            ignored: widget.onTimeTap != null,
             overflowItemBuilder: widget.overflowItemBuilder!,
             heightUnit: heightUnit,
             eventColumnWith: eventColumnWith,

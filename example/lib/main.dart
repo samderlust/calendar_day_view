@@ -51,6 +51,7 @@ class CalendarDayViewExample extends StatelessWidget {
           body: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10),
             child: TabBarView(
+              physics: const NeverScrollableScrollPhysics(),
               children: [
                 OverflowDayViewTab(
                   events: fakeEvents

@@ -13,6 +13,7 @@ This package aims to give user most customization they want.
 - Option to change start of day and end of day in day view
 - Option to change time gap(duration that a single row represent) in day view.
 - Option to show current time on day view as a line
+- Allow user to tap on day view (ex: to create event at that specific time)
 
 ## Installing and import the library:
 
@@ -60,7 +61,7 @@ OverFlowCalendarDayView(
 
 ### Event Only Day View
 
-- For Viewing events only and their starts time
+- For Viewing events only and their start times
 
 <img src="https://raw.githubusercontent.com/samderlust/images/main/eventonly.png" alt="event only day view" style="width:300px;"/>
 
@@ -79,7 +80,7 @@ OverFlowCalendarDayView(
 
 ### In Row Day View
 
-- For viewing events that starts in a same time window (15min, 30mins,...)
+- For viewing events that start in a same time window (15min, 30mins,...)
 
 <img src="https://raw.githubusercontent.com/samderlust/images/main/ir.png" alt="In Row Day View" style="width:300px;"/>
 
