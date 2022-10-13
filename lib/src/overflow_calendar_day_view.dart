@@ -89,7 +89,6 @@ class _OverFlowCalendarDayViewState<T extends Object>
   double _heightPerMin = 1.0;
   TimeOfDay _currentTime = TimeOfDay.now();
   Timer? _timer;
-  double _rowHeight = 60.0;
   double _rowScale = 1;
 
   @override
@@ -98,7 +97,6 @@ class _OverFlowCalendarDayViewState<T extends Object>
 
     _heightPerMin = widget.heightPerMin;
     _timesInDay = getTimeList();
-    _rowHeight = widget.timeGap * _heightPerMin * _rowScale;
 
     _overflowEvents = processOverflowEvents(widget.events
       ..sort(
@@ -117,7 +115,7 @@ class _OverFlowCalendarDayViewState<T extends Object>
   @override
   void didUpdateWidget(covariant OverFlowCalendarDayView<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
-    _rowHeight = widget.timeGap * _heightPerMin * _rowScale;
+
     _timesInDay = getTimeList();
     _overflowEvents = processOverflowEvents(widget.events
       ..sort(
@@ -152,6 +150,7 @@ class _OverFlowCalendarDayViewState<T extends Object>
   @override
   Widget build(BuildContext context) {
     final heightUnit = _heightPerMin * _rowScale;
+    final rowHeight = widget.timeGap * _heightPerMin * _rowScale;
 
     return LayoutBuilder(builder: (context, constraints) {
       final viewWidth = constraints.maxWidth;
@@ -162,7 +161,7 @@ class _OverFlowCalendarDayViewState<T extends Object>
           physics: const AlwaysScrollableScrollPhysics(),
           padding: const EdgeInsets.only(top: 10, bottom: 20),
           child: SizedBox(
-            height: _timesInDay.length * _rowHeight,
+            height: _timesInDay.length * rowHeight,
             child: Stack(
               clipBehavior: Clip.none,
               // padding: const EdgeInsets.only(top: 20, bottom: 20),
@@ -179,7 +178,7 @@ class _OverFlowCalendarDayViewState<T extends Object>
                           ? null
                           : () => widget.onTimeTap!(time),
                       child: SizedBox(
-                        height: _rowHeight,
+                        height: rowHeight,
                         width: viewWidth,
                         child: Stack(
                           children: [
@@ -228,8 +227,6 @@ class _OverFlowCalendarDayViewState<T extends Object>
                 //       setState(() {
                 //         if (details.scale >= 1 && details.scale <= 10) {
                 //           _rowScale = details.scale;
-                //           _rowHeight =
-                //               widget.timeGap * _heightPerMin * _rowScale;
                 //         }
                 //       });
                 //     }
