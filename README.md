@@ -27,7 +27,7 @@ dependencies:
 Then import it wherever you want to use it:
 
 ```
-import 'package:fetching_state/calendar_day_view.dart';
+import 'package:calendar_day_view/calendar_day_view.dart';
 ```
 
 ## Usage
