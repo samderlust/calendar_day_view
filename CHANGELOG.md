@@ -1,3 +1,7 @@
+## 1.5.0
+
+- adding vertical views
+
 ## 1.4.1
 
 - fix doc typo

@@ -1,10 +1,10 @@
-import 'package:calendar_day_view/src/background_ignore_pointer.dart';
+import 'package:calendar_day_view/src/widgets/background_ignore_pointer.dart';
 import 'package:flutter/material.dart';
 
 import '../../calendar_day_view.dart';
-import '../overflow_event.dart';
-import '../time_of_day_extension.dart';
-import '../typedef.dart';
+import '../models/overflow_event_row.dart';
+import '../utils/time_of_day_extension.dart';
+import '../utils/typedef.dart';
 
 class OverflowListViewRow<T extends Object> extends StatefulWidget {
   const OverflowListViewRow({
@@ -16,6 +16,7 @@ class OverflowListViewRow<T extends Object> extends StatefulWidget {
     required this.showMoreOnRowButton,
     this.moreOnRowButton,
     required this.ignored,
+    this.scrollDirection = Axis.horizontal,
   }) : super(key: key);
 
   final OverflowEventsRow<T> oEvents;
@@ -25,6 +26,7 @@ class OverflowListViewRow<T extends Object> extends StatefulWidget {
   final Widget? moreOnRowButton;
   final bool showMoreOnRowButton;
   final bool ignored;
+  final Axis scrollDirection;
 
   @override
   State<OverflowListViewRow<T>> createState() => _OverflowListViewRowState<T>();
@@ -87,7 +89,7 @@ class _OverflowListViewRowState<T extends Object>
         children: [
           ListView.builder(
             controller: _scrollCtrl,
-            scrollDirection: Axis.horizontal,
+            scrollDirection: widget.scrollDirection,
             shrinkWrap: true,
             itemCount: widget.oEvents.events.length,
             itemBuilder: (context, index) {

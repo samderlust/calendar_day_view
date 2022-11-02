@@ -9,4 +9,5 @@ library calendar_day_view;
 export './src/event_calendar_day_view.dart';
 export './src/in_row_calendar_day_view.dart';
 export './src/overflow_calendar_day_view.dart';
-export './src/day_event.dart';
+export './src/vertical_overflow_calendar_day_view.dart';
+export 'src/models/day_event.dart';

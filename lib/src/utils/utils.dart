@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'day_event.dart';
-import 'overflow_event.dart';
+import '../models/day_event.dart';
+import '../models/overflow_event_row.dart';
 import 'time_of_day_extension.dart';
 
 List<OverflowEventsRow<T>> processOverflowEvents<T extends Object>(

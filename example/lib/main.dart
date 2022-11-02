@@ -5,6 +5,7 @@ import 'package:english_words/english_words.dart';
 import 'package:example/tabs/event_day_view_tab.dart';
 import 'package:example/tabs/in_row_day_view_tab.dart';
 import 'package:example/tabs/overflow_day_view_tab.dart';
+import 'package:example/tabs/vertical_overflow_day_view_tab.dart';
 import 'package:flutter/material.dart';
 
 final rd = Random();
@@ -34,7 +35,7 @@ class CalendarDayViewExample extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 3,
+      length: 4,
       child: SafeArea(
         child: Scaffold(
           backgroundColor: Theme.of(context).backgroundColor,
@@ -45,6 +46,7 @@ class CalendarDayViewExample extends StatelessWidget {
                 Tab(text: 'Overflow'),
                 Tab(text: 'In Row'),
                 Tab(text: 'Event Only'),
+                Tab(text: 'Vertical'),
               ],
             ),
           ),
@@ -53,22 +55,10 @@ class CalendarDayViewExample extends StatelessWidget {
             child: TabBarView(
               physics: const NeverScrollableScrollPhysics(),
               children: [
-                OverflowDayViewTab(
-                  events: fakeEvents
-                      .map(
-                        (e) => e.copyWith(
-                          end: TimeOfDay(
-                            hour: e.start.hour + 1,
-                            minute: e.start.minute + 30 + rd.nextInt(30),
-                          ),
-                        ),
-                      )
-                      .toList(),
-                ),
-                InRowDayViewTab(
-                  events: fakeEvents,
-                ),
+                OverflowDayViewTab(events: oFEvents),
+                InRowDayViewTab(events: fakeEvents),
                 EventDayViewTab(events: fakeEvents),
+                VerticalOverflowDayViewTab(events: oFEvents),
               ],
             ),
           ),
@@ -77,6 +67,17 @@ class CalendarDayViewExample extends StatelessWidget {
     );
   }
 }
+
+final oFEvents = fakeEvents
+    .map(
+      (e) => e.copyWith(
+        end: TimeOfDay(
+          hour: e.start.hour + 1,
+          minute: e.start.minute + 30 + rd.nextInt(30),
+        ),
+      ),
+    )
+    .toList();
 
 final now = DateTime.now();
 final List<DayEvent<String>> fakeEvents = [

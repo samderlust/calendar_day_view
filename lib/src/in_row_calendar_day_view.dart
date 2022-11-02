@@ -2,9 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
-import 'time_of_day_extension.dart';
-import 'day_event.dart';
-import 'typedef.dart';
+import 'utils/time_of_day_extension.dart';
+import 'models/day_event.dart';
+import 'utils/typedef.dart';
 import 'widgets/current_time_line_widget.dart';
 
 /// Show events in a time gap window in a single row
