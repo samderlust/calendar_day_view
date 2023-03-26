@@ -48,30 +48,46 @@ class InRowDayViewTab extends HookWidget {
         Row(
           children: [
             const Text('TimeGap:'),
-            Radio<int>(
-              value: 15,
-              groupValue: timeGap.value,
-              onChanged: (v) => timeGap.value = v!,
+            Column(
+              children: [
+                Radio<int>(
+                  value: 15,
+                  groupValue: timeGap.value,
+                  onChanged: (v) => timeGap.value = v!,
+                ),
+                const Text('15m'),
+              ],
             ),
-            const Text('15m'),
-            Radio<int>(
-              value: 20,
-              groupValue: timeGap.value,
-              onChanged: (v) => timeGap.value = v!,
+            Column(
+              children: [
+                Radio<int>(
+                  value: 20,
+                  groupValue: timeGap.value,
+                  onChanged: (v) => timeGap.value = v!,
+                ),
+                const Text('20m'),
+              ],
             ),
-            const Text('20m'),
-            Radio<int>(
-              value: 30,
-              groupValue: timeGap.value,
-              onChanged: (v) => timeGap.value = v!,
+            Column(
+              children: [
+                Radio<int>(
+                  value: 30,
+                  groupValue: timeGap.value,
+                  onChanged: (v) => timeGap.value = v!,
+                ),
+                const Text('30m'),
+              ],
             ),
-            const Text('30m'),
-            Radio<int>(
-              value: 60,
-              groupValue: timeGap.value,
-              onChanged: (v) => timeGap.value = v!,
+            Column(
+              children: [
+                Radio<int>(
+                  value: 60,
+                  groupValue: timeGap.value,
+                  onChanged: (v) => timeGap.value = v!,
+                ),
+                const Text('60m'),
+              ],
             ),
-            const Text('60m'),
           ],
         ),
         Row(
