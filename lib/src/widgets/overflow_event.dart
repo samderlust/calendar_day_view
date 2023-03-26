@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-import 'day_event.dart';
+import '../models/day_event.dart';
 
 class OverflowEventsRow<T extends Object> {
   final List<DayEvent<T>> events;

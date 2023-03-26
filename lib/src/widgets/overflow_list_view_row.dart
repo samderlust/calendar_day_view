@@ -1,10 +1,10 @@
-import 'package:calendar_day_view/src/background_ignore_pointer.dart';
+import 'package:calendar_day_view/src/utils/background_ignore_pointer.dart';
 import 'package:flutter/material.dart';
 
 import '../../calendar_day_view.dart';
-import '../overflow_event.dart';
-import '../time_of_day_extension.dart';
-import '../typedef.dart';
+import 'overflow_event.dart';
+import '../utils/time_of_day_extension.dart';
+import '../utils/typedef.dart';
 
 class OverflowListViewRow<T extends Object> extends StatefulWidget {
   const OverflowListViewRow({
