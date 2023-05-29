@@ -23,7 +23,7 @@ class OverflowDayViewTab extends HookWidget {
             startOfDay: const TimeOfDay(hour: 00, minute: 0),
             endOfDay: const TimeOfDay(hour: 23, minute: 0),
             timeGap: timeGap.value,
-            renderRowAsListView: true,
+            // renderRowAsListView: true,
             showCurrentTimeLine: true,
             showMoreOnRowButton: true,
             overflowItemBuilder: (context, constraints, event) {
@@ -34,11 +34,12 @@ class OverflowDayViewTab extends HookWidget {
                 child: Container(
                   margin: const EdgeInsets.only(right: 3),
                   key: ValueKey(event.hashCode),
-                  width: constraints.minWidth < 100
-                      ? 100
-                      :
-                      // -3 for the margin
-                      constraints.minWidth - 3,
+                  width: constraints
+                      .minWidth, // use this if `renderRowAsListView` is false. it will distribute the available width to all event equally,
+                  // width: constraints.minWidth < 100
+                  //     ? 100
+                  //     : constraints.minWidth - 3 // -3 for the margin
+                  // , //use this when `renderRowAsListView` is true
                   height: constraints.maxHeight,
                   decoration: BoxDecoration(
                     color: getRandomColor(),

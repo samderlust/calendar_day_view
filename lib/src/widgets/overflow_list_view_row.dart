@@ -94,6 +94,7 @@ class _OverflowListViewRowState<T extends Object>
               final event = widget.oEvents.events.elementAt(index);
               final width =
                   widget.eventColumnWith / widget.oEvents.events.length;
+
               return Column(
                 children: [
                   SizedBox(
