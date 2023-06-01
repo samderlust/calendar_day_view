@@ -30,6 +30,9 @@ class OverFlowCalendarDayView<T extends Object> extends StatefulWidget {
     this.showMoreOnRowButton = false,
     this.moreOnRowButton,
     this.onTimeTap,
+    this.primary,
+    this.physics,
+    this.controller,
   }) : super(key: key);
 
   /// The width of the column that contain list of time points
@@ -80,6 +83,11 @@ class OverFlowCalendarDayView<T extends Object> extends StatefulWidget {
 
   /// allow user to tap on Day view
   final OnTimeTap? onTimeTap;
+
+  /// {@macro flutter.widgets.scroll_view.primary}
+  final bool? primary;
+  final ScrollPhysics? physics;
+  final ScrollController? controller;
 
   @override
   State<OverFlowCalendarDayView> createState() =>
@@ -164,9 +172,9 @@ class _OverFlowCalendarDayViewState<T extends Object>
 
       return SafeArea(
         child: SingleChildScrollView(
-          primary: true,
-          // physics: const NeverScrollableScrollPhysics(),
-          // physics: const AlwaysScrollableScrollPhysics(),
+          primary: widget.primary,
+          controller: widget.controller,
+          physics: widget.physics,
           padding: const EdgeInsets.only(top: 10, bottom: 20),
           child: SizedBox(
             height: _timesInDay.length * rowHeight,

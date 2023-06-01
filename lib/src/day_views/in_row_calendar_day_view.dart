@@ -29,6 +29,9 @@ class InRowCalendarDayView<T extends Object> extends StatefulWidget {
     this.showCurrentTimeLine = false,
     this.currentTimeLineColor,
     this.onTap,
+    this.primary,
+    this.physics,
+    this.controller,
   })  : assert(timeRowBuilder != null || itemBuilder != null),
         assert(timeRowBuilder == null || itemBuilder == null),
         super(key: key);
@@ -75,6 +78,10 @@ class InRowCalendarDayView<T extends Object> extends StatefulWidget {
   /// allow user to tap on Day view
   final OnTimeTap? onTap;
 
+  /// {@macro flutter.widgets.scroll_view.primary}
+  final bool? primary;
+  final ScrollPhysics? physics;
+  final ScrollController? controller;
   @override
   State<InRowCalendarDayView> createState() => _InRowCalendarDayViewState<T>();
 }
@@ -150,7 +157,9 @@ class _InRowCalendarDayViewState<T extends Object>
             });
           },
           child: ListView.builder(
-            physics: const ClampingScrollPhysics(),
+            primary: widget.primary,
+            controller: widget.controller,
+            physics: widget.physics,
             padding: const EdgeInsets.only(top: 20, bottom: 20),
             itemCount: _timesInDay.length,
             itemBuilder: (context, index) {
