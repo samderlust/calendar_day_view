@@ -1,3 +1,9 @@
+## 1.5.0
+
+- allow user to add `ScrollController`, `physic` and `primary`.
+- calendar Day View now work better with Sliver (thanks @Paul-Todd).
+- update example
+
 ## 1.4.1
 
 - fix doc typo

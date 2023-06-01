@@ -24,24 +24,28 @@ class InRowDayViewTab extends HookWidget {
             startOfDay: const TimeOfDay(hour: 00, minute: 0),
             endOfDay: const TimeOfDay(hour: 22, minute: 0),
             itemBuilder: (context, constraints, event) => Flexible(
-              child: GestureDetector(
-                onTap: () => print(event.value),
-                child: Container(
-                  height: constraints.maxHeight,
-                  color: getRandomColor(),
-                  child: Center(
-                    child: Text(
-                      event.value,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: constraints.maxWidth < 100 ? 10 : 15,
-                        fontWeight: FontWeight.bold,
+              child: HookBuilder(builder: (context) {
+                final randomColor = useMemoized(() => getRandomColor());
+
+                return GestureDetector(
+                  onTap: () => print(event.value),
+                  child: Container(
+                    height: constraints.maxHeight,
+                    color: randomColor,
+                    child: Center(
+                      child: Text(
+                        event.value,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: constraints.maxWidth < 100 ? 10 : 15,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ),
+                );
+              }),
             ),
           ),
         ),

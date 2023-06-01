@@ -2,10 +2,11 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
-import 'time_of_day_extension.dart';
-import 'day_event.dart';
-import 'typedef.dart';
-import 'widgets/current_time_line_widget.dart';
+import '../models/day_event.dart';
+import '../models/time_of_day_extension.dart';
+
+import '../models/typedef.dart';
+import '../widgets/current_time_line_widget.dart';
 
 /// Show events in a time gap window in a single row
 ///
@@ -28,6 +29,9 @@ class InRowCalendarDayView<T extends Object> extends StatefulWidget {
     this.showCurrentTimeLine = false,
     this.currentTimeLineColor,
     this.onTap,
+    this.primary,
+    this.physics,
+    this.controller,
   })  : assert(timeRowBuilder != null || itemBuilder != null),
         assert(timeRowBuilder == null || itemBuilder == null),
         super(key: key);
@@ -74,6 +78,9 @@ class InRowCalendarDayView<T extends Object> extends StatefulWidget {
   /// allow user to tap on Day view
   final OnTimeTap? onTap;
 
+  final bool? primary;
+  final ScrollPhysics? physics;
+  final ScrollController? controller;
   @override
   State<InRowCalendarDayView> createState() => _InRowCalendarDayViewState<T>();
 }
@@ -149,7 +156,9 @@ class _InRowCalendarDayViewState<T extends Object>
             });
           },
           child: ListView.builder(
-            physics: const ClampingScrollPhysics(),
+            primary: widget.primary,
+            controller: widget.controller,
+            physics: widget.physics,
             padding: const EdgeInsets.only(top: 20, bottom: 20),
             itemCount: _timesInDay.length,
             itemBuilder: (context, index) {

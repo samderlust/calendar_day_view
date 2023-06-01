@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'day_event.dart';
+import '../models/day_event.dart';
 
 typedef EventDayViewItemBuilder<T extends Object> = Widget Function(
   BuildContext context,
@@ -22,6 +22,9 @@ class EventCalendarDayView<T extends Object> extends StatefulWidget {
     this.itemSeparatorBuilder,
     this.rowPadding,
     this.timeSlotPadding,
+    this.primary,
+    this.physics,
+    this.controller,
   }) : super(key: key);
 
   /// List of events to be display in the day view
@@ -48,6 +51,9 @@ class EventCalendarDayView<T extends Object> extends StatefulWidget {
   ///padding for time slot
   final EdgeInsetsGeometry? timeSlotPadding;
 
+  final bool? primary;
+  final ScrollPhysics? physics;
+  final ScrollController? controller;
   @override
   State<EventCalendarDayView> createState() => _EventCalendarDayViewState<T>();
 }
@@ -87,6 +93,10 @@ class _EventCalendarDayViewState<T extends Object>
       builder: (context, constraints) {
         return SafeArea(
           child: ListView.builder(
+            shrinkWrap: true,
+            primary: widget.primary,
+            controller: widget.controller,
+            physics: widget.physics,
             padding: const EdgeInsets.only(top: 20, bottom: 20),
             itemCount: _timesInDay.length,
             itemBuilder: (context, index) {

@@ -6,7 +6,7 @@
 /// in the app that need better day view
 library calendar_day_view;
 
-export './src/event_calendar_day_view.dart';
-export './src/in_row_calendar_day_view.dart';
-export './src/overflow_calendar_day_view.dart';
-export './src/day_event.dart';
+export './src/day_views/event_calendar_day_view.dart';
+export './src/day_views/in_row_calendar_day_view.dart';
+export './src/day_views/overflow_calendar_day_view.dart';
+export 'src/models/day_event.dart';

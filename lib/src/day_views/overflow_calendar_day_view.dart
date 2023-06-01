@@ -1,15 +1,15 @@
 import 'dart:async';
 
-import 'package:calendar_day_view/src/background_ignore_pointer.dart';
-import 'package:calendar_day_view/src/widgets/overflow_list_view_row.dart';
 import 'package:flutter/material.dart';
 
-import 'day_event.dart';
-import 'overflow_event.dart';
-import 'time_of_day_extension.dart';
-import 'typedef.dart';
-import 'utils.dart';
-import 'widgets/current_time_line_widget.dart';
+import '../widgets/background_ignore_pointer.dart';
+import '../models/day_event.dart';
+import '../models/overflow_event.dart';
+import '../models/time_of_day_extension.dart';
+import '../models/typedef.dart';
+import '../utils/events_utils.dart';
+import '../widgets/current_time_line_widget.dart';
+import '../widgets/overflow_list_view_row.dart';
 
 class OverFlowCalendarDayView<T extends Object> extends StatefulWidget {
   const OverFlowCalendarDayView({
@@ -30,6 +30,9 @@ class OverFlowCalendarDayView<T extends Object> extends StatefulWidget {
     this.showMoreOnRowButton = false,
     this.moreOnRowButton,
     this.onTimeTap,
+    this.primary,
+    this.physics,
+    this.controller,
   }) : super(key: key);
 
   /// The width of the column that contain list of time points
@@ -80,6 +83,10 @@ class OverFlowCalendarDayView<T extends Object> extends StatefulWidget {
 
   /// allow user to tap on Day view
   final OnTimeTap? onTimeTap;
+
+  final bool? primary;
+  final ScrollPhysics? physics;
+  final ScrollController? controller;
 
   @override
   State<OverFlowCalendarDayView> createState() =>
@@ -164,7 +171,9 @@ class _OverFlowCalendarDayViewState<T extends Object>
 
       return SafeArea(
         child: SingleChildScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
+          primary: widget.primary,
+          controller: widget.controller,
+          physics: widget.physics,
           padding: const EdgeInsets.only(top: 10, bottom: 20),
           child: SizedBox(
             height: _timesInDay.length * rowHeight,
