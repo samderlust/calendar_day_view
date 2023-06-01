@@ -59,7 +59,7 @@ class CalendarDayViewExample extends HookWidget {
       child: SafeArea(
         child: Scaffold(
           extendBodyBehindAppBar: true,
-          backgroundColor: Theme.of(context).backgroundColor,
+          backgroundColor: Theme.of(context).colorScheme.background,
           bottomNavigationBar: BottomNavigationBar(
             items: const [
               BottomNavigationBarItem(
@@ -70,6 +70,7 @@ class CalendarDayViewExample extends HookWidget {
                   icon: Icon(Icons.calendar_month), label: "Events"),
             ],
             onTap: (value) => currentIndex.value = value,
+            currentIndex: currentIndex.value,
           ),
           body: NestedScrollView(
             headerSliverBuilder: (context, innerBoxScrolled) => [
@@ -78,7 +79,7 @@ class CalendarDayViewExample extends HookWidget {
                 pinned: true,
                 title: Text(
                   getTitle(currentIndex.value),
-                  style: TextStyle(color: Colors.white),
+                  style: const TextStyle(color: Colors.white),
                 ),
               ),
             ],
