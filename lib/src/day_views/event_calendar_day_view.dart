@@ -51,7 +51,6 @@ class EventCalendarDayView<T extends Object> extends StatefulWidget {
   ///padding for time slot
   final EdgeInsetsGeometry? timeSlotPadding;
 
-  /// {@macro flutter.widgets.scroll_view.primary}
   final bool? primary;
   final ScrollPhysics? physics;
   final ScrollController? controller;

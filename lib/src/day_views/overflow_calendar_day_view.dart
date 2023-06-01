@@ -84,7 +84,6 @@ class OverFlowCalendarDayView<T extends Object> extends StatefulWidget {
   /// allow user to tap on Day view
   final OnTimeTap? onTimeTap;
 
-  /// {@macro flutter.widgets.scroll_view.primary}
   final bool? primary;
   final ScrollPhysics? physics;
   final ScrollController? controller;
