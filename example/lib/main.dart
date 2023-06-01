@@ -5,6 +5,7 @@ import 'package:english_words/english_words.dart';
 import 'package:example/tabs/event_day_view_tab.dart';
 import 'package:example/tabs/in_row_day_view_tab.dart';
 import 'package:example/tabs/overflow_day_view_tab.dart';
+import 'package:example/tabs/sliver_over_flow_tab.dart';
 import 'package:flutter/material.dart';
 
 final rd = Random();
@@ -34,7 +35,7 @@ class CalendarDayViewExample extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 3,
+      length: 4,
       child: SafeArea(
         child: Scaffold(
           backgroundColor: Theme.of(context).backgroundColor,
@@ -45,6 +46,7 @@ class CalendarDayViewExample extends StatelessWidget {
                 Tab(text: 'Overflow'),
                 Tab(text: 'In Row'),
                 Tab(text: 'Event Only'),
+                Tab(text: 'Sliver OF'),
               ],
             ),
           ),
@@ -69,6 +71,18 @@ class CalendarDayViewExample extends StatelessWidget {
                   events: fakeEvents,
                 ),
                 EventDayViewTab(events: fakeEvents),
+                SliverOverFlowTab(
+                  events: fakeEvents
+                      .map(
+                        (e) => e.copyWith(
+                          end: TimeOfDay(
+                            hour: e.start.hour + 1,
+                            minute: e.start.minute + 30 + rd.nextInt(30),
+                          ),
+                        ),
+                      )
+                      .toList(),
+                ),
               ],
             ),
           ),

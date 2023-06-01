@@ -1,15 +1,15 @@
 import 'dart:async';
 
-import 'package:calendar_day_view/src/background_ignore_pointer.dart';
-import 'package:calendar_day_view/src/widgets/overflow_list_view_row.dart';
 import 'package:flutter/material.dart';
 
-import 'day_event.dart';
-import 'overflow_event.dart';
-import 'time_of_day_extension.dart';
-import 'typedef.dart';
-import 'utils.dart';
-import 'widgets/current_time_line_widget.dart';
+import '../widgets/background_ignore_pointer.dart';
+import '../models/day_event.dart';
+import '../models/overflow_event.dart';
+import '../models/time_of_day_extension.dart';
+import '../models/typedef.dart';
+import '../utils/events_utils.dart';
+import '../widgets/current_time_line_widget.dart';
+import '../widgets/overflow_list_view_row.dart';
 
 class OverFlowCalendarDayView<T extends Object> extends StatefulWidget {
   const OverFlowCalendarDayView({
@@ -164,7 +164,9 @@ class _OverFlowCalendarDayViewState<T extends Object>
 
       return SafeArea(
         child: SingleChildScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
+          primary: true,
+          // physics: const NeverScrollableScrollPhysics(),
+          // physics: const AlwaysScrollableScrollPhysics(),
           padding: const EdgeInsets.only(top: 10, bottom: 20),
           child: SizedBox(
             height: _timesInDay.length * rowHeight,

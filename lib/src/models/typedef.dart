@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../calendar_day_view.dart';
+import '../../calendar_day_view.dart';
 
 typedef DayViewItemBuilder<T extends Object> = Widget Function(
   BuildContext context,
