@@ -9,9 +9,9 @@ typedef DayViewItemBuilder<T extends Object> = Widget Function(
 );
 
 typedef DayViewTimeRowBuilder<T extends Object> = Widget Function(
-  BuildContext,
+  BuildContext context,
   BoxConstraints constraints,
-  List<DayEvent<T>>,
+  List<DayEvent<T>> events,
 );
 
 typedef OnTimeTap = Function(TimeOfDay time);
