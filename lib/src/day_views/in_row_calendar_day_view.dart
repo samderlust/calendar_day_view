@@ -1,8 +1,10 @@
 import 'dart:async';
 
+import 'package:calendar_day_view/src/models/categorized_day_event.dart';
 import 'package:flutter/material.dart';
 
 import '../models/day_event.dart';
+import '../models/event_category.dart';
 import '../models/time_of_day_extension.dart';
 
 import '../models/typedef.dart';

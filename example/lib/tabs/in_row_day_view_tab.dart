@@ -26,7 +26,6 @@ class InRowDayViewTab extends HookWidget {
             itemBuilder: (context, constraints, event) => Flexible(
               child: HookBuilder(builder: (context) {
                 final randomColor = useMemoized(() => getRandomColor());
-
                 return GestureDetector(
                   onTap: () => print(event.value),
                   child: Container(

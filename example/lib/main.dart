@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:calendar_day_view/calendar_day_view.dart';
 import 'package:english_words/english_words.dart';
+import 'package:example/tabs/category_day_view_tab.dart';
 import 'package:example/tabs/event_day_view_tab.dart';
 import 'package:example/tabs/in_row_day_view_tab.dart';
 import 'package:example/tabs/overflow_day_view_tab.dart';
@@ -47,6 +48,7 @@ class CalendarDayViewExample extends HookWidget {
             )
             .toList(),
       ),
+      CategoryDayViewTab(),
       InRowDayViewTab(
         events: fakeEvents,
       ),
@@ -61,9 +63,16 @@ class CalendarDayViewExample extends HookWidget {
           extendBodyBehindAppBar: true,
           backgroundColor: Theme.of(context).colorScheme.background,
           bottomNavigationBar: BottomNavigationBar(
+            showUnselectedLabels: true,
+            showSelectedLabels: true,
+            unselectedFontSize: 14,
+            unselectedItemColor: Colors.black,
+            selectedItemColor: Colors.blue,
             items: const [
               BottomNavigationBarItem(
                   icon: Icon(Icons.calendar_month), label: "Overflow"),
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.calendar_view_day), label: "Category"),
               BottomNavigationBarItem(
                   icon: Icon(Icons.calendar_month), label: "In Row"),
               BottomNavigationBarItem(
@@ -96,8 +105,10 @@ String getTitle(int index) {
     case 0:
       return "Overflow Day View";
     case 1:
-      return "In Row Day View";
+      return "Category Day View";
     case 2:
+      return "In Row Day View";
+    case 3:
       return "Events Day View";
 
     default:
