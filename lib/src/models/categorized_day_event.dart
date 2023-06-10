@@ -1,6 +1,6 @@
 import 'package:calendar_day_view/calendar_day_view.dart';
 
-class CategorizedDayEvent extends DayEvent {
+class CategorizedDayEvent<T extends Object> extends DayEvent<T> {
   final String categoryId;
   CategorizedDayEvent({
     required this.categoryId,
@@ -19,13 +19,4 @@ class CategorizedDayEvent extends DayEvent {
 
   @override
   int get hashCode => categoryId.hashCode;
-}
-
-class EventCategory {
-  final String id;
-  final String name;
-  EventCategory({
-    required this.id,
-    required this.name,
-  });
 }

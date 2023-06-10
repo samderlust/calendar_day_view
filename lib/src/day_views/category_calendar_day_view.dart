@@ -1,8 +1,10 @@
+import 'package:calendar_day_view/src/extentions/list_extentions.dart';
 import 'package:flutter/material.dart';
 
-import 'package:calendar_day_view/src/models/categorized_day_event.dart';
+import '../../calendar_day_view.dart';
+import '../models/typedef.dart';
 
-class CategoryCalendarDayView extends StatelessWidget {
+class CategoryCalendarDayView<T extends Object> extends StatelessWidget {
   const CategoryCalendarDayView({
     Key? key,
     required this.categories,
@@ -16,9 +18,11 @@ class CategoryCalendarDayView extends StatelessWidget {
     this.verticalDivider,
     this.horizontalDivider,
     this.timeTextStyle,
+    required this.eventBuilder,
+    this.onTileTap,
   }) : super(key: key);
   final List<EventCategory> categories;
-  final List<CategorizedDayEvent> events;
+  final List<CategorizedDayEvent<T>> events;
 
   /// To set the start time of the day view
   final TimeOfDay startOfDay;
@@ -36,6 +40,8 @@ class CategoryCalendarDayView extends StatelessWidget {
   final VerticalDivider? verticalDivider;
   final Divider? horizontalDivider;
   final TextStyle? timeTextStyle;
+  final CategoryDayViewEventBuilder<T> eventBuilder;
+  final CategoryDayViewTileTap? onTileTap;
 
   @override
   Widget build(BuildContext context) {
@@ -46,89 +52,101 @@ class CategoryCalendarDayView extends StatelessWidget {
     );
 
     final rowHeight = heightPerMin * timeGap;
-    return LayoutBuilder(
-      builder: (BuildContext context, BoxConstraints constraints) {
-        final rowLength = constraints.maxWidth - 50;
-        final tileWidth = rowLength / categories.length;
-        return Column(
-          children: [
-            Row(
-              children: [
-                const SizedBox(width: 50),
-                verticalDivider ?? const VerticalDivider(width: 0),
-                ...categories
-                    .map(
-                      (e) => [
+    return SingleChildScrollView(
+      child: LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints constraints) {
+          final rowLength = constraints.maxWidth - 50;
+          final tileWidth = rowLength / categories.length;
+          return Column(
+            children: [
+              Row(
+                children: [
+                  const SizedBox(width: 50),
+                  verticalDivider ?? const VerticalDivider(width: 0),
+                  ...categories
+                      .map(
+                        (e) => [
+                          SizedBox(
+                            width: tileWidth,
+                            height: 40,
+                            child: Center(
+                                child: Text(
+                              e.name,
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.bold),
+                            )),
+                          ),
+                          const VerticalDivider(
+                            width: 0,
+                            color: Colors.red,
+                          ),
+                        ],
+                      )
+                      .expand((e) => e)
+                      .toList()
+                ],
+              ),
+              ListView.separated(
+                shrinkWrap: true,
+                itemCount: timeList.length,
+                separatorBuilder: (context, index) =>
+                    horizontalDivider ?? const Divider(height: 0),
+                itemBuilder: (context, index) {
+                  final time = timeList.elementAt(index);
+                  final rowEvents = events.where(
+                    (event) => event.isInThisGap(time, timeGap),
+                  );
+                  return Container(
+                    decoration: BoxDecoration(
+                      color: index % 2 == 0 ? evenRowColor : oddRowColor,
+                    ),
+                    height: rowHeight,
+                    child: Row(
+                      children: [
                         SizedBox(
-                          width: tileWidth,
-                          height: 40,
+                          width: 50,
                           child: Center(
-                              child: Text(
-                            e.name,
-                            style: const TextStyle(fontWeight: FontWeight.bold),
-                          )),
-                        ),
-                        const VerticalDivider(
-                          width: 0,
-                          color: Colors.red,
-                        ),
-                      ],
-                    )
-                    .expand((e) => e)
-                    .toList()
-              ],
-            ),
-            ListView.separated(
-              shrinkWrap: true,
-              physics: NeverScrollableScrollPhysics(),
-              itemCount: timeList.length,
-              separatorBuilder: (context, index) =>
-                  horizontalDivider ?? const Divider(height: 0),
-              itemBuilder: (context, index) {
-                final time = timeList.elementAt(index);
-                return Container(
-                  decoration: BoxDecoration(
-                    color: index % 2 == 0 ? evenRowColor : oddRowColor,
-                  ),
-                  height: rowHeight,
-                  child: Row(
-                    children: [
-                      SizedBox(
-                        width: 50,
-                        child: Center(
-                          child: Text(
-                            "${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, "0")}",
-                            style: timeTextStyle,
+                            child: Text(
+                              "${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, "0")}",
+                              style: timeTextStyle,
+                            ),
                           ),
                         ),
-                      ),
-                      verticalDivider ?? const VerticalDivider(width: 0),
-                      ...categories
-                          .map((e) => [
-                                GestureDetector(
-                                  behavior: HitTestBehavior.translucent,
-                                  onTap: () {
-                                    print(e);
-                                    print(time);
-                                  },
-                                  child: Container(
-                                    width: tileWidth,
-                                    height: rowHeight,
+                        verticalDivider ?? const VerticalDivider(width: 0),
+                        ...categories
+                            .map((category) => [
+                                  GestureDetector(
+                                    behavior: HitTestBehavior.translucent,
+                                    onTap: onTileTap == null
+                                        ? null
+                                        : () => onTileTap!(category, time),
+                                    child: SizedBox(
+                                      width: tileWidth,
+                                      height: rowHeight,
+                                      child: eventBuilder(
+                                          BoxConstraints(
+                                            maxHeight: rowHeight,
+                                            maxWidth: tileWidth,
+                                          ),
+                                          category,
+                                          rowEvents.firstWhereOrNull((e) =>
+                                              e.categoryId == category.id)),
+                                    ),
                                   ),
-                                ),
-                                verticalDivider ??
-                                    const VerticalDivider(width: 0),
-                              ])
-                          .expand((element) => element)
-                          .toList()
-                    ],
-                  ),
-                );
-              },
-            ),
-          ],
-        );
-      },
+                                  verticalDivider ??
+                                      const VerticalDivider(width: 0),
+                                ])
+                            .expand((element) => element)
+                            .toList()
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ],
+          );
+        },
+      ),
     );
   }
 }
