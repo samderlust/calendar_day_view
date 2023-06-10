@@ -118,9 +118,9 @@ class CalendarDayViewExample extends HookWidget {
               BottomNavigationBarItem(
                   icon: Icon(Icons.calendar_view_day), label: "Category"),
               BottomNavigationBarItem(
-                  icon: Icon(Icons.calendar_month), label: "In Row"),
+                  icon: Icon(Icons.calendar_today_outlined), label: "In Row"),
               BottomNavigationBarItem(
-                  icon: Icon(Icons.calendar_month), label: "Events"),
+                  icon: Icon(Icons.calendar_view_month), label: "Events"),
             ],
             onTap: (value) => currentIndex.value = value,
             currentIndex: currentIndex.value,
@@ -130,18 +130,19 @@ class CalendarDayViewExample extends HookWidget {
               SliverAppBar.large(
                 floating: true,
                 pinned: true,
+                stretch: true,
                 flexibleSpace: Row(
                   children: [
-                    SizedBox(
-                      width: 200,
+                    Expanded(
                       child: FlexibleSpaceBar(
+                        titlePadding: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 20),
                         title: Text(
                           getTitle(currentIndex.value),
                           style: const TextStyle(color: Colors.white),
                         ),
                       ),
                     ),
-                    const Spacer(),
                     if (currentIndex.value != 1)
                       TextButton.icon(
                         style:
@@ -159,7 +160,7 @@ class CalendarDayViewExample extends HookWidget {
                         icon: const Icon(Icons.refresh),
                         label: const Text("events"),
                       ),
-                      const SizedBox(width: 20),
+                      const SizedBox(width: 10),
                       TextButton.icon(
                         style:
                             TextButton.styleFrom(backgroundColor: Colors.white),
@@ -168,7 +169,7 @@ class CalendarDayViewExample extends HookWidget {
                         label: const Text("category"),
                       ),
                     ],
-                    const SizedBox(width: 20),
+                    const SizedBox(width: 10),
                   ],
                 ),
               ),
