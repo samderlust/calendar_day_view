@@ -33,18 +33,41 @@ class CategoryCalendarDayView<T extends Object> extends StatelessWidget {
   final TimeOfDay? endOfDay;
 
   /// time gap/duration of a row.
+  ///
+  /// This will determine the minimum height of a row
+  /// row height is calculated by `rowHeight = heightPerMin * timeGap`
   final int timeGap;
 
   /// height in pixel per minute
   final double heightPerMin;
+
+  /// background color of the even-indexed row
   final Color? evenRowColor;
+
+  /// background color of the odd-indexed row
   final Color? oddRowColor;
+
+  /// dividers that run vertically in the day view
   final VerticalDivider? verticalDivider;
+
+  /// dividers that run horizontally in the day view
   final Divider? horizontalDivider;
+
+  /// time label text style
   final TextStyle? timeTextStyle;
+
+  /// event builder
   final CategoryDayViewEventBuilder<T> eventBuilder;
+
+  /// call when you tap on an empty tile
+  ///
+  /// provide [EventCategory] and [TimeOfDay]  of that tile
   final CategoryDayViewTileTap? onTileTap;
+
+  /// build category header
   final CategoryDayViewHeaderTileBuilder? headerTileBuilder;
+
+  /// header row decoration
   final BoxDecoration? headerDecoration;
 
   @override
@@ -77,6 +100,7 @@ class CategoryCalendarDayView<T extends Object> extends StatelessWidget {
                 horizontalDivider ?? const Divider(height: 0),
                 ListView.separated(
                   shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
                   itemCount: timeList.length,
                   separatorBuilder: (context, index) =>
                       horizontalDivider ?? const Divider(height: 0),
@@ -91,7 +115,9 @@ class CategoryCalendarDayView<T extends Object> extends StatelessWidget {
                       decoration: BoxDecoration(
                         color: index % 2 == 0 ? evenRowColor : oddRowColor,
                       ),
-                      height: rowHeight,
+                      constraints: BoxConstraints(
+                        minHeight: rowHeight,
+                      ),
                       child: DayViewRow<T>(
                         time: time,
                         timeTextStyle: timeTextStyle,
@@ -141,49 +167,55 @@ class DayViewRow<T extends Object> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        SizedBox(
-          width: 50,
-          child: Center(
-            child: Text(
-              "${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, "0")}",
-              style: timeTextStyle,
+    return IntrinsicHeight(
+      child: Row(
+        children: [
+          SizedBox(
+            width: 50,
+            child: Center(
+              child: Text(
+                "${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, "0")}",
+                style: timeTextStyle,
+              ),
             ),
           ),
-        ),
-        verticalDivider ?? const VerticalDivider(width: 0),
-        ...categories
-            .map((category) {
-              final event = rowEvents
-                  .firstWhereOrNull((e) => e.categoryId == category.id);
-              return [
-                GestureDetector(
-                  behavior: HitTestBehavior.translucent,
-                  onTap: (onTileTap == null || event != null)
-                      ? null
-                      : () => onTileTap!(category, time),
-                  child: SizedBox(
-                    width: tileWidth,
-                    height: rowHeight,
-                    child: event == null
-                        ? const SizedBox.expand()
-                        : eventBuilder(
-                            BoxConstraints(
-                              maxHeight: rowHeight,
-                              maxWidth: tileWidth,
+          verticalDivider ?? const VerticalDivider(width: 0),
+          ...categories
+              .map((category) {
+                final event = rowEvents
+                    .firstWhereOrNull((e) => e.categoryId == category.id);
+
+                final constraints = BoxConstraints(
+                  minHeight: rowHeight,
+                  maxWidth: tileWidth,
+                );
+                return [
+                  GestureDetector(
+                    behavior: HitTestBehavior.translucent,
+                    onTap: (onTileTap == null || event != null)
+                        ? null
+                        : () => onTileTap!(category, time),
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                        minWidth: tileWidth,
+                        minHeight: rowHeight,
+                      ),
+                      child: event == null
+                          ? const SizedBox.shrink()
+                          : eventBuilder(
+                              constraints,
+                              category,
+                              event,
                             ),
-                            category,
-                            event,
-                          ),
+                    ),
                   ),
-                ),
-                verticalDivider ?? const VerticalDivider(width: 0),
-              ];
-            })
-            .expand((element) => element)
-            .toList()
-      ],
+                  verticalDivider ?? const VerticalDivider(width: 0),
+                ];
+              })
+              .expand((element) => element)
+              .toList()
+        ],
+      ),
     );
   }
 }

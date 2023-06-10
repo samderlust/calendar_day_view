@@ -33,15 +33,18 @@ class OverflowListViewRow<T extends Object> extends StatefulWidget {
 class _OverflowListViewRowState<T extends Object>
     extends State<OverflowListViewRow<T>> {
   late ScrollController _scrollCtrl;
-  bool _atEndOfList = false;
+  bool _atEndOfList = true;
 
   @override
   void initState() {
     super.initState();
+    _atEndOfList = true;
     _scrollCtrl = ScrollController();
 
     _scrollCtrl.addListener(() {
       if (_scrollCtrl.position.pixels == _scrollCtrl.position.maxScrollExtent) {
+        print(
+            "PIXEL::${_scrollCtrl.position.pixels} ||| Extent:: ${_scrollCtrl.position.maxScrollExtent}");
         if (!_atEndOfList) {
           setState(() {
             _atEndOfList = true;
@@ -59,6 +62,8 @@ class _OverflowListViewRowState<T extends Object>
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       if (_scrollCtrl.hasClients &&
           _scrollCtrl.position.pixels >= _scrollCtrl.position.maxScrollExtent) {
+        print(
+            "PIXEL::${_scrollCtrl.position.pixels} ||| Extent:: ${_scrollCtrl.position.maxScrollExtent}");
         setState(() {
           _atEndOfList = true;
         });

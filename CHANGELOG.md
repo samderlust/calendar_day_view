@@ -1,7 +1,9 @@
-## 1.6.0
+## 2.0.0
 
+- Add CategoryCalendarDayView to show event in day by categories
 - fix Typedef
-- Add display by columns/categories
+- provide index of the event in the event builder of Day View (this will be useful for decoration base on index).
+- pump sdk version to 2.17.1
 
 ## 1.5.1
 

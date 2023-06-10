@@ -95,9 +95,8 @@ class OverFlowCalendarDayView<T extends Object> extends StatefulWidget {
 
 class _OverFlowCalendarDayViewState<T extends Object>
     extends State<OverFlowCalendarDayView<T>> {
-  List<TimeOfDay> _timesInDay = [];
   List<OverflowEventsRow<T>> _overflowEvents = [];
-  double _heightPerMin = 1.0;
+
   TimeOfDay _currentTime = TimeOfDay.now();
   Timer? _timer;
   double _rowScale = 1;
@@ -106,9 +105,6 @@ class _OverFlowCalendarDayViewState<T extends Object>
   void initState() {
     super.initState();
     _rowScale = 1;
-
-    _heightPerMin = widget.heightPerMin;
-    _timesInDay = getTimeList();
 
     _overflowEvents = processOverflowEvents([...widget.events]..sort(
         (a, b) => a.compare(b),
@@ -126,12 +122,9 @@ class _OverFlowCalendarDayViewState<T extends Object>
   @override
   void didUpdateWidget(covariant OverFlowCalendarDayView<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
-
-    _timesInDay = getTimeList();
     _overflowEvents = processOverflowEvents([...widget.events]..sort(
         (a, b) => a.compare(b),
       ));
-    _heightPerMin = widget.heightPerMin;
   }
 
   @override
@@ -141,12 +134,12 @@ class _OverFlowCalendarDayViewState<T extends Object>
   }
 
   List<TimeOfDay> getTimeList() {
+    print("GetTIMELIST");
     final timeEnd = widget.endOfDay ?? const TimeOfDay(hour: 23, minute: 0);
 
     final timeCount =
         (((timeEnd.hour + 1) - widget.startOfDay.hour) * 60) ~/ widget.timeGap -
             1;
-
     DateTime first = DateTime.parse(
         "2012-02-27T${widget.startOfDay.hour.toString().padLeft(2, '0')}:00");
 
@@ -160,8 +153,10 @@ class _OverFlowCalendarDayViewState<T extends Object>
 
   @override
   Widget build(BuildContext context) {
-    final heightUnit = _heightPerMin * _rowScale;
-    final rowHeight = widget.timeGap * _heightPerMin * _rowScale;
+    final heightUnit = widget.heightPerMin * _rowScale;
+    final rowHeight = widget.timeGap * widget.heightPerMin * _rowScale;
+
+    final timesInDay = getTimeList();
 
     return LayoutBuilder(builder: (context, constraints) {
       final viewWidth = constraints.maxWidth;
@@ -174,16 +169,16 @@ class _OverFlowCalendarDayViewState<T extends Object>
           physics: widget.physics,
           padding: const EdgeInsets.only(top: 10, bottom: 20),
           child: SizedBox(
-            height: _timesInDay.length * rowHeight,
+            height: timesInDay.length * rowHeight,
             child: Stack(
               clipBehavior: Clip.none,
               // padding: const EdgeInsets.only(top: 20, bottom: 20),
               children: [
                 ListView.builder(
                   physics: const NeverScrollableScrollPhysics(),
-                  itemCount: _timesInDay.length,
+                  itemCount: timesInDay.length,
                   itemBuilder: (context, index) {
-                    final time = _timesInDay.elementAt(index);
+                    final time = timesInDay.elementAt(index);
                     return GestureDetector(
                       key: ValueKey(time.toString()),
                       behavior: HitTestBehavior.opaque,
@@ -234,17 +229,6 @@ class _OverFlowCalendarDayViewState<T extends Object>
                     width: constraints.maxWidth,
                     color: widget.currentTimeLineColor,
                   ),
-                // GestureDetector(
-                //   onScaleUpdate: (details) {
-                //     if (details.horizontalScale != _rowScale) {
-                //       setState(() {
-                //         if (details.scale >= 1 && details.scale <= 10) {
-                //           _rowScale = details.scale;
-                //         }
-                //       });
-                //     }
-                //   },
-                // ),
               ],
             ),
           ),
@@ -285,6 +269,7 @@ class _OverFlowCalendarDayViewState<T extends Object>
     ];
   }
 
+// to render all events in same row as a horizontal istView
   List<Widget> renderAsListView(double heightUnit, double eventColumnWith) {
     return [
       for (final oEvents in _overflowEvents)

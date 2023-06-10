@@ -7,6 +7,7 @@ This package aims to give user most customization they want.
 
 ## Features
 
+- Category Day View showing event on a day with multiple categories
 - Over flow day view: like normal calendar where event is displayed expanded on multiple time row to indicate its duration
 - In row day view: show all events that start in the same time gap in a row
 - Event day view: show all events in day
@@ -34,9 +35,46 @@ import 'package:calendar_day_view/calendar_day_view.dart';
 
 look at example folder for all use cases
 
-### 1. Overflow Day View
+## Category Day View
+
+- For showing event on a day with multiple categories (ex: multiple meeting rooms, playground,...).
+- Category can be add on the fly.
+
+  <img src="https://raw.githubusercontent.com/samderlust/images/main/cagetorydayview.png" alt="Category Day View" style="width:800px;"/>
+
+  ```
+  CategoryCalendarDayView(
+            categories: categories,
+            events: events,
+            onTileTap: addEventOnClick,
+            startOfDay: const TimeOfDay(hour: 7, minute: 00),
+            endOfDay: const TimeOfDay(hour: 17, minute: 00),
+            timeGap: 60,
+            heightPerMin: 1,
+            evenRowColor: Colors.white,
+            oddRowColor: Colors.grey,
+            headerDecoration: BoxDecoration(
+              color: Colors.lightBlueAccent.withOpacity(.5),
+            ),
+            eventBuilder: (constraints, category, event) => GestureDetector(
+              onTap: () => print(event),
+              child: Container(
+                constraints: constraints,
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.primary,
+                  border: Border.all(width: .5, color: Colors.black26),
+                ),
+                child:<<ItemWidget>>
+              ),
+            ),
+          )
+  ```
+
+## Overflow Day View
 
 - For viewing event and duration as event will be shown on multiple time point rows depends on its own duration. For this to work all [DayEvent] must have non-null `end` time.
+
+<img src="https://raw.githubusercontent.com/samderlust/images/main/overfloatdayview.png" alt="Overflow Day View" style="width:800px;"/>
 
 | Overflow normal                                                                                                            | Overflow with ListView                                                                                                      |
 | -------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
@@ -59,11 +97,11 @@ OverFlowCalendarDayView(
           )
 ```
 
-### Event Only Day View
+## Event Only Day View
 
 - For Viewing events only and their start times
 
-<img src="https://raw.githubusercontent.com/samderlust/images/main/eventonly.png" alt="event only day view" style="width:300px;"/>
+<img src="https://raw.githubusercontent.com/samderlust/images/main/eventdayview.png" alt="event only day view" style="width:600px;"/>
 
 ```
  EventCalendarDayView(
@@ -78,11 +116,11 @@ OverFlowCalendarDayView(
     );
 ```
 
-### In Row Day View
+## In Row Day View
 
 - For viewing events that start in a same time window (15min, 30mins,...)
 
-<img src="https://raw.githubusercontent.com/samderlust/images/main/ir.png" alt="In Row Day View" style="width:300px;"/>
+<img src="https://raw.githubusercontent.com/samderlust/images/main/inrowdayview.png" alt="In Row Day View" style="width:600px;"/>
 
 ```
 InRowCalendarDayView<String>(
