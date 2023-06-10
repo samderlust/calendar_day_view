@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../models/day_event.dart';
-
-typedef EventDayViewItemBuilder<T extends Object> = Widget Function(
-  BuildContext context,
-  DayEvent<T> event,
-);
+import '../models/typedef.dart';
 
 /// Day View that only show time slot with Events
 ///
@@ -145,6 +141,7 @@ class _EventCalendarDayViewState<T extends Object>
                               itemBuilder: (context, index) {
                                 return widget.eventDayViewItemBuilder(
                                   context,
+                                  index,
                                   events.elementAt(index),
                                 );
                               },

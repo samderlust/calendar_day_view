@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:calendar_day_view/calendar_day_view.dart';
 import 'package:example/utils.dart';
 import 'package:flutter/material.dart';
@@ -11,11 +13,12 @@ class InRowDayViewTab extends HookWidget {
   Widget build(BuildContext context) {
     final timeGap = useState<int>(60);
     final withEventOnly = useState<bool>(false);
+    final colorScheme = Theme.of(context).colorScheme;
     return Column(
       children: [
         Expanded(
           child: InRowCalendarDayView<String>(
-            events: events,
+            events: UnmodifiableListView(events),
             heightPerMin: 1,
             showCurrentTimeLine: true,
             dividerColor: Colors.black,
@@ -23,25 +26,45 @@ class InRowDayViewTab extends HookWidget {
             showWithEventOnly: withEventOnly.value,
             startOfDay: const TimeOfDay(hour: 00, minute: 0),
             endOfDay: const TimeOfDay(hour: 22, minute: 0),
-            itemBuilder: (context, constraints, event) => Flexible(
+            itemBuilder: (context, constraints, itemIndex, event) => Flexible(
               child: HookBuilder(builder: (context) {
-                final randomColor = useMemoized(() => getRandomColor());
-
-                return GestureDetector(
-                  onTap: () => print(event.value),
-                  child: Container(
-                    height: constraints.maxHeight,
-                    color: randomColor,
-                    child: Center(
-                      child: Text(
-                        event.value,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: constraints.maxWidth < 100 ? 10 : 15,
-                          fontWeight: FontWeight.bold,
+                return SizedBox(
+                  height: constraints.maxHeight,
+                  child: IntrinsicHeight(
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () => print(event.value),
+                            child: Container(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 5),
+                              height: constraints.maxHeight,
+                              color: itemIndex % 2 == 0
+                                  ? colorScheme.primary
+                                  : colorScheme.secondary,
+                              child: Center(
+                                child: Text(
+                                  event.value,
+                                  overflow: TextOverflow.ellipsis,
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize:
+                                        constraints.maxWidth < 100 ? 10 : 15,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
+                        const VerticalDivider(
+                          width: 2,
+                          thickness: 2,
+                          color: Colors.black,
+                        )
+                      ],
                     ),
                   ),
                 );
