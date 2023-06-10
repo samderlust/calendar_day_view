@@ -1,7 +1,4 @@
-import 'dart:math';
-
 import 'package:calendar_day_view/calendar_day_view.dart';
-import 'package:example/main.dart';
 import 'package:faker/faker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -14,11 +11,12 @@ class CategoryDayViewTab extends HookWidget {
     final events = useState<List<CategorizedDayEvent<String>>>(genEvents());
     return Column(
       children: [
-        const SizedBox(height: 20),
+        const SizedBox(height: 10),
         ElevatedButton(
           onPressed: () => events.value = genEvents(),
-          child: Text("Re-generate EVents"),
+          child: const Text("Re-generate EVents"),
         ),
+        const SizedBox(height: 10),
         Expanded(
           child: CategoryCalendarDayView(
             categories: [
@@ -32,13 +30,31 @@ class CategoryDayViewTab extends HookWidget {
               print(category);
               print(time);
             },
-            startOfDay: TimeOfDay(hour: 7, minute: 00),
-            endOfDay: TimeOfDay(hour: 17, minute: 00),
+            startOfDay: const TimeOfDay(hour: 7, minute: 00),
+            endOfDay: const TimeOfDay(hour: 17, minute: 00),
             timeGap: 60,
+            heightPerMin: 1,
             evenRowColor: Colors.white,
             oddRowColor: Colors.grey,
-            eventBuilder: (constraints, category, event) =>
-                Text(event?.value.toString() ?? ''),
+            headerDecoration: BoxDecoration(
+              color: Colors.lightBlueAccent.withOpacity(.5),
+            ),
+            eventBuilder: (constraints, category, event) => GestureDetector(
+              onTap: () => print(event),
+              child: Container(
+                constraints: constraints,
+                decoration: BoxDecoration(
+                  color: Colors.amber,
+                  border: Border.all(width: .5, color: Colors.black26),
+                ),
+                child: Center(
+                  child: Text(
+                    event.value,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ),
+            ),
           ),
         ),
       ],
@@ -46,19 +62,22 @@ class CategoryDayViewTab extends HookWidget {
   }
 }
 
-List<CategorizedDayEvent<String>> genEvents() =>
-    faker.randomGenerator.amount((i) {
-      final hour = faker.randomGenerator.integer(17, min: 7);
-      return CategorizedDayEvent(
-        categoryId: faker.randomGenerator.integer(4, min: 1).toString(),
-        value: faker.animal.name(),
-        start: TimeOfDay(
-          hour: hour,
-          minute: 0,
-        ),
-        end: TimeOfDay(
-          hour: faker.randomGenerator.integer(2, min: 1) + hour,
-          minute: 0,
-        ),
-      );
-    }, 20, min: 5);
+List<CategorizedDayEvent<String>> genEvents() => faker.randomGenerator.amount(
+      (i) {
+        final hour = faker.randomGenerator.integer(17, min: 7);
+        return CategorizedDayEvent(
+          categoryId: faker.randomGenerator.integer(4, min: 1).toString(),
+          value: faker.animal.name(),
+          start: TimeOfDay(
+            hour: hour,
+            minute: faker.randomGenerator.element([0, 30]),
+          ),
+          end: TimeOfDay(
+            hour: faker.randomGenerator.integer(2, min: 1) + hour,
+            minute: faker.randomGenerator.element([0, 30]),
+          ),
+        );
+      },
+      20,
+      min: 5,
+    );

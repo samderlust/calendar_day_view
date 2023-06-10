@@ -19,7 +19,7 @@ typedef OnTimeTap = Function(TimeOfDay time);
 typedef CategoryDayViewEventBuilder<T extends Object> = Widget Function(
   BoxConstraints constraints,
   EventCategory category,
-  CategorizedDayEvent<T>? event,
+  CategorizedDayEvent<T> event,
 );
 typedef CategoryDayViewRowBuilder<T extends Object> = Widget Function(
   List<EventCategory> category,
@@ -29,4 +29,9 @@ typedef CategoryDayViewRowBuilder<T extends Object> = Widget Function(
 typedef CategoryDayViewTileTap<T extends Object> = Function(
   EventCategory category,
   TimeOfDay time,
+);
+
+typedef CategoryDayViewHeaderTileBuilder = Function(
+  BoxConstraints constraints,
+  EventCategory category,
 );
