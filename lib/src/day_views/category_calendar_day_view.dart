@@ -210,39 +210,41 @@ class DayViewHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: headerDecoration,
-      height: rowHeight,
-      child: Row(
-        children: [
-          const SizedBox(width: 50),
-          verticalDivider ?? const VerticalDivider(width: 0),
-          ...categories
-              .map(
-                (category) => [
-                  headerTileBuilder != null
-                      ? headerTileBuilder!(
-                          BoxConstraints(
-                            maxHeight: rowHeight,
-                            maxWidth: tileWidth,
-                          ),
-                          category,
-                        )
-                      : SizedBox(
-                          width: tileWidth,
-                          height: rowHeight,
-                          child: Center(
-                            child: Text(
-                              category.name,
-                              style:
-                                  const TextStyle(fontWeight: FontWeight.bold),
+      constraints: BoxConstraints(minHeight: rowHeight),
+      child: IntrinsicHeight(
+        child: Row(
+          children: [
+            const SizedBox(width: 50),
+            verticalDivider ?? const VerticalDivider(width: 0),
+            ...categories
+                .map(
+                  (category) => [
+                    headerTileBuilder != null
+                        ? headerTileBuilder!(
+                            BoxConstraints(
+                              maxHeight: rowHeight,
+                              maxWidth: tileWidth,
+                            ),
+                            category,
+                          )
+                        : SizedBox(
+                            width: tileWidth,
+                            height: rowHeight,
+                            child: Center(
+                              child: Text(
+                                category.name,
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold),
+                              ),
                             ),
                           ),
-                        ),
-                  verticalDivider ?? const VerticalDivider(width: 0),
-                ],
-              )
-              .expand((e) => e)
-              .toList()
-        ],
+                    verticalDivider ?? const VerticalDivider(width: 0),
+                  ],
+                )
+                .expand((e) => e)
+                .toList()
+          ],
+        ),
       ),
     );
   }

@@ -6,6 +6,7 @@ import 'package:example/tabs/category_day_view_tab.dart';
 import 'package:example/tabs/event_day_view_tab.dart';
 import 'package:example/tabs/in_row_day_view_tab.dart';
 import 'package:example/tabs/overflow_day_view_tab.dart';
+import 'package:faker/faker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 
@@ -35,9 +36,30 @@ class CalendarDayViewExample extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
+    final dayEvents = useState<List<DayEvent<String>>>(fakeEvents());
+
+    final categories = useState([
+      EventCategory(id: "1", name: "cate 1"),
+      EventCategory(id: "2", name: "cate 2"),
+      EventCategory(id: "3", name: "cate 3"),
+      EventCategory(id: "4", name: "cate 4"),
+    ]);
+    final categoryEvents = useState<List<CategorizedDayEvent<String>>>(
+        genEvents(categories.value.length));
+
+    void addCategory() {
+      categories.value = [
+        ...categories.value,
+        EventCategory(
+            id: "${categories.value.length + 1}",
+            name: "cate ${categories.value.length + 1}"),
+      ];
+      categoryEvents.value = genEvents(categories.value.length);
+    }
+
     final bodyItems = [
       OverflowDayViewTab(
-        events: fakeEvents
+        events: dayEvents.value
             .map(
               (e) => e.copyWith(
                 end: TimeOfDay(
@@ -48,14 +70,18 @@ class CalendarDayViewExample extends HookWidget {
             )
             .toList(),
       ),
-      CategoryDayViewTab(),
-      InRowDayViewTab(
-        events: fakeEvents,
+      CategoryDayViewTab(
+        events: categoryEvents.value,
+        categories: categories.value,
       ),
-      EventDayViewTab(events: fakeEvents),
+      InRowDayViewTab(
+        events: dayEvents.value,
+      ),
+      EventDayViewTab(events: dayEvents.value),
     ];
 
     final currentIndex = useState<int>(0);
+
     return DefaultTabController(
       length: 4,
       child: SafeArea(
@@ -90,6 +116,34 @@ class CalendarDayViewExample extends HookWidget {
                   getTitle(currentIndex.value),
                   style: const TextStyle(color: Colors.white),
                 ),
+                actions: [
+                  if (currentIndex.value != 1)
+                    TextButton.icon(
+                      style:
+                          TextButton.styleFrom(backgroundColor: Colors.white),
+                      onPressed: () => dayEvents.value = fakeEvents(),
+                      icon: Icon(Icons.refresh),
+                      label: Text("events"),
+                    ),
+                  if (currentIndex.value == 1) ...[
+                    TextButton.icon(
+                      style:
+                          TextButton.styleFrom(backgroundColor: Colors.white),
+                      onPressed: () => categoryEvents.value =
+                          genEvents(categories.value.length),
+                      icon: Icon(Icons.refresh),
+                      label: Text("events"),
+                    ),
+                    const SizedBox(width: 20),
+                    TextButton.icon(
+                      style:
+                          TextButton.styleFrom(backgroundColor: Colors.white),
+                      onPressed: addCategory,
+                      icon: Icon(Icons.add),
+                      label: Text("category"),
+                    ),
+                  ],
+                ],
               ),
             ],
             body: bodyItems[currentIndex.value],
@@ -116,76 +170,34 @@ String getTitle(int index) {
   }
 }
 
-final now = DateTime.now();
-final List<DayEvent<String>> fakeEvents = [
-  DayEvent(
-    start: TimeOfDay.fromDateTime(
-        DateTime(now.year, now.month, now.day, now.hour - 4)),
-    value: nouns.elementAt(rd.nextInt(2000)),
-  ),
-  DayEvent(
-    start: TimeOfDay.fromDateTime(
-        DateTime(now.year, now.month, now.day, now.hour + 3)),
-    value: nouns.elementAt(rd.nextInt(2000)),
-  ),
-  DayEvent(
-    start: TimeOfDay.fromDateTime(
-        DateTime(now.year, now.month, now.day, now.hour + 4)),
-    value: nouns.elementAt(rd.nextInt(2000)),
-  ),
-  DayEvent(
-    start: TimeOfDay.fromDateTime(
-        DateTime(now.year, now.month, now.day, now.hour - 2)),
-    value: nouns.elementAt(rd.nextInt(2000)),
-  ),
-  DayEvent(
-    start: TimeOfDay.fromDateTime(
-        DateTime(now.year, now.month, now.day, now.hour - 4)),
-    value: nouns.elementAt(rd.nextInt(2000)),
-  ),
-  DayEvent(
-    start: TimeOfDay.fromDateTime(
-        DateTime(now.year, now.month, now.day, now.hour - 4)),
-    value: nouns.elementAt(rd.nextInt(2000)),
-  ),
-  DayEvent(
-    start: TimeOfDay.fromDateTime(
-        DateTime(now.year, now.month, now.day, now.hour - 4)),
-    value: nouns.elementAt(rd.nextInt(2000)),
-  ),
-  DayEvent(
-    start: TimeOfDay.fromDateTime(
-        DateTime(now.year, now.month, now.day, now.hour - 4)),
-    value: nouns.elementAt(rd.nextInt(2000)),
-  ),
-  DayEvent(
-    start: TimeOfDay.fromDateTime(
-        DateTime(now.year, now.month, now.day, now.hour - 4)),
-    value: nouns.elementAt(rd.nextInt(2000)),
-  ),
-  DayEvent(
-    start: TimeOfDay.fromDateTime(
-        DateTime(now.year, now.month, now.day, now.hour - 3)),
-    value: nouns.elementAt(rd.nextInt(2000)),
-  ),
-  DayEvent(
-    start: TimeOfDay.fromDateTime(
-        DateTime(now.year, now.month, now.day, now.hour - 4, now.minute - 15)),
-    value: nouns.elementAt(rd.nextInt(2000)),
-  ),
-  DayEvent(
-    start: TimeOfDay.fromDateTime(
-        DateTime(now.year, now.month, now.day, now.hour - 4, now.minute - 15)),
-    value: nouns.elementAt(rd.nextInt(2000)),
-  ),
-  DayEvent(
-    start: TimeOfDay.fromDateTime(
-        DateTime(now.year, now.month, now.day, now.hour - 4, now.minute - 30)),
-    value: nouns.elementAt(rd.nextInt(2000)),
-  ),
-  DayEvent(
-    start: TimeOfDay.fromDateTime(
-        DateTime(now.year, now.month, now.day, now.hour - 4, now.minute - 30)),
-    value: nouns.elementAt(rd.nextInt(2000)),
-  ),
-];
+List<DayEvent<String>> fakeEvents() => faker.randomGenerator.amount(
+    (i) => DayEvent(
+          value: faker.animal.name(),
+          start: TimeOfDay(
+              hour: faker.randomGenerator.integer(17, min: 7), minute: 0),
+        ),
+    30,
+    min: 10);
+
+List<CategorizedDayEvent<String>> genEvents(int categoryLength) =>
+    faker.randomGenerator.amount(
+      (i) {
+        final hour = faker.randomGenerator.integer(17, min: 7);
+        return CategorizedDayEvent(
+          categoryId: faker.randomGenerator
+              .integer(categoryLength + 1, min: 1)
+              .toString(),
+          value: faker.animal.name(),
+          start: TimeOfDay(
+            hour: hour,
+            minute: faker.randomGenerator.element([0]),
+          ),
+          end: TimeOfDay(
+            hour: faker.randomGenerator.integer(2, min: 1) + hour,
+            minute: faker.randomGenerator.element([0, 30]),
+          ),
+        );
+      },
+      categoryLength * 5,
+      min: 10,
+    );
