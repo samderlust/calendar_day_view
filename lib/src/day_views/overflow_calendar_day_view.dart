@@ -134,7 +134,6 @@ class _OverFlowCalendarDayViewState<T extends Object>
   }
 
   List<TimeOfDay> getTimeList() {
-    print("GetTIMELIST");
     final timeEnd = widget.endOfDay ?? const TimeOfDay(hour: 23, minute: 0);
 
     final timeCount =

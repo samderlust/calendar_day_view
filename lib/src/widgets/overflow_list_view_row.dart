@@ -43,8 +43,6 @@ class _OverflowListViewRowState<T extends Object>
 
     _scrollCtrl.addListener(() {
       if (_scrollCtrl.position.pixels == _scrollCtrl.position.maxScrollExtent) {
-        print(
-            "PIXEL::${_scrollCtrl.position.pixels} ||| Extent:: ${_scrollCtrl.position.maxScrollExtent}");
         if (!_atEndOfList) {
           setState(() {
             _atEndOfList = true;
@@ -62,8 +60,6 @@ class _OverflowListViewRowState<T extends Object>
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       if (_scrollCtrl.hasClients &&
           _scrollCtrl.position.pixels >= _scrollCtrl.position.maxScrollExtent) {
-        print(
-            "PIXEL::${_scrollCtrl.position.pixels} ||| Extent:: ${_scrollCtrl.position.maxScrollExtent}");
         setState(() {
           _atEndOfList = true;
         });
