@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:calendar_day_view/calendar_day_view.dart';
 import 'package:example/utils.dart';
 import 'package:flutter/material.dart';
@@ -16,7 +18,7 @@ class InRowDayViewTab extends HookWidget {
       children: [
         Expanded(
           child: InRowCalendarDayView<String>(
-            events: events,
+            events: UnmodifiableListView(events),
             heightPerMin: 1,
             showCurrentTimeLine: true,
             dividerColor: Colors.black,

@@ -32,7 +32,6 @@ dependencies:
   calendar_day_view:
     path: ../
   cupertino_icons: ^1.0.2
-  english_words: ^4.0.0
   faker: ^2.1.0
   flutter:
     sdk: flutter

@@ -67,10 +67,30 @@ class CalendarDayViewExample extends HookWidget {
               ),
             )
             .toList(),
+        onTimeTap: (time) => dayEvents.value = [
+          ...dayEvents.value,
+          DayEvent(
+            value: faker.conference.name(),
+            start: time,
+            end: TimeOfDay(
+              hour: time.hour + 1,
+              minute: time.minute + 30 + rd.nextInt(30),
+            ),
+          )
+        ],
       ),
       CategoryDayViewTab(
         events: categoryEvents.value,
         categories: categories.value,
+        addEventOnClick: (cate, time) {
+          categoryEvents.value = [
+            ...categoryEvents.value,
+            CategorizedDayEvent(
+                categoryId: cate.id,
+                value: faker.conference.name(),
+                start: time)
+          ];
+        },
       ),
       InRowDayViewTab(
         events: dayEvents.value,

@@ -110,8 +110,7 @@ class _OverFlowCalendarDayViewState<T extends Object>
     _heightPerMin = widget.heightPerMin;
     _timesInDay = getTimeList();
 
-    _overflowEvents = processOverflowEvents(widget.events
-      ..sort(
+    _overflowEvents = processOverflowEvents([...widget.events]..sort(
         (a, b) => a.compare(b),
       ));
 
@@ -129,8 +128,7 @@ class _OverFlowCalendarDayViewState<T extends Object>
     super.didUpdateWidget(oldWidget);
 
     _timesInDay = getTimeList();
-    _overflowEvents = processOverflowEvents(widget.events
-      ..sort(
+    _overflowEvents = processOverflowEvents([...widget.events]..sort(
         (a, b) => a.compare(b),
       ));
     _heightPerMin = widget.heightPerMin;

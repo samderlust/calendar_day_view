@@ -9,59 +9,25 @@ class CategoryDayViewTab extends HookWidget {
     super.key,
     required this.categories,
     required this.events,
+    this.addEventOnClick,
   });
   final List<EventCategory> categories;
   final List<CategorizedDayEvent<String>> events;
 
+  final Function(EventCategory, TimeOfDay)? addEventOnClick;
   @override
   Widget build(BuildContext context) {
-    // final categories = useState([
-    //   EventCategory(id: "1", name: "court 1"),
-    //   EventCategory(id: "2", name: "court 2"),
-    //   EventCategory(id: "3", name: "court 3"),
-    //   EventCategory(id: "4", name: "court 4"),
-    // ]);
-
-    // final events = useState<List<CategorizedDayEvent<String>>>(
-    //     genEvents(categories.length));
-
-    // void addCategory() {
-    //   categories = [
-    //     ...categories,
-    //     EventCategory(
-    //         id: "${categories.length + 1}",
-    //         name: "court ${categories.length + 1}"),
-    //   ];
-    //   events = genEvents(categories.value.length);
-    // }
-
     return Column(
       children: [
-        // const SizedBox(height: 10),
-        // Row(
-        //   children: [
-        //     const SizedBox(width: 20),
-        //     ElevatedButton(
-        //       onPressed: () =>
-        //           events = genEvents(categories.length),
-        //       child: const Text("Re-generate EVents"),
-        //     ),
-        //     const SizedBox(width: 20),
-        //     ElevatedButton(
-        //       onPressed: addCategory,
-        //       child: const Text("Add Category"),
-        //     ),
-        //   ],
-        // ),
-        // const SizedBox(height: 10),
         Expanded(
           child: CategoryCalendarDayView(
             categories: categories,
             events: events,
-            onTileTap: (category, time) {
-              print(category);
-              print(time);
-            },
+            onTileTap: addEventOnClick ??
+                (category, time) {
+                  print(category);
+                  print(time);
+                },
             startOfDay: const TimeOfDay(hour: 7, minute: 00),
             endOfDay: const TimeOfDay(hour: 17, minute: 00),
             timeGap: 60,
@@ -83,8 +49,11 @@ class CategoryDayViewTab extends HookWidget {
                   child: Text(
                     event.value,
                     textAlign: TextAlign.center,
+                    overflow: TextOverflow.fade,
                     style: const TextStyle(
-                        fontWeight: FontWeight.bold, color: Colors.white),
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               ),
