@@ -13,14 +13,16 @@ class EventDayViewTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return EventCalendarDayView(
       events: events,
-      eventDayViewItemBuilder: (context, event) {
+      eventDayViewItemBuilder: (context, index, event) {
         return HookBuilder(builder: (context) {
           final randomColor = useMemoized(() => getRandomColor());
           return Container(
             decoration: BoxDecoration(
-              color: randomColor,
+              color:
+                  index % 2 == 0 ? colorScheme.primary : colorScheme.secondary,
               borderRadius: const BorderRadius.all(Radius.circular(10)),
             ),
             height: 50,

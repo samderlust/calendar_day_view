@@ -76,13 +76,15 @@ class CategoryDayViewTab extends HookWidget {
               child: Container(
                 constraints: constraints,
                 decoration: BoxDecoration(
-                  color: Colors.amber,
+                  color: Theme.of(context).colorScheme.primary,
                   border: Border.all(width: .5, color: Colors.black26),
                 ),
                 child: Center(
                   child: Text(
                     event.value,
-                    style: const TextStyle(fontWeight: FontWeight.bold),
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold, color: Colors.white),
                   ),
                 ),
               ),

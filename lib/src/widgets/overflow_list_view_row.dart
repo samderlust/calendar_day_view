@@ -94,6 +94,14 @@ class _OverflowListViewRowState<T extends Object>
               final event = widget.oEvents.events.elementAt(index);
               final width =
                   widget.eventColumnWith / widget.oEvents.events.length;
+
+              final tileConstraints = BoxConstraints(
+                maxHeight: event.durationInMins * widget.heightUnit,
+                minHeight: event.durationInMins * widget.heightUnit,
+                minWidth: width,
+                maxWidth: widget.eventColumnWith,
+              );
+
               return Column(
                 children: [
                   SizedBox(
@@ -108,12 +116,8 @@ class _OverflowListViewRowState<T extends Object>
                       ignored: widget.ignored,
                       child: widget.overflowItemBuilder(
                         context,
-                        BoxConstraints(
-                          maxHeight: event.durationInMins * widget.heightUnit,
-                          minHeight: event.durationInMins * widget.heightUnit,
-                          minWidth: width,
-                          maxWidth: widget.eventColumnWith,
-                        ),
+                        tileConstraints,
+                        index,
                         event,
                       ),
                     ),

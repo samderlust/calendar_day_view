@@ -1,10 +1,8 @@
 import 'dart:async';
 
-import 'package:calendar_day_view/src/models/categorized_day_event.dart';
 import 'package:flutter/material.dart';
 
 import '../models/day_event.dart';
-import '../models/event_category.dart';
 import '../models/time_of_day_extension.dart';
 
 import '../models/typedef.dart';
@@ -165,11 +163,11 @@ class _InRowCalendarDayViewState<T extends Object>
             itemCount: _timesInDay.length,
             itemBuilder: (context, index) {
               final time = _timesInDay.elementAt(index);
-              final events = widget.events.where(
+              final rowEvents = widget.events.where(
                 (event) => event.isInThisGap(time, widget.timeGap),
               );
 
-              if (events.isEmpty && widget.showWithEventOnly) {
+              if (rowEvents.isEmpty && widget.showWithEventOnly) {
                 return const SizedBox.shrink();
               }
 
@@ -210,6 +208,12 @@ class _InRowCalendarDayViewState<T extends Object>
                                 : () => widget.onTap!(time),
                             child: LayoutBuilder(
                               builder: (context, constrains) {
+                                final tileConstraints = BoxConstraints(
+                                  maxHeight: _rowHeight,
+                                  maxWidth:
+                                      constrains.maxWidth / rowEvents.length,
+                                );
+
                                 return SizedBox(
                                   height: _rowHeight,
                                   child: Builder(
@@ -218,21 +222,19 @@ class _InRowCalendarDayViewState<T extends Object>
                                         return widget.timeRowBuilder!(
                                           context,
                                           constrains,
-                                          events.toList(),
+                                          rowEvents.toList(),
                                         );
                                       } else {
                                         return Row(
                                           children: [
-                                            for (final event in events)
+                                            for (var i = 0;
+                                                i < rowEvents.length;
+                                                i++)
                                               widget.itemBuilder!(
                                                 context,
-                                                BoxConstraints(
-                                                  maxHeight: _rowHeight,
-                                                  maxWidth:
-                                                      constrains.maxWidth /
-                                                          events.length,
-                                                ),
-                                                event,
+                                                tileConstraints,
+                                                i,
+                                                rowEvents.elementAt(i),
                                               )
                                           ],
                                         );

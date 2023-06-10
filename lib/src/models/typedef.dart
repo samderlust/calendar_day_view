@@ -5,6 +5,9 @@ import '../../calendar_day_view.dart';
 typedef DayViewItemBuilder<T extends Object> = Widget Function(
   BuildContext context,
   BoxConstraints constraints,
+
+  ///index of the item in same row
+  int itemIndex,
   DayEvent<T> event,
 );
 
@@ -12,6 +15,12 @@ typedef DayViewTimeRowBuilder<T extends Object> = Widget Function(
   BuildContext context,
   BoxConstraints constraints,
   List<DayEvent<T>> events,
+);
+
+typedef EventDayViewItemBuilder<T extends Object> = Widget Function(
+  BuildContext context,
+  int itemIndex,
+  DayEvent<T> event,
 );
 
 typedef OnTimeTap = Function(TimeOfDay time);

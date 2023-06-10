@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import 'package:calendar_day_view/calendar_day_view.dart';
-import 'package:english_words/english_words.dart';
 import 'package:example/tabs/category_day_view_tab.dart';
 import 'package:example/tabs/event_day_view_tab.dart';
 import 'package:example/tabs/in_row_day_view_tab.dart';
@@ -23,9 +22,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.teal,
-      ),
+      theme:
+          ThemeData(colorScheme: ColorScheme.fromSeed(seedColor: Colors.white)),
       home: const CalendarDayViewExample(),
     );
   }
@@ -112,38 +110,47 @@ class CalendarDayViewExample extends HookWidget {
               SliverAppBar.large(
                 floating: true,
                 pinned: true,
-                title: Text(
-                  getTitle(currentIndex.value),
-                  style: const TextStyle(color: Colors.white),
-                ),
-                actions: [
-                  if (currentIndex.value != 1)
-                    TextButton.icon(
-                      style:
-                          TextButton.styleFrom(backgroundColor: Colors.white),
-                      onPressed: () => dayEvents.value = fakeEvents(),
-                      icon: Icon(Icons.refresh),
-                      label: Text("events"),
+                flexibleSpace: Row(
+                  children: [
+                    SizedBox(
+                      width: 200,
+                      child: FlexibleSpaceBar(
+                        title: Text(
+                          getTitle(currentIndex.value),
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                      ),
                     ),
-                  if (currentIndex.value == 1) ...[
-                    TextButton.icon(
-                      style:
-                          TextButton.styleFrom(backgroundColor: Colors.white),
-                      onPressed: () => categoryEvents.value =
-                          genEvents(categories.value.length),
-                      icon: Icon(Icons.refresh),
-                      label: Text("events"),
-                    ),
+                    const Spacer(),
+                    if (currentIndex.value != 1)
+                      TextButton.icon(
+                        style:
+                            TextButton.styleFrom(backgroundColor: Colors.white),
+                        onPressed: () => dayEvents.value = fakeEvents(),
+                        icon: const Icon(Icons.refresh),
+                        label: const Text("events"),
+                      ),
+                    if (currentIndex.value == 1) ...[
+                      TextButton.icon(
+                        style:
+                            TextButton.styleFrom(backgroundColor: Colors.white),
+                        onPressed: () => categoryEvents.value =
+                            genEvents(categories.value.length),
+                        icon: const Icon(Icons.refresh),
+                        label: const Text("events"),
+                      ),
+                      const SizedBox(width: 20),
+                      TextButton.icon(
+                        style:
+                            TextButton.styleFrom(backgroundColor: Colors.white),
+                        onPressed: addCategory,
+                        icon: const Icon(Icons.add),
+                        label: const Text("category"),
+                      ),
+                    ],
                     const SizedBox(width: 20),
-                    TextButton.icon(
-                      style:
-                          TextButton.styleFrom(backgroundColor: Colors.white),
-                      onPressed: addCategory,
-                      icon: Icon(Icons.add),
-                      label: Text("category"),
-                    ),
                   ],
-                ],
+                ),
               ),
             ],
             body: bodyItems[currentIndex.value],
@@ -172,9 +179,9 @@ String getTitle(int index) {
 
 List<DayEvent<String>> fakeEvents() => faker.randomGenerator.amount(
     (i) => DayEvent(
-          value: faker.animal.name(),
+          value: faker.conference.name(),
           start: TimeOfDay(
-              hour: faker.randomGenerator.integer(17, min: 7), minute: 0),
+              hour: faker.randomGenerator.integer(24, min: 0), minute: 0),
         ),
     30,
     min: 10);
@@ -187,7 +194,7 @@ List<CategorizedDayEvent<String>> genEvents(int categoryLength) =>
           categoryId: faker.randomGenerator
               .integer(categoryLength + 1, min: 1)
               .toString(),
-          value: faker.animal.name(),
+          value: faker.conference.name(),
           start: TimeOfDay(
             hour: hour,
             minute: faker.randomGenerator.element([0]),

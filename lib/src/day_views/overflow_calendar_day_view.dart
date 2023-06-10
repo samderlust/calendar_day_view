@@ -258,10 +258,18 @@ class _OverFlowCalendarDayViewState<T extends Object>
   List<Widget> renderWithFixedWidth(double heightUnit, double eventColumnWith) {
     return [
       for (final oEvents in _overflowEvents)
-        for (final event in oEvents.events)
+        for (var i = 0; i < oEvents.events.length; i++)
           Builder(
             builder: (context) {
+              final event = oEvents.events.elementAt(i);
               final width = eventColumnWith / oEvents.events.length;
+              final tileConstraints = BoxConstraints(
+                maxHeight: event.durationInMins * heightUnit,
+                minHeight: event.durationInMins * heightUnit,
+                minWidth: width,
+                maxWidth: eventColumnWith,
+              );
+
               return Positioned(
                 left: widget.timeTitleColumnWidth +
                     oEvents.events.indexOf(event) * width,
@@ -269,12 +277,8 @@ class _OverFlowCalendarDayViewState<T extends Object>
                     heightUnit,
                 child: widget.overflowItemBuilder!(
                   context,
-                  BoxConstraints(
-                    maxHeight: event.durationInMins * heightUnit,
-                    minHeight: event.durationInMins * heightUnit,
-                    minWidth: width,
-                    maxWidth: eventColumnWith,
-                  ),
+                  tileConstraints,
+                  i,
                   event,
                 ),
               );

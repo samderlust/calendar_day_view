@@ -13,6 +13,7 @@ class OverflowDayViewTab extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final timeGap = useState<int>(60);
+    final colorScheme = Theme.of(context).colorScheme;
     return Column(
       children: [
         Expanded(
@@ -26,9 +27,8 @@ class OverflowDayViewTab extends HookWidget {
             renderRowAsListView: true,
             showCurrentTimeLine: true,
             showMoreOnRowButton: true,
-            overflowItemBuilder: (context, constraints, event) {
+            overflowItemBuilder: (context, constraints, itemIndex, event) {
               return HookBuilder(builder: (context) {
-                final randomColor = useMemoized(() => getRandomColor());
                 return GestureDetector(
                   key: ValueKey(event.hashCode),
                   onTap: () {
@@ -36,6 +36,7 @@ class OverflowDayViewTab extends HookWidget {
                   },
                   child: Container(
                     margin: const EdgeInsets.only(right: 3),
+                    padding: const EdgeInsets.symmetric(horizontal: 5),
                     key: ValueKey(event.hashCode),
                     width: constraints.minWidth < 100
                         ? 100
@@ -44,11 +45,13 @@ class OverflowDayViewTab extends HookWidget {
                         constraints.minWidth - 3,
                     height: constraints.maxHeight,
                     decoration: BoxDecoration(
-                      color: randomColor,
-                      borderRadius: const BorderRadius.all(Radius.circular(10)),
+                      color: itemIndex % 2 == 0
+                          ? colorScheme.primary
+                          : colorScheme.secondary,
                     ),
                     child: Center(
                       child: Text(
+                        textAlign: TextAlign.center,
                         event.value,
                         style: const TextStyle(
                           color: Colors.white,
