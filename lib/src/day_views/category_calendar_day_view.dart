@@ -22,9 +22,14 @@ class CategoryCalendarDayView<T extends Object> extends StatelessWidget {
     this.onTileTap,
     this.headerTileBuilder,
     this.headerDecoration,
+    this.logo,
+    this.timeColumnWidth = 50,
   }) : super(key: key);
   final List<EventCategory> categories;
   final List<CategorizedDayEvent<T>> events;
+
+  /// width of the first column where times are displayed
+  final double timeColumnWidth;
 
   /// To set the start time of the day view
   final TimeOfDay startOfDay;
@@ -70,6 +75,9 @@ class CategoryCalendarDayView<T extends Object> extends StatelessWidget {
   /// header row decoration
   final BoxDecoration? headerDecoration;
 
+  /// The widget that will be place at top left corner tile of this day view
+  final Widget? logo;
+
   @override
   Widget build(BuildContext context) {
     final timeList = getTimeList(
@@ -82,7 +90,7 @@ class CategoryCalendarDayView<T extends Object> extends StatelessWidget {
     return SingleChildScrollView(
       child: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
-          final rowLength = constraints.maxWidth - 50;
+          final rowLength = constraints.maxWidth - timeColumnWidth;
           final tileWidth = rowLength / categories.length;
           return SizedBox(
             width: constraints.maxWidth,
@@ -96,6 +104,8 @@ class CategoryCalendarDayView<T extends Object> extends StatelessWidget {
                   headerTileBuilder: headerTileBuilder,
                   tileWidth: tileWidth,
                   headerDecoration: headerDecoration,
+                  timeColumnWidth: timeColumnWidth,
+                  logo: logo,
                 ),
                 horizontalDivider ?? const Divider(height: 0),
                 ListView.separated(
@@ -128,6 +138,7 @@ class CategoryCalendarDayView<T extends Object> extends StatelessWidget {
                         tileWidth: tileWidth,
                         rowHeight: rowHeight,
                         eventBuilder: eventBuilder,
+                        timeColumnWidth: timeColumnWidth,
                       ),
                     );
                   },
@@ -153,6 +164,7 @@ class DayViewRow<T extends Object> extends StatelessWidget {
     required this.tileWidth,
     required this.rowHeight,
     required this.eventBuilder,
+    required this.timeColumnWidth,
   });
 
   final TimeOfDay time;
@@ -164,14 +176,14 @@ class DayViewRow<T extends Object> extends StatelessWidget {
   final double tileWidth;
   final double rowHeight;
   final CategoryDayViewEventBuilder<T> eventBuilder;
-
+  final double timeColumnWidth;
   @override
   Widget build(BuildContext context) {
     return IntrinsicHeight(
       child: Row(
         children: [
           SizedBox(
-            width: 50,
+            width: timeColumnWidth,
             child: Center(
               child: Text(
                 "${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, "0")}",
@@ -200,13 +212,12 @@ class DayViewRow<T extends Object> extends StatelessWidget {
                         minWidth: tileWidth,
                         minHeight: rowHeight,
                       ),
-                      child: event == null
-                          ? const SizedBox.shrink()
-                          : eventBuilder(
-                              constraints,
-                              category,
-                              event,
-                            ),
+                      child: eventBuilder(
+                        constraints,
+                        category,
+                        time,
+                        event,
+                      ),
                     ),
                   ),
                   verticalDivider ?? const VerticalDivider(width: 0),
@@ -229,6 +240,8 @@ class DayViewHeader extends StatelessWidget {
     required this.headerTileBuilder,
     required this.tileWidth,
     this.headerDecoration,
+    required this.timeColumnWidth,
+    this.logo,
   });
 
   final double rowHeight;
@@ -237,6 +250,8 @@ class DayViewHeader extends StatelessWidget {
   final CategoryDayViewHeaderTileBuilder? headerTileBuilder;
   final double tileWidth;
   final BoxDecoration? headerDecoration;
+  final Widget? logo;
+  final double timeColumnWidth;
 
   @override
   Widget build(BuildContext context) {
@@ -246,7 +261,11 @@ class DayViewHeader extends StatelessWidget {
       child: IntrinsicHeight(
         child: Row(
           children: [
-            const SizedBox(width: 50),
+            ConstrainedBox(
+              constraints: BoxConstraints(
+                  maxWidth: timeColumnWidth, minHeight: rowHeight),
+              child: logo ?? SizedBox(width: timeColumnWidth),
+            ),
             verticalDivider ?? const VerticalDivider(width: 0),
             ...categories
                 .map(
@@ -254,7 +273,7 @@ class DayViewHeader extends StatelessWidget {
                     headerTileBuilder != null
                         ? headerTileBuilder!(
                             BoxConstraints(
-                              maxHeight: rowHeight,
+                              minHeight: rowHeight,
                               maxWidth: tileWidth,
                             ),
                             category,

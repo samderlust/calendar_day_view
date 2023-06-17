@@ -1,3 +1,8 @@
+## 2.1.0
+
+- add custom header builder for category day view
+- empty tile builder for category day view
+
 ## 2.0.0
 
 - Add CategoryCalendarDayView to show event in day by categories

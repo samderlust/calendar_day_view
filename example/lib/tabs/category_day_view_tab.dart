@@ -37,27 +37,29 @@ class CategoryDayViewTab extends HookWidget {
             headerDecoration: BoxDecoration(
               color: Colors.lightBlueAccent.withOpacity(.5),
             ),
-            eventBuilder: (constraints, category, event) => GestureDetector(
-              onTap: () => print(event),
-              child: Container(
-                constraints: constraints,
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.primary,
-                  border: Border.all(width: .5, color: Colors.black26),
-                ),
-                child: Center(
-                  child: Text(
-                    event.value,
-                    textAlign: TextAlign.center,
-                    overflow: TextOverflow.fade,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
+            eventBuilder: (constraints, category, _, event) => event == null
+                ? SizedBox.shrink()
+                : GestureDetector(
+                    onTap: () => print(event),
+                    child: Container(
+                      constraints: constraints,
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.primary,
+                        border: Border.all(width: .5, color: Colors.black26),
+                      ),
+                      child: Center(
+                        child: Text(
+                          event.value,
+                          textAlign: TextAlign.center,
+                          overflow: TextOverflow.fade,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
                     ),
                   ),
-                ),
-              ),
-            ),
           ),
         ),
       ],
