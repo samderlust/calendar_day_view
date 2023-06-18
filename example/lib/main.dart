@@ -60,7 +60,7 @@ class CalendarDayViewExample extends HookWidget {
         events: dayEvents.value
             .map(
               (e) => e.copyWith(
-                end: e.start.add(const Duration(minutes: 90)),
+                end: e.start.add(const Duration(minutes: 160)),
               ),
             )
             .toList(),
@@ -69,10 +69,7 @@ class CalendarDayViewExample extends HookWidget {
           DayEvent(
             value: faker.conference.name(),
             start: time,
-            end: DateTime.now().copyWith(
-              hour: time.hour + 1,
-              minute: time.minute + 30 + rd.nextInt(30),
-            ),
+            end: time.add(const Duration(minutes: 90)),
           )
         ],
       ),

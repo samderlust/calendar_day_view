@@ -75,6 +75,8 @@ extension DayEventExtension on DayEvent {
       start.hour == timePoint.hour && timePoint.minute == start.minute;
 
   int compare(DayEvent other) {
+    return start.isBefore(other.start) ? -1 : 1;
+
     if (start.hour > other.start.hour) return 1;
     if (start.hour == other.start.hour && start.minute > other.start.minute) {
       return 1;

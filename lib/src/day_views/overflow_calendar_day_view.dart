@@ -132,6 +132,12 @@ class _OverFlowCalendarDayViewState<T extends Object>
     _overflowEvents = processOverflowEvents([...widget.events]..sort(
         (a, b) => a.compare(b),
       ));
+
+    _overflowEvents.forEach((e) {
+      print(
+          "OEVENT: ALL: ${e.start} -> ${e.end} || first: ${e.events.first.start} || last: ${e.events.last.end}");
+    });
+    print("------");
   }
 
   @override
