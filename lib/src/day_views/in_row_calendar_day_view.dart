@@ -2,10 +2,10 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
+import '../extensions/time_of_day_extension.dart';
 import '../models/day_event.dart';
-import '../models/time_of_day_extension.dart';
-
 import '../models/typedef.dart';
+import '../utils/date_time_utils.dart';
 import '../widgets/current_time_line_widget.dart';
 
 /// Show events in a time gap window in a single row
@@ -16,8 +16,8 @@ class InRowCalendarDayView<T extends Object> extends StatefulWidget {
   const InRowCalendarDayView({
     Key? key,
     required this.events,
-    this.startOfDay = const TimeOfDay(hour: 8, minute: 0),
-    this.endOfDay,
+    required this.startOfDay,
+    required this.endOfDay,
     this.showWithEventOnly = false,
     this.timeGap = 60,
     this.timeTextColor,
@@ -49,10 +49,10 @@ class InRowCalendarDayView<T extends Object> extends StatefulWidget {
   final List<DayEvent<T>> events;
 
   /// To set the start time of the day view
-  final TimeOfDay startOfDay;
+  final DateTime startOfDay;
 
   /// To set the end time of the day view
-  final TimeOfDay? endOfDay;
+  final DateTime endOfDay;
 
   /// if true, only display row with events. Default to false
   final bool showWithEventOnly;
@@ -87,9 +87,9 @@ class InRowCalendarDayView<T extends Object> extends StatefulWidget {
 
 class _InRowCalendarDayViewState<T extends Object>
     extends State<InRowCalendarDayView<T>> {
-  List<TimeOfDay> _timesInDay = [];
+  List<DateTime> _timesInDay = [];
   double _heightPerMin = 1;
-  TimeOfDay _currentTime = TimeOfDay.now();
+  DateTime _currentTime = DateTime.now();
   Timer? _timer;
   double _rowHeight = 60.0;
   double _rowScale = 1;
@@ -98,37 +98,24 @@ class _InRowCalendarDayViewState<T extends Object>
   void initState() {
     super.initState();
     _heightPerMin = widget.heightPerMin;
-    _timesInDay = getTimeList();
+    _timesInDay =
+        getTimeList(widget.startOfDay, widget.endOfDay, widget.timeGap);
     _rowHeight = widget.timeGap * _heightPerMin * _rowScale;
 
     if (widget.showCurrentTimeLine) {
       _timer = Timer.periodic(const Duration(minutes: 1), (_) {
         setState(() {
-          _currentTime = TimeOfDay.now();
+          _currentTime = DateTime.now();
         });
       });
     }
   }
 
-  List<TimeOfDay> getTimeList() {
-    final timeEnd = widget.endOfDay ?? const TimeOfDay(hour: 23, minute: 0);
-
-    final timeCount =
-        ((timeEnd.hour - widget.startOfDay.hour) * 60) ~/ widget.timeGap;
-    DateTime first = DateTime.parse(
-        "2012-02-27T${widget.startOfDay.hour.toString().padLeft(2, '0')}:00");
-    List<TimeOfDay> list = [];
-    for (var i = 1; i <= timeCount; i++) {
-      list.add(TimeOfDay.fromDateTime(first));
-      first = first.add(Duration(minutes: widget.timeGap));
-    }
-    return list;
-  }
-
   @override
   void didUpdateWidget(covariant InRowCalendarDayView<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
-    _timesInDay = getTimeList();
+    _timesInDay =
+        getTimeList(widget.startOfDay, widget.endOfDay, widget.timeGap);
     _heightPerMin = widget.heightPerMin;
     _rowHeight = widget.timeGap * _heightPerMin * _rowScale;
   }

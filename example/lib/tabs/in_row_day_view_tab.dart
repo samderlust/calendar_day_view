@@ -1,7 +1,6 @@
 import 'dart:collection';
 
 import 'package:calendar_day_view/calendar_day_view.dart';
-import 'package:example/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 
@@ -24,8 +23,8 @@ class InRowDayViewTab extends HookWidget {
             dividerColor: Colors.black,
             timeGap: timeGap.value,
             showWithEventOnly: withEventOnly.value,
-            startOfDay: const TimeOfDay(hour: 00, minute: 0),
-            endOfDay: const TimeOfDay(hour: 22, minute: 0),
+            startOfDay: DateTime.now().copyWith(hour: 00, minute: 0),
+            endOfDay: DateTime.now().copyWith(hour: 22, minute: 0),
             itemBuilder: (context, constraints, itemIndex, event) => Flexible(
               child: HookBuilder(builder: (context) {
                 return SizedBox(

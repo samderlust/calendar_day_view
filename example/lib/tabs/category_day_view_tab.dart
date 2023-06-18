@@ -1,8 +1,6 @@
-import 'package:faker/faker.dart';
+import 'package:calendar_day_view/calendar_day_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-
-import 'package:calendar_day_view/calendar_day_view.dart';
 
 class CategoryDayViewTab extends HookWidget {
   const CategoryDayViewTab({
@@ -14,7 +12,7 @@ class CategoryDayViewTab extends HookWidget {
   final List<EventCategory> categories;
   final List<CategorizedDayEvent<String>> events;
 
-  final Function(EventCategory, TimeOfDay)? addEventOnClick;
+  final Function(EventCategory, DateTime)? addEventOnClick;
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -23,13 +21,12 @@ class CategoryDayViewTab extends HookWidget {
           child: CategoryCalendarDayView(
             categories: categories,
             events: events,
-            onTileTap: addEventOnClick ??
-                (category, time) {
-                  print(category);
-                  print(time);
-                },
-            startOfDay: const TimeOfDay(hour: 7, minute: 00),
-            endOfDay: const TimeOfDay(hour: 17, minute: 00),
+            onTileTap: (category, time) {
+              print(category);
+              print(time);
+            },
+            startOfDay: DateTime.now().copyWith(hour: 7, minute: 00),
+            endOfDay: DateTime.now().copyWith(hour: 17, minute: 00),
             timeGap: 60,
             heightPerMin: 1,
             evenRowColor: Colors.white,
@@ -66,26 +63,3 @@ class CategoryDayViewTab extends HookWidget {
     );
   }
 }
-
-List<CategorizedDayEvent<String>> genEvents(int categoryLength) =>
-    faker.randomGenerator.amount(
-      (i) {
-        final hour = faker.randomGenerator.integer(17, min: 7);
-        return CategorizedDayEvent(
-          categoryId: faker.randomGenerator
-              .integer(categoryLength + 1, min: 1)
-              .toString(),
-          value: faker.animal.name(),
-          start: TimeOfDay(
-            hour: hour,
-            minute: faker.randomGenerator.element([0]),
-          ),
-          end: TimeOfDay(
-            hour: faker.randomGenerator.integer(2, min: 1) + hour,
-            minute: faker.randomGenerator.element([0, 30]),
-          ),
-        );
-      },
-      categoryLength * 5,
-      min: 10,
-    );

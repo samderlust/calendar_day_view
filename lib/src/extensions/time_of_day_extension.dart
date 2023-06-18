@@ -1,25 +1,25 @@
 import 'package:flutter/material.dart';
 
-extension TimeOfDayExtension on TimeOfDay {
-  bool earlierThan(TimeOfDay other) {
+extension DateTimeExtension on DateTime {
+  bool earlierThan(DateTime other) {
     return hour < other.hour || ((hour == other.hour) && minute < other.minute);
   }
 
-  bool laterThan(TimeOfDay other) {
+  bool laterThan(DateTime other) {
     return hour > other.hour || ((hour == other.hour) && minute > other.minute);
   }
 
-  bool same(TimeOfDay other) => hour == other.hour && minute == other.minute;
+  bool same(DateTime other) => hour == other.hour && minute == other.minute;
 
-  int minuteFrom(TimeOfDay timePoint) {
+  int minuteFrom(DateTime timePoint) {
     return (hour - timePoint.hour) * 60 + (minute - timePoint.minute);
   }
 
-  int minuteUntil(TimeOfDay timePoint) {
+  int minuteUntil(DateTime timePoint) {
     return (timePoint.hour - hour) * 60 + (timePoint.minute - minute);
   }
 
-  bool inTheGap(TimeOfDay timePoint, int gap) {
+  bool inTheGap(DateTime timePoint, int gap) {
     return hour == timePoint.hour &&
         (minute >= timePoint.minute && minute < (timePoint.minute + gap));
   }

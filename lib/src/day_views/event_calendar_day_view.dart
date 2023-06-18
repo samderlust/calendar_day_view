@@ -56,7 +56,7 @@ class EventCalendarDayView<T extends Object> extends StatefulWidget {
 
 class _EventCalendarDayViewState<T extends Object>
     extends State<EventCalendarDayView<T>> {
-  List<TimeOfDay> _timesInDay = [];
+  List<DateTime> _timesInDay = [];
 
   @override
   void initState() {
@@ -64,8 +64,8 @@ class _EventCalendarDayViewState<T extends Object>
     _timesInDay = getTimeList();
   }
 
-  List<TimeOfDay> getTimeList() {
-    Set<TimeOfDay> list = {};
+  List<DateTime> getTimeList() {
+    Set<DateTime> list = {};
     list.addAll(widget.events.map((e) => e.start).toList()
       ..sort(
         (a, b) {

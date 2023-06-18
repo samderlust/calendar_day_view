@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../../calendar_day_view.dart';
 import '../models/typedef.dart';
+import '../utils/date_time_utils.dart';
 
 class CategoryCalendarDayView<T extends Object> extends StatelessWidget {
   const CategoryCalendarDayView({
@@ -10,7 +11,7 @@ class CategoryCalendarDayView<T extends Object> extends StatelessWidget {
     required this.categories,
     required this.events,
     required this.startOfDay,
-    this.endOfDay,
+    required this.endOfDay,
     required this.timeGap,
     this.heightPerMin = 1.0,
     this.evenRowColor,
@@ -32,10 +33,10 @@ class CategoryCalendarDayView<T extends Object> extends StatelessWidget {
   final double timeColumnWidth;
 
   /// To set the start time of the day view
-  final TimeOfDay startOfDay;
+  final DateTime startOfDay;
 
   /// To set the end time of the day view
-  final TimeOfDay? endOfDay;
+  final DateTime endOfDay;
 
   /// time gap/duration of a row.
   ///
@@ -66,7 +67,7 @@ class CategoryCalendarDayView<T extends Object> extends StatelessWidget {
 
   /// call when you tap on an empty tile
   ///
-  /// provide [EventCategory] and [TimeOfDay]  of that tile
+  /// provide [EventCategory] and [DateTime]  of that tile
   final CategoryDayViewTileTap? onTileTap;
 
   /// build category header
@@ -81,9 +82,9 @@ class CategoryCalendarDayView<T extends Object> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final timeList = getTimeList(
-      startOfDay: startOfDay,
-      endOfDay: endOfDay,
-      timeGap: timeGap,
+      startOfDay,
+      endOfDay,
+      timeGap,
     );
 
     final rowHeight = heightPerMin * timeGap;
@@ -167,7 +168,7 @@ class DayViewRow<T extends Object> extends StatelessWidget {
     required this.timeColumnWidth,
   });
 
-  final TimeOfDay time;
+  final DateTime time;
   final TextStyle? timeTextStyle;
   final VerticalDivider? verticalDivider;
   final List<EventCategory> categories;
@@ -299,22 +300,4 @@ class DayViewHeader extends StatelessWidget {
       ),
     );
   }
-}
-
-List<TimeOfDay> getTimeList({
-  required TimeOfDay startOfDay,
-  TimeOfDay? endOfDay,
-  required int timeGap,
-}) {
-  final timeEnd = endOfDay ?? const TimeOfDay(hour: 23, minute: 0);
-
-  final timeCount = ((timeEnd.hour - startOfDay.hour) * 60) ~/ timeGap;
-  DateTime first = DateTime.parse(
-      "2012-02-27T${startOfDay.hour.toString().padLeft(2, '0')}:00");
-  List<TimeOfDay> list = [];
-  for (var i = 1; i <= timeCount; i++) {
-    list.add(TimeOfDay.fromDateTime(first));
-    first = first.add(Duration(minutes: timeGap));
-  }
-  return list;
 }

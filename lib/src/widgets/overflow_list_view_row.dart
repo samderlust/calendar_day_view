@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-import 'background_ignore_pointer.dart';
+import '../extensions/time_of_day_extension.dart';
 import '../models/day_event.dart';
 import '../models/overflow_event.dart';
-import '../models/time_of_day_extension.dart';
 import '../models/typedef.dart';
+import 'background_ignore_pointer.dart';
 
 class OverflowListViewRow<T extends Object> extends StatefulWidget {
   const OverflowListViewRow({
@@ -75,8 +75,9 @@ class _OverflowListViewRowState<T extends Object>
 
   @override
   Widget build(BuildContext context) {
-    final maxHeight = widget.heightUnit *
-        widget.oEvents.start.minuteUntil(widget.oEvents.end);
+    final maxHeight = (widget.heightUnit *
+        widget.oEvents.start.minuteUntil(widget.oEvents.end).abs());
+
     return Container(
       width: widget.eventColumnWith,
       height: maxHeight,
@@ -85,8 +86,10 @@ class _OverflowListViewRowState<T extends Object>
         minHeight: maxHeight,
       ),
       child: Stack(
+        clipBehavior: Clip.none,
         children: [
           ListView.builder(
+            clipBehavior: Clip.none,
             controller: _scrollCtrl,
             scrollDirection: Axis.horizontal,
             shrinkWrap: true,
