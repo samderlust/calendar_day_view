@@ -16,8 +16,9 @@ class InRowCalendarDayView<T extends Object> extends StatefulWidget {
   const InRowCalendarDayView({
     Key? key,
     required this.events,
-    required this.startOfDay,
-    required this.endOfDay,
+    this.startOfDay = const TimeOfDay(hour: 7, minute: 00),
+    this.endOfDay = const TimeOfDay(hour: 17, minute: 00),
+    required this.currentDate,
     this.showWithEventOnly = false,
     this.timeGap = 60,
     this.timeTextColor,
@@ -45,14 +46,17 @@ class InRowCalendarDayView<T extends Object> extends StatefulWidget {
   /// height in pixel per minute
   final double heightPerMin;
 
+  /// the date that this dayView is presenting
+  final DateTime currentDate;
+
   /// List of events to be display in the day view
   final List<DayEvent<T>> events;
 
   /// To set the start time of the day view
-  final DateTime startOfDay;
+  final TimeOfDay startOfDay;
 
   /// To set the end time of the day view
-  final DateTime endOfDay;
+  final TimeOfDay endOfDay;
 
   /// if true, only display row with events. Default to false
   final bool showWithEventOnly;
@@ -94,12 +98,18 @@ class _InRowCalendarDayViewState<T extends Object>
   double _rowHeight = 60.0;
   double _rowScale = 1;
 
+  late DateTime timeStart;
+  late DateTime timeEnd;
+
   @override
   void initState() {
     super.initState();
     _heightPerMin = widget.heightPerMin;
-    _timesInDay =
-        getTimeList(widget.startOfDay, widget.endOfDay, widget.timeGap);
+    timeStart = widget.currentDate.copyTimeAndMinClean(widget.startOfDay);
+    timeEnd = widget.currentDate.copyTimeAndMinClean(widget.endOfDay);
+
+    _timesInDay = getTimeList(timeStart, timeEnd, widget.timeGap);
+
     _rowHeight = widget.timeGap * _heightPerMin * _rowScale;
 
     if (widget.showCurrentTimeLine) {
@@ -114,8 +124,10 @@ class _InRowCalendarDayViewState<T extends Object>
   @override
   void didUpdateWidget(covariant InRowCalendarDayView<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
-    _timesInDay =
-        getTimeList(widget.startOfDay, widget.endOfDay, widget.timeGap);
+    timeStart = widget.currentDate.copyTimeAndMinClean(widget.startOfDay);
+    timeEnd = widget.currentDate.copyTimeAndMinClean(widget.endOfDay);
+    _timesInDay = getTimeList(timeStart, timeEnd, widget.timeGap);
+
     _heightPerMin = widget.heightPerMin;
     _rowHeight = widget.timeGap * _heightPerMin * _rowScale;
   }
@@ -143,6 +155,7 @@ class _InRowCalendarDayViewState<T extends Object>
             });
           },
           child: ListView.builder(
+            clipBehavior: Clip.none,
             primary: widget.primary,
             controller: widget.controller,
             physics: widget.physics,

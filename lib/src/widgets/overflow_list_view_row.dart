@@ -79,7 +79,7 @@ class _OverflowListViewRowState<T extends Object>
         widget.oEvents.start.minuteUntil(widget.oEvents.end).abs());
 
     return Stack(
-      clipBehavior: Clip.none,
+      // clipBehavior: Clip.none,
       children: [
         Container(
           width: widget.eventColumnWith,
@@ -89,10 +89,9 @@ class _OverflowListViewRowState<T extends Object>
             minHeight: maxHeight,
           ),
           child: Stack(
-            clipBehavior: Clip.none,
+            // clipBehavior: Clip.none,
             children: [
               ListView.builder(
-                clipBehavior: Clip.none,
                 controller: _scrollCtrl,
                 scrollDirection: Axis.horizontal,
                 shrinkWrap: true,
@@ -110,6 +109,7 @@ class _OverflowListViewRowState<T extends Object>
                   );
 
                   return Column(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       SizedBox(
                         height: event.start.minuteFrom(widget.oEvents.start) *

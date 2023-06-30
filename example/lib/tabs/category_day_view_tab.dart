@@ -19,14 +19,14 @@ class CategoryDayViewTab extends HookWidget {
       children: [
         Expanded(
           child: CategoryCalendarDayView(
+            // allowHorizontalScroll: true,
             categories: categories,
             events: events,
             onTileTap: (category, time) {
               print(category);
               print(time);
             },
-            startOfDay: DateTime.now().copyWith(hour: 7, minute: 00),
-            endOfDay: DateTime.now().copyWith(hour: 17, minute: 00),
+            currentDate: DateTime.now(),
             timeGap: 60,
             heightPerMin: 1,
             evenRowColor: Colors.white,

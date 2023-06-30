@@ -8,15 +8,25 @@ import '../models/overflow_event.dart';
 /// in the time range of a row.
 
 List<OverflowEventsRow<T>> processOverflowEvents<T extends Object>(
-    List<DayEvent<T>> sortedEvents) {
+  List<DayEvent<T>> sortedEvents, {
+  required DateTime startOfDay,
+  required DateTime endOfDay,
+}) {
   if (sortedEvents.isEmpty) return [];
 
-  var start = sortedEvents.first.start;
+  var start = sortedEvents.first.start.cleanSec();
   var end = sortedEvents.first.end!;
 
   final Map<DateTime, OverflowEventsRow<T>> oM = {};
 
-  for (final event in sortedEvents) {
+  for (var event in sortedEvents) {
+    if (event.start.isBefore(startOfDay) || event.start.isAfter(endOfDay)) {
+      continue;
+    }
+    // if (event.end!.isAfter(endOfDay)) {
+    //   event = event.copyWith(end: endOfDay);
+    // }
+
     if (event.start.earlierThan(end)) {
       oM.update(
         start,
@@ -26,11 +36,11 @@ List<OverflowEventsRow<T>> processOverflowEvents<T extends Object>(
       );
 
       if (event.end!.laterThan(end)) {
-        end = event.end!;
+        end = event.end!.isBefore(endOfDay) ? event.end! : endOfDay;
         oM[start] = oM[start]!.copyWith(end: event.end!);
       }
     } else {
-      start = event.start;
+      start = event.start.cleanSec();
       end = event.end!;
       oM[start] = OverflowEventsRow(
           events: [event], start: event.start, end: event.end!);

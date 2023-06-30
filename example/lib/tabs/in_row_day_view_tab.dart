@@ -23,8 +23,7 @@ class InRowDayViewTab extends HookWidget {
             dividerColor: Colors.black,
             timeGap: timeGap.value,
             showWithEventOnly: withEventOnly.value,
-            startOfDay: DateTime.now().copyWith(hour: 00, minute: 0),
-            endOfDay: DateTime.now().copyWith(hour: 22, minute: 0),
+            currentDate: DateTime.now(),
             itemBuilder: (context, constraints, itemIndex, event) => Flexible(
               child: HookBuilder(builder: (context) {
                 return SizedBox(
