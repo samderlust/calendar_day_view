@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-import 'background_ignore_pointer.dart';
+import '../extensions/time_of_day_extension.dart';
 import '../models/day_event.dart';
 import '../models/overflow_event.dart';
-import '../models/time_of_day_extension.dart';
 import '../models/typedef.dart';
+import 'background_ignore_pointer.dart';
 
 class OverflowListViewRow<T extends Object> extends StatefulWidget {
   const OverflowListViewRow({
@@ -75,92 +75,101 @@ class _OverflowListViewRowState<T extends Object>
 
   @override
   Widget build(BuildContext context) {
-    final maxHeight = widget.heightUnit *
-        widget.oEvents.start.minuteUntil(widget.oEvents.end);
-    return Container(
-      width: widget.eventColumnWith,
-      height: maxHeight,
-      constraints: BoxConstraints(
-        maxHeight: maxHeight,
-        minHeight: maxHeight,
-      ),
-      child: Stack(
-        children: [
-          ListView.builder(
-            controller: _scrollCtrl,
-            scrollDirection: Axis.horizontal,
-            shrinkWrap: true,
-            itemCount: widget.oEvents.events.length,
-            itemBuilder: (context, index) {
-              final event = widget.oEvents.events.elementAt(index);
-              final width =
-                  widget.eventColumnWith / widget.oEvents.events.length;
+    final maxHeight = (widget.heightUnit *
+        widget.oEvents.start.minuteUntil(widget.oEvents.end).abs());
 
-              final tileConstraints = BoxConstraints(
-                maxHeight: event.durationInMins * widget.heightUnit,
-                minHeight: event.durationInMins * widget.heightUnit,
-                minWidth: width,
-                maxWidth: widget.eventColumnWith,
-              );
-
-              return Column(
-                children: [
-                  SizedBox(
-                    height: event.start.minuteFrom(widget.oEvents.start) *
-                        widget.heightUnit,
-                  ),
-                  ConstrainedBox(
-                    constraints: BoxConstraints(
-                      maxHeight: event.durationInMins * widget.heightUnit,
-                    ),
-                    child: StopBackgroundIgnorePointer(
-                      ignored: widget.ignored,
-                      child: widget.overflowItemBuilder(
-                        context,
-                        tileConstraints,
-                        index,
-                        event,
-                      ),
-                    ),
-                  ),
-                ],
-              );
-            },
+    return Stack(
+      // clipBehavior: Clip.none,
+      children: [
+        Container(
+          width: widget.eventColumnWith,
+          height: maxHeight,
+          constraints: BoxConstraints(
+            maxHeight: maxHeight,
+            minHeight: maxHeight,
           ),
-          if (widget.showMoreOnRowButton)
-            Align(
-              alignment: Alignment.centerRight,
-              child: GestureDetector(
-                onTap: () {
-                  _scrollCtrl.animateTo(
-                    (_scrollCtrl.offset + (widget.eventColumnWith - 10)).clamp(
-                      0,
-                      _scrollCtrl.position.maxScrollExtent,
-                    ),
-                    duration: const Duration(milliseconds: 300),
-                    curve: Curves.easeIn,
+          child: Stack(
+            // clipBehavior: Clip.none,
+            children: [
+              ListView.builder(
+                controller: _scrollCtrl,
+                scrollDirection: Axis.horizontal,
+                shrinkWrap: true,
+                itemCount: widget.oEvents.events.length,
+                itemBuilder: (context, index) {
+                  final event = widget.oEvents.events.elementAt(index);
+                  final width =
+                      widget.eventColumnWith / widget.oEvents.events.length;
+
+                  final tileConstraints = BoxConstraints(
+                    maxHeight: event.durationInMins * widget.heightUnit,
+                    minHeight: event.durationInMins * widget.heightUnit,
+                    minWidth: width,
+                    maxWidth: widget.eventColumnWith,
                   );
-                },
-                child: AnimatedOpacity(
-                  opacity: _atEndOfList ? 0 : 1,
-                  duration: const Duration(milliseconds: 300),
-                  child: widget.moreOnRowButton ??
-                      Container(
-                        height: 30,
-                        width: 30,
-                        decoration: BoxDecoration(
-                            color: Colors.black38.withOpacity(.8),
-                            shape: BoxShape.circle),
-                        child: const Icon(
-                          Icons.arrow_right,
-                          color: Colors.white,
+
+                  return Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      SizedBox(
+                        height: event.start.minuteFrom(widget.oEvents.start) *
+                            widget.heightUnit,
+                      ),
+                      ConstrainedBox(
+                        constraints: BoxConstraints(
+                          maxHeight: event.durationInMins * widget.heightUnit,
+                        ),
+                        child: StopBackgroundIgnorePointer(
+                          ignored: widget.ignored,
+                          child: widget.overflowItemBuilder(
+                            context,
+                            tileConstraints,
+                            index,
+                            event,
+                          ),
                         ),
                       ),
-                ),
+                    ],
+                  );
+                },
               ),
-            )
-        ],
-      ),
+              if (widget.showMoreOnRowButton)
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: GestureDetector(
+                    onTap: () {
+                      _scrollCtrl.animateTo(
+                        (_scrollCtrl.offset + (widget.eventColumnWith - 10))
+                            .clamp(
+                          0,
+                          _scrollCtrl.position.maxScrollExtent,
+                        ),
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.easeIn,
+                      );
+                    },
+                    child: AnimatedOpacity(
+                      opacity: _atEndOfList ? 0 : 1,
+                      duration: const Duration(milliseconds: 300),
+                      child: widget.moreOnRowButton ??
+                          Container(
+                            height: 30,
+                            width: 30,
+                            decoration: BoxDecoration(
+                                color: Colors.black38.withOpacity(.8),
+                                shape: BoxShape.circle),
+                            child: const Icon(
+                              Icons.arrow_right,
+                              color: Colors.white,
+                            ),
+                          ),
+                    ),
+                  ),
+                )
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

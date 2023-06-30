@@ -1,5 +1,8 @@
-## 2.1.0
+## 3.10.0 [BREAKING CHANGES]
 
+- [breaking] use `DateTime` instead of `TimeOfDate` all across. This is more convenient for click to create new event and lavage build in helpers
+- [breaking] in all day views, `startOfDay` and `endOfDate` is now `required`
+- [breaking] `currentDate` is required in order to support on time click
 - add custom header builder for category day view
 - empty tile builder for category day view
 

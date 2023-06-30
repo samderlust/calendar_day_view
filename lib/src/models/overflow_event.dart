@@ -5,8 +5,8 @@ import 'day_event.dart';
 
 class OverflowEventsRow<T extends Object> {
   final List<DayEvent<T>> events;
-  final TimeOfDay start;
-  final TimeOfDay end;
+  final DateTime start;
+  final DateTime end;
   OverflowEventsRow({
     required this.events,
     required this.start,
@@ -15,8 +15,8 @@ class OverflowEventsRow<T extends Object> {
 
   OverflowEventsRow<T> copyWith({
     List<DayEvent<T>>? events,
-    TimeOfDay? start,
-    TimeOfDay? end,
+    DateTime? start,
+    DateTime? end,
   }) {
     return OverflowEventsRow<T>(
       events: events ?? this.events,
