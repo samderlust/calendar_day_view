@@ -1,9 +1,11 @@
 ## 3.10.0 [BREAKING CHANGES]
 
-- [breaking] use `DateTime` instead of `TimeOfDate` all across. This is more convenient for click to create new event and lavage build in helpers
-- [breaking] in all day views, `startOfDay` and `endOfDate` is now `required`
 - [breaking] `currentDate` is required in order to support on time click
-- add custom header builder for category day view
+- Change to CategoryCalendarDayView:
+  - add custom header builder for category day view
+  - add `allowHorizontalScroll` to allow vertical scroll to show more category, unless all categories columns will be divided to fit the screen
+  - add `eventColumnWith` to customize the width of each category column, only has effect when [allowHorizontalScroll] = true
+  - add `logo` The widget that will be place at top left corner tile of this day view
 - empty tile builder for category day view
 
 ## 2.0.0
