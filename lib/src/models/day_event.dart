@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 class DayEvent<T extends Object> {
   final T value;
   final DateTime start;
@@ -66,9 +64,9 @@ extension DayEventExtension on DayEvent {
         .difference(timePoint.copyWith(second: 00))
         .inSeconds;
     return dif <= gap && dif >= 0;
-    return start.hour == timePoint.hour &&
-        (start.minute >= timePoint.minute &&
-            start.minute < (timePoint.minute + gap));
+    // return start.hour == timePoint.hour &&
+    //     (start.minute >= timePoint.minute &&
+    //         start.minute < (timePoint.minute + gap));
   }
 
   bool startAt(DateTime timePoint) =>
@@ -77,10 +75,10 @@ extension DayEventExtension on DayEvent {
   int compare(DayEvent other) {
     return start.isBefore(other.start) ? -1 : 1;
 
-    if (start.hour > other.start.hour) return 1;
-    if (start.hour == other.start.hour && start.minute > other.start.minute) {
-      return 1;
-    }
-    return -1;
+    // if (start.hour > other.start.hour) return 1;
+    // if (start.hour == other.start.hour && start.minute > other.start.minute) {
+    //   return 1;
+    // }
+    // return -1;
   }
 }

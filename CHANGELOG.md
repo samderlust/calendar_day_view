@@ -1,4 +1,4 @@
-## 3.10.0 [BREAKING CHANGES]
+## 3.0.0-dev.1 [BREAKING CHANGES]
 
 - [breaking] `currentDate` is required in order to support on time click
 - Change to CategoryCalendarDayView:

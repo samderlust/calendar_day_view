@@ -1,5 +1,7 @@
 [!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/samderlust)
 
+## [BREAKING CHANGES] in version 3. please prefer to Changelogs
+
 # Calendar Day View - A fully customizable Calendar day view library
 
 This package is dedicated to calendar day view. While there are many calendar package out there. It seems that not many of them support Day view well. This package clearly is not a calendar replacement but rather a complement to make calendar in app better.

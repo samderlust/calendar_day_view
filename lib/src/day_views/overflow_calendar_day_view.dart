@@ -13,7 +13,7 @@ import '../widgets/current_time_line_widget.dart';
 import '../widgets/overflow_list_view_row.dart';
 
 class OverFlowCalendarDayView<T extends Object> extends StatefulWidget {
-  OverFlowCalendarDayView({
+  const OverFlowCalendarDayView({
     Key? key,
     required this.events,
     this.timeTitleColumnWidth = 50.0,
