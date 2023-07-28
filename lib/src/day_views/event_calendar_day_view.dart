@@ -92,7 +92,7 @@ class _EventCalendarDayViewState<T extends Object>
             shrinkWrap: true,
             primary: widget.primary,
             controller: widget.controller,
-            physics: widget.physics,
+            physics: widget.physics ?? const ClampingScrollPhysics(),
             padding: const EdgeInsets.only(top: 20, bottom: 20),
             itemCount: _timesInDay.length,
             itemBuilder: (context, index) {

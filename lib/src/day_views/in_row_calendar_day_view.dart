@@ -158,7 +158,7 @@ class _InRowCalendarDayViewState<T extends Object>
             clipBehavior: Clip.none,
             primary: widget.primary,
             controller: widget.controller,
-            physics: widget.physics,
+            physics: widget.physics ?? const ClampingScrollPhysics(),
             padding: const EdgeInsets.only(top: 20, bottom: 20),
             itemCount: _timesInDay.length,
             itemBuilder: (context, index) {

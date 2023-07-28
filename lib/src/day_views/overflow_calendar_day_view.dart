@@ -172,7 +172,7 @@ class _OverFlowCalendarDayViewState<T extends Object>
         child: SingleChildScrollView(
           primary: widget.primary,
           controller: widget.controller,
-          physics: widget.physics,
+          physics: widget.physics ?? const ClampingScrollPhysics(),
           padding: const EdgeInsets.only(top: 10, bottom: 20),
           child: Stack(
             children: [
