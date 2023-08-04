@@ -18,9 +18,10 @@ class CategoryDayViewTab extends HookWidget {
     return Column(
       children: [
         Expanded(
-          child: CategoryCalendarDayView2(
+          child: CategoryCalendarDayView(
             allowHorizontalScroll: true,
             categories: categories,
+            columnsPerPage: 3,
             events: events,
             onTileTap: (category, time) {
               print(category);
@@ -33,6 +34,24 @@ class CategoryDayViewTab extends HookWidget {
             oddRowColor: Colors.grey,
             headerDecoration: BoxDecoration(
               color: Colors.lightBlueAccent.withOpacity(.5),
+            ),
+            controlBarBuilder: (goToPreviousTab, goToNextTab) => Container(
+              color: Colors.green,
+              child: Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  IconButton.filledTonal(
+                    onPressed: goToPreviousTab,
+                    icon: const Icon(Icons.arrow_left),
+                  ),
+                  Text(DateTime.now().toString().split(":").first),
+                  IconButton.filledTonal(
+                    onPressed: goToNextTab,
+                    icon: const Icon(Icons.arrow_right),
+                  ),
+                ],
+              ),
             ),
             eventBuilder: (constraints, category, _, event) => event == null
                 ? SizedBox.shrink()

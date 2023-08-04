@@ -41,6 +41,15 @@ typedef CategoryDayViewTileTap<T extends Object> = Function(
   DateTime time,
 );
 
+/// To build the controller bar on the top of the day view
+///
+/// [goToPreviousTab] to animate to previous tabs
+/// [goToNextTab] to animate to next tabs
+typedef CategoryDayViewControlBarBuilder = Widget Function(
+  void Function() goToPreviousTab,
+  void Function() goToNextTab,
+);
+
 typedef CategoryDayViewHeaderTileBuilder = Function(
   BoxConstraints constraints,
   EventCategory category,

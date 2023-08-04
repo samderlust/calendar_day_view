@@ -29,6 +29,7 @@ class OverflowDayViewTab extends HookWidget {
             currentDate: DateTime.now(),
             timeGap: timeGap.value,
             heightPerMin: .4,
+            startOfDay: TimeOfDay(hour: 7, minute: 15),
             renderRowAsListView: true,
             showCurrentTimeLine: true,
             showMoreOnRowButton: true,
