@@ -98,8 +98,8 @@ class CategoryCalendarDayView<T extends Object> extends StatefulWidget {
 
   /// To build the controller bar on the top of the day view
   ///
-  /// [goToPreviousTab] to animate to previous tabs
-  /// [goToNextTab] to animate to next tabs
+  /// `goToPreviousTab` to animate to previous tabs
+  /// `goToNextTab` to animate to next tabs
   final CategoryDayViewControlBarBuilder? controlBarBuilder;
 
   @override

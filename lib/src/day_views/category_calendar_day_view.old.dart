@@ -158,7 +158,7 @@ class _CategoryCalendarDayViewState<T extends Object>
                             duration: const Duration(milliseconds: 300),
                             curve: Curves.linear);
                       },
-                      icon: Icon(Icons.arrow_left),
+                      icon: const Icon(Icons.arrow_left),
                     ),
                     Text(widget.currentDate.toString()),
                     IconButton.filledTonal(
@@ -169,7 +169,7 @@ class _CategoryCalendarDayViewState<T extends Object>
                             duration: const Duration(milliseconds: 300),
                             curve: Curves.linear);
                       },
-                      icon: Icon(Icons.arrow_right),
+                      icon: const Icon(Icons.arrow_right),
                     ),
                   ],
                 ),

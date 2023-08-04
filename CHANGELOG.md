@@ -1,7 +1,6 @@
 ## 3.0.0-dev.2
 
-- update to dart 3.0.0
-- support tab on category day view
+- Support tab view for Category Day View.
 
 ## 3.0.0-dev.1 [BREAKING CHANGES]
 
