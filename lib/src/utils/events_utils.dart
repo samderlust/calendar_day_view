@@ -37,7 +37,7 @@ List<OverflowEventsRow<T>> processOverflowEvents<T extends Object>(
 
       if (event.end!.laterThan(end)) {
         end = event.end!.isBefore(endOfDay) ? event.end! : endOfDay;
-        oM[start] = oM[start]!.copyWith(end: event.end!);
+        oM[start] = oM[start]!.copyWith(end: end);
       }
     } else {
       start = event.start.cleanSec();

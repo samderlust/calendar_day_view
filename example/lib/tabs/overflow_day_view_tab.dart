@@ -28,8 +28,8 @@ class OverflowDayViewTab extends HookWidget {
             dividerColor: Colors.black,
             currentDate: DateTime.now(),
             timeGap: timeGap.value,
-            heightPerMin: .4,
-            startOfDay: TimeOfDay(hour: 7, minute: 15),
+            heightPerMin: 2,
+            startOfDay: TimeOfDay(hour: 7, minute: 0),
             renderRowAsListView: true,
             showCurrentTimeLine: true,
             showMoreOnRowButton: true,
@@ -59,8 +59,8 @@ class OverflowDayViewTab extends HookWidget {
                     ),
                     child: Center(
                       child: Text(
-                        textAlign: TextAlign.center,
                         event.value,
+                        textAlign: TextAlign.center,
                         overflow: TextOverflow.fade,
                         style: const TextStyle(
                           color: Colors.white,

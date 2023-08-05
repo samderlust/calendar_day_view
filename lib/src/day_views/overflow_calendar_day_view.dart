@@ -157,12 +157,12 @@ class _OverFlowCalendarDayViewState<T extends Object>
   Widget build(BuildContext context) {
     final heightUnit = widget.heightPerMin * _rowScale;
     final rowHeight = widget.timeGap * widget.heightPerMin * _rowScale;
-
     final timesInDay = getTimeList(
       timeStart,
       timeEnd,
       widget.timeGap,
     );
+    final totalHeight = timesInDay.length * rowHeight;
 
     return LayoutBuilder(builder: (context, constraints) {
       final viewWidth = constraints.maxWidth;
@@ -177,7 +177,7 @@ class _OverFlowCalendarDayViewState<T extends Object>
           child: Stack(
             children: [
               SizedBox(
-                height: timesInDay.length * rowHeight,
+                height: totalHeight,
                 child: Stack(
                   children: [
                     ListView.builder(
@@ -228,7 +228,11 @@ class _OverFlowCalendarDayViewState<T extends Object>
                         fit: StackFit.expand,
                         // clipBehavior: Clip.none,
                         children: widget.renderRowAsListView
-                            ? renderAsListView(heightUnit, eventColumnWith)
+                            ? renderAsListView(
+                                heightUnit,
+                                eventColumnWith,
+                                totalHeight,
+                              )
                             : renderWithFixedWidth(heightUnit, eventColumnWith),
                       ),
                     ),
@@ -281,13 +285,15 @@ class _OverFlowCalendarDayViewState<T extends Object>
   }
 
 // to render all events in same row as a horizontal istView
-  List<Widget> renderAsListView(double heightUnit, double eventColumnWith) {
+  List<Widget> renderAsListView(
+      double heightUnit, double eventColumnWith, double totalHeight) {
     return [
       for (final oEvents in _overflowEvents)
         Positioned(
           top: oEvents.start.minuteFrom(timeStart) * heightUnit,
           left: widget.timeTitleColumnWidth,
           child: OverflowListViewRow(
+            totalHeight: totalHeight,
             oEvents: oEvents,
             ignored: widget.onTimeTap != null,
             overflowItemBuilder: widget.overflowItemBuilder!,

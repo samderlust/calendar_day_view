@@ -21,7 +21,7 @@ class CategoryDayViewTab extends HookWidget {
           child: CategoryCalendarDayView(
             allowHorizontalScroll: true,
             categories: categories,
-            columnsPerPage: 3,
+            columnsPerPage: 2,
             events: events,
             onTileTap: (category, time) {
               print(category);
