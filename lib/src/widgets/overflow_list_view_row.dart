@@ -81,7 +81,6 @@ class _OverflowListViewRowState<T extends Object>
         widget.oEvents.start.minuteUntil(widget.oEvents.end).abs());
 
     return Container(
-      color: Colors.amber,
       width: widget.eventColumnWith,
       height: maxHeight,
       constraints: BoxConstraints(
