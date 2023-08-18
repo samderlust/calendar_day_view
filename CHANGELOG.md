@@ -2,6 +2,10 @@
 
 - user factory constructor to create different Day Views. Reduce confusion.
 
+## 3.0.1
+
+- fix padding issue in overflow day view
+
 ## 3.0.0
 
 - [breaking] `currentDate` is required in order to support on time click

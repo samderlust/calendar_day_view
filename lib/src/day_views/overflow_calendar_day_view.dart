@@ -182,7 +182,6 @@ class _OverFlowCalendarDayViewState<T extends Object>
                 child: Stack(
                   children: [
                     ListView.builder(
-                      padding: const EdgeInsets.symmetric(vertical: 15),
                       physics: const NeverScrollableScrollPhysics(),
                       itemCount: timesInDay.length,
                       itemBuilder: (context, index) {
