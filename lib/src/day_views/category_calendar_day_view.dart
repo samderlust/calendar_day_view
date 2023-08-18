@@ -418,10 +418,7 @@ class DayViewRow<T extends Object> extends StatelessWidget {
                         ? null
                         : () => onTileTap!(category, time),
                     child: ConstrainedBox(
-                      constraints: BoxConstraints(
-                        minWidth: tileWidth,
-                        minHeight: rowHeight,
-                      ),
+                      constraints: constraints,
                       child: eventBuilder(
                         constraints,
                         category,

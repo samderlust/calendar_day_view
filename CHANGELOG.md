@@ -1,6 +1,6 @@
-## 3.1.0
+## 3.0.2
 
-- user factory constructor to create different Day Views. Reduce confusion.
+- fix category day view event tile size constraints
 
 ## 3.0.1
 
