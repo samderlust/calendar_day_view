@@ -1,12 +1,4 @@
-## 3.0.0-dev.3
-
-- fix tile height in Overflow day view
-
-## 3.0.0-dev.2
-
-- Support tab view for Category Day View.
-
-## 3.0.0-dev.1 [BREAKING CHANGES]
+## 3.0.0
 
 - [breaking] `currentDate` is required in order to support on time click
 - Change to CategoryCalendarDayView:
@@ -15,6 +7,8 @@
   - add `eventColumnWith` to customize the width of each category column, only has effect when [allowHorizontalScroll] = true
   - add `logo` The widget that will be place at top left corner tile of this day view
 - empty tile builder for category day view
+- fix tile height in Overflow day view.
+- Support tab view for Category Day View.
 
 ## 2.0.0
 
