@@ -1,3 +1,7 @@
+## 3.0.0-dev.3
+
+- fix tile height in Overflow day view
+
 ## 3.0.0-dev.2
 
 - Support tab view for Category Day View.
