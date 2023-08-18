@@ -22,14 +22,14 @@ class OverflowDayViewTab extends HookWidget {
     return Column(
       children: [
         Expanded(
-          child: OverFlowCalendarDayView(
+          child: CalendarDayView.overflow(
             onTimeTap: onTimeTap ?? print,
             events: UnmodifiableListView(events),
             dividerColor: Colors.black,
             currentDate: DateTime.now(),
             timeGap: timeGap.value,
             heightPerMin: 2,
-            startOfDay: TimeOfDay(hour: 7, minute: 0),
+            startOfDay: const TimeOfDay(hour: 7, minute: 0),
             renderRowAsListView: true,
             showCurrentTimeLine: true,
             showMoreOnRowButton: true,

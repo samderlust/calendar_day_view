@@ -1,3 +1,7 @@
+## 3.1.0
+
+- user factory constructor to create different Day Views. Reduce confusion.
+
 ## 3.0.1
 
 - fix padding issue in overflow day view

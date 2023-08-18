@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 
 import '../models/day_event.dart';
 import '../models/typedef.dart';
+import 'calendar_day_view_base.dart';
 
 /// Day View that only show time slot with Events
 ///
 /// this day view doesn't display with a fixed time gap
 /// it listed and sorted by the time that the events start
-class EventCalendarDayView<T extends Object> extends StatefulWidget {
+class EventCalendarDayView<T extends Object> extends StatefulWidget
+    implements CalendarDayView<T> {
   const EventCalendarDayView({
     Key? key,
     required this.events,
