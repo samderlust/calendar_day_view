@@ -18,7 +18,7 @@ class CategoryDayViewTab extends HookWidget {
     return Column(
       children: [
         Expanded(
-          child: CategoryCalendarDayView(
+          child: CalendarDayView.category(
             allowHorizontalScroll: true,
             categories: categories,
             columnsPerPage: 2,
