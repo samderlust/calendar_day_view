@@ -1,9 +1,9 @@
 import 'dart:async';
 
+import 'package:calendar_day_view/calendar_day_view.dart';
 import 'package:calendar_day_view/src/extensions/time_of_day_extension.dart';
 import 'package:flutter/material.dart';
 
-import '../models/day_event.dart';
 import '../models/overflow_event.dart';
 import '../models/typedef.dart';
 import '../utils/date_time_utils.dart';
@@ -12,24 +12,25 @@ import '../widgets/background_ignore_pointer.dart';
 import '../widgets/current_time_line_widget.dart';
 import '../widgets/overflow_list_view_row.dart';
 
-class OverFlowCalendarDayView<T extends Object> extends StatefulWidget {
+class OverFlowCalendarDayView<T extends Object> extends StatefulWidget
+    implements CalendarDayView<T> {
   const OverFlowCalendarDayView({
     Key? key,
     required this.events,
     this.timeTitleColumnWidth = 50.0,
     this.startOfDay = const TimeOfDay(hour: 7, minute: 00),
     this.endOfDay = const TimeOfDay(hour: 17, minute: 00),
-    required this.currentDate,
+    this.heightPerMin = 1.0,
     this.timeGap = 60,
+    this.showCurrentTimeLine = false,
+    this.renderRowAsListView = false,
+    this.showMoreOnRowButton = false,
+    required this.currentDate,
     this.timeTextColor,
     this.timeTextStyle,
     this.dividerColor,
-    this.heightPerMin = 1.0,
-    this.showCurrentTimeLine = false,
     this.currentTimeLineColor,
     this.overflowItemBuilder,
-    this.renderRowAsListView = false,
-    this.showMoreOnRowButton = false,
     this.moreOnRowButton,
     this.onTimeTap,
     this.primary,

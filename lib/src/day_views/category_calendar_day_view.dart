@@ -6,7 +6,8 @@ import '../../calendar_day_view.dart';
 import '../models/typedef.dart';
 import '../utils/date_time_utils.dart';
 
-class CategoryCalendarDayView<T extends Object> extends StatefulWidget {
+class CategoryCalendarDayView<T extends Object> extends StatefulWidget
+    implements CalendarDayView<T> {
   const CategoryCalendarDayView({
     Key? key,
     required this.categories,
@@ -14,7 +15,7 @@ class CategoryCalendarDayView<T extends Object> extends StatefulWidget {
     this.startOfDay = const TimeOfDay(hour: 7, minute: 00),
     this.endOfDay = const TimeOfDay(hour: 17, minute: 00),
     required this.currentDate,
-    required this.timeGap,
+    this.timeGap = 60,
     this.heightPerMin = 1.0,
     this.evenRowColor,
     this.oddRowColor,

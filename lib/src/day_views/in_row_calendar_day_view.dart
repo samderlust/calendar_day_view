@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
+import '../../calendar_day_view.dart';
 import '../extensions/time_of_day_extension.dart';
-import '../models/day_event.dart';
 import '../models/typedef.dart';
 import '../utils/date_time_utils.dart';
 import '../widgets/current_time_line_widget.dart';
@@ -12,7 +12,8 @@ import '../widgets/current_time_line_widget.dart';
 ///
 /// ex: if [timeGap] is 15, the events that have start time from `10:00` to `10:15`
 /// will be displayed in the same row.
-class InRowCalendarDayView<T extends Object> extends StatefulWidget {
+class InRowCalendarDayView<T extends Object> extends StatefulWidget
+    implements CalendarDayView<T> {
   const InRowCalendarDayView({
     Key? key,
     required this.events,

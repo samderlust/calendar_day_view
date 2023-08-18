@@ -16,7 +16,7 @@ class InRowDayViewTab extends HookWidget {
     return Column(
       children: [
         Expanded(
-          child: InRowCalendarDayView<String>(
+          child: CalendarDayView<String>.inRow(
             events: UnmodifiableListView(events),
             heightPerMin: 1,
             showCurrentTimeLine: true,
