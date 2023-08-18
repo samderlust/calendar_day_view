@@ -1,5 +1,7 @@
 [!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/samderlust)
 
+## [BREAKING CHANGES] in version 3. please prefer to Changelogs
+
 # Calendar Day View - A fully customizable Calendar day view library
 
 This package is dedicated to calendar day view. While there are many calendar package out there. It seems that not many of them support Day view well. This package clearly is not a calendar replacement but rather a complement to make calendar in app better.
@@ -46,10 +48,10 @@ look at example folder for all use cases
   CategoryCalendarDayView(
             categories: categories,
             events: events,
+            currentDate: DateTime.now(),
             onTileTap: addEventOnClick,
-            startOfDay: const TimeOfDay(hour: 7, minute: 00),
-            endOfDay: const TimeOfDay(hour: 17, minute: 00),
             timeGap: 60,
+            columnsPerPage: 3,
             heightPerMin: 1,
             evenRowColor: Colors.white,
             oddRowColor: Colors.grey,
@@ -85,8 +87,7 @@ look at example folder for all use cases
 OverFlowCalendarDayView(
             events: events,
             dividerColor: Colors.black,
-            startOfDay: const TimeOfDay(hour: 00, minute: 0),
-            endOfDay: const TimeOfDay(hour: 23, minute: 0),
+            currentDate: DateTime.now(),
             timeGap: 60,
             renderRowAsListView: true,
             showCurrentTimeLine: true,
@@ -129,6 +130,7 @@ InRowCalendarDayView<String>(
             showCurrentTimeLine: true,
             dividerColor: Colors.black,
             timeGap: 15,
+            currentDate: DateTime.now(),
             showWithEventOnly: withEventOnly.value,
             startOfDay: const TimeOfDay(hour: 00, minute: 0),
             endOfDay: const TimeOfDay(hour: 22, minute: 0),

@@ -1,3 +1,21 @@
+## 3.0.0-dev.3
+
+- fix tile height in Overflow day view
+
+## 3.0.0-dev.2
+
+- Support tab view for Category Day View.
+
+## 3.0.0-dev.1 [BREAKING CHANGES]
+
+- [breaking] `currentDate` is required in order to support on time click
+- Change to CategoryCalendarDayView:
+  - add custom header builder for category day view
+  - add `allowHorizontalScroll` to allow vertical scroll to show more category, unless all categories columns will be divided to fit the screen
+  - add `eventColumnWith` to customize the width of each category column, only has effect when [allowHorizontalScroll] = true
+  - add `logo` The widget that will be place at top left corner tile of this day view
+- empty tile builder for category day view
+
 ## 2.0.0
 
 - Add CategoryCalendarDayView to show event in day by categories

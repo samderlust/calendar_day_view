@@ -23,21 +23,31 @@ typedef EventDayViewItemBuilder<T extends Object> = Widget Function(
   DayEvent<T> event,
 );
 
-typedef OnTimeTap = Function(TimeOfDay time);
+typedef OnTimeTap = Function(DateTime time);
 
 typedef CategoryDayViewEventBuilder<T extends Object> = Widget Function(
   BoxConstraints constraints,
   EventCategory category,
-  CategorizedDayEvent<T> event,
+  DateTime time,
+  CategorizedDayEvent<T>? event,
 );
 typedef CategoryDayViewRowBuilder<T extends Object> = Widget Function(
   List<EventCategory> category,
   List<CategorizedDayEvent<T>> events,
-  TimeOfDay time,
+  DateTime time,
 );
 typedef CategoryDayViewTileTap<T extends Object> = Function(
   EventCategory category,
-  TimeOfDay time,
+  DateTime time,
+);
+
+/// To build the controller bar on the top of the day view
+///
+/// [goToPreviousTab] to animate to previous tabs
+/// [goToNextTab] to animate to next tabs
+typedef CategoryDayViewControlBarBuilder = Widget Function(
+  void Function() goToPreviousTab,
+  void Function() goToNextTab,
 );
 
 typedef CategoryDayViewHeaderTileBuilder = Function(

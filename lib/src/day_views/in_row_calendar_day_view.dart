@@ -2,10 +2,10 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
+import '../extensions/time_of_day_extension.dart';
 import '../models/day_event.dart';
-import '../models/time_of_day_extension.dart';
-
 import '../models/typedef.dart';
+import '../utils/date_time_utils.dart';
 import '../widgets/current_time_line_widget.dart';
 
 /// Show events in a time gap window in a single row
@@ -16,8 +16,9 @@ class InRowCalendarDayView<T extends Object> extends StatefulWidget {
   const InRowCalendarDayView({
     Key? key,
     required this.events,
-    this.startOfDay = const TimeOfDay(hour: 8, minute: 0),
-    this.endOfDay,
+    this.startOfDay = const TimeOfDay(hour: 7, minute: 00),
+    this.endOfDay = const TimeOfDay(hour: 17, minute: 00),
+    required this.currentDate,
     this.showWithEventOnly = false,
     this.timeGap = 60,
     this.timeTextColor,
@@ -45,6 +46,9 @@ class InRowCalendarDayView<T extends Object> extends StatefulWidget {
   /// height in pixel per minute
   final double heightPerMin;
 
+  /// the date that this dayView is presenting
+  final DateTime currentDate;
+
   /// List of events to be display in the day view
   final List<DayEvent<T>> events;
 
@@ -52,7 +56,7 @@ class InRowCalendarDayView<T extends Object> extends StatefulWidget {
   final TimeOfDay startOfDay;
 
   /// To set the end time of the day view
-  final TimeOfDay? endOfDay;
+  final TimeOfDay endOfDay;
 
   /// if true, only display row with events. Default to false
   final bool showWithEventOnly;
@@ -87,48 +91,43 @@ class InRowCalendarDayView<T extends Object> extends StatefulWidget {
 
 class _InRowCalendarDayViewState<T extends Object>
     extends State<InRowCalendarDayView<T>> {
-  List<TimeOfDay> _timesInDay = [];
+  List<DateTime> _timesInDay = [];
   double _heightPerMin = 1;
-  TimeOfDay _currentTime = TimeOfDay.now();
+  DateTime _currentTime = DateTime.now();
   Timer? _timer;
   double _rowHeight = 60.0;
   double _rowScale = 1;
+
+  late DateTime timeStart;
+  late DateTime timeEnd;
 
   @override
   void initState() {
     super.initState();
     _heightPerMin = widget.heightPerMin;
-    _timesInDay = getTimeList();
+    timeStart = widget.currentDate.copyTimeAndMinClean(widget.startOfDay);
+    timeEnd = widget.currentDate.copyTimeAndMinClean(widget.endOfDay);
+
+    _timesInDay = getTimeList(timeStart, timeEnd, widget.timeGap);
+
     _rowHeight = widget.timeGap * _heightPerMin * _rowScale;
 
     if (widget.showCurrentTimeLine) {
       _timer = Timer.periodic(const Duration(minutes: 1), (_) {
         setState(() {
-          _currentTime = TimeOfDay.now();
+          _currentTime = DateTime.now();
         });
       });
     }
   }
 
-  List<TimeOfDay> getTimeList() {
-    final timeEnd = widget.endOfDay ?? const TimeOfDay(hour: 23, minute: 0);
-
-    final timeCount =
-        ((timeEnd.hour - widget.startOfDay.hour) * 60) ~/ widget.timeGap;
-    DateTime first = DateTime.parse(
-        "2012-02-27T${widget.startOfDay.hour.toString().padLeft(2, '0')}:00");
-    List<TimeOfDay> list = [];
-    for (var i = 1; i <= timeCount; i++) {
-      list.add(TimeOfDay.fromDateTime(first));
-      first = first.add(Duration(minutes: widget.timeGap));
-    }
-    return list;
-  }
-
   @override
   void didUpdateWidget(covariant InRowCalendarDayView<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
-    _timesInDay = getTimeList();
+    timeStart = widget.currentDate.copyTimeAndMinClean(widget.startOfDay);
+    timeEnd = widget.currentDate.copyTimeAndMinClean(widget.endOfDay);
+    _timesInDay = getTimeList(timeStart, timeEnd, widget.timeGap);
+
     _heightPerMin = widget.heightPerMin;
     _rowHeight = widget.timeGap * _heightPerMin * _rowScale;
   }
@@ -156,9 +155,10 @@ class _InRowCalendarDayViewState<T extends Object>
             });
           },
           child: ListView.builder(
+            clipBehavior: Clip.none,
             primary: widget.primary,
             controller: widget.controller,
-            physics: widget.physics,
+            physics: widget.physics ?? const ClampingScrollPhysics(),
             padding: const EdgeInsets.only(top: 20, bottom: 20),
             itemCount: _timesInDay.length,
             itemBuilder: (context, index) {

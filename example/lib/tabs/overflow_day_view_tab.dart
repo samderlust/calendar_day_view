@@ -4,6 +4,8 @@ import 'package:calendar_day_view/calendar_day_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 
+final now = DateTime.now();
+
 class OverflowDayViewTab extends HookWidget {
   const OverflowDayViewTab({
     Key? key,
@@ -11,11 +13,12 @@ class OverflowDayViewTab extends HookWidget {
     this.onTimeTap,
   }) : super(key: key);
   final List<DayEvent<String>> events;
-  final Function(TimeOfDay)? onTimeTap;
+  final Function(DateTime)? onTimeTap;
   @override
   Widget build(BuildContext context) {
     final timeGap = useState<int>(60);
     final colorScheme = Theme.of(context).colorScheme;
+
     return Column(
       children: [
         Expanded(
@@ -23,10 +26,10 @@ class OverflowDayViewTab extends HookWidget {
             onTimeTap: onTimeTap ?? print,
             events: UnmodifiableListView(events),
             dividerColor: Colors.black,
-            startOfDay: const TimeOfDay(hour: 00, minute: 0),
-            endOfDay: const TimeOfDay(hour: 23, minute: 0),
+            currentDate: DateTime.now(),
             timeGap: timeGap.value,
-            heightPerMin: .4,
+            heightPerMin: 2,
+            startOfDay: TimeOfDay(hour: 7, minute: 0),
             renderRowAsListView: true,
             showCurrentTimeLine: true,
             showMoreOnRowButton: true,
@@ -36,6 +39,8 @@ class OverflowDayViewTab extends HookWidget {
                   key: ValueKey(event.hashCode),
                   onTap: () {
                     print(event.value);
+                    print(event.start);
+                    print(event.end);
                   },
                   child: Container(
                     margin: const EdgeInsets.only(right: 3),
@@ -54,8 +59,8 @@ class OverflowDayViewTab extends HookWidget {
                     ),
                     child: Center(
                       child: Text(
-                        textAlign: TextAlign.center,
                         event.value,
+                        textAlign: TextAlign.center,
                         overflow: TextOverflow.fade,
                         style: const TextStyle(
                           color: Colors.white,
