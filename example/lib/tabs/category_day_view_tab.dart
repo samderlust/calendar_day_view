@@ -18,7 +18,7 @@ class CategoryDayViewTab extends HookWidget {
     return Column(
       children: [
         Expanded(
-          child: CalendarDayView.category(
+          child: CalendarDayView.categoryOverflow(
             allowHorizontalScroll: true,
             categories: categories,
             columnsPerPage: 2,
@@ -59,6 +59,7 @@ class CategoryDayViewTab extends HookWidget {
                     onTap: () => print(event),
                     child: Container(
                       constraints: constraints,
+                      width: constraints.maxWidth * .8,
                       decoration: BoxDecoration(
                         color: Theme.of(context).colorScheme.primary,
                         border: Border.all(width: .5, color: Colors.black26),

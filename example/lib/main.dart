@@ -205,20 +205,26 @@ List<CategorizedDayEvent<String>> genEvents(int categoryLength) =>
     faker.randomGenerator.amount(
       (i) {
         final hour = faker.randomGenerator.integer(17, min: 7);
-        return CategorizedDayEvent(
-          categoryId: faker.randomGenerator
-              .integer(categoryLength + 1, min: 1)
-              .toString(),
-          value: faker.conference.name(),
-          start: DateTime.now().copyWith(
-            hour: hour,
-            minute: faker.randomGenerator.element([0]),
-          ),
-          end: DateTime.now().copyWith(
-            hour: faker.randomGenerator.integer(2, min: 1) + hour,
-            minute: faker.randomGenerator.element([0, 30]),
-          ),
+        final start = DateTime.now().copyWith(
+          hour: hour,
+          minute: faker.randomGenerator.element([0, 15, 20]),
+          second: 0,
         );
+        return CategorizedDayEvent(
+            categoryId: faker.randomGenerator
+                .integer(categoryLength + 1, min: 1)
+                .toString(),
+            value: faker.conference.name(),
+            start: start,
+            end: start.add(
+              Duration(minutes: faker.randomGenerator.element([90, 60])),
+            )
+            // end: DateTime.now().copyWith(
+            //   hour: faker.randomGenerator.integer(2, min: 1) + hour,
+            //   minute: faker.randomGenerator.element([0, 30]),
+            //   second: 0,
+            // ),
+            );
       },
       categoryLength * 5,
       min: 10,
