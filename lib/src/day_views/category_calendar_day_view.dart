@@ -6,6 +6,10 @@ import '../../calendar_day_view.dart';
 import '../models/typedef.dart';
 import '../utils/date_time_utils.dart';
 
+/// CategoryCalendarDayView
+/// where day view is divided into multiple category with fixed time slot.
+/// events will be showed within the correspond event tile only.
+
 class CategoryCalendarDayView<T extends Object> extends StatefulWidget
     implements CalendarDayView<T> {
   const CategoryCalendarDayView({

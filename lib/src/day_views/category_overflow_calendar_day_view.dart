@@ -6,6 +6,10 @@ import '../../calendar_day_view.dart';
 import '../models/typedef.dart';
 import '../utils/date_time_utils.dart';
 
+///CategoryOverflowCalendarDayView
+///
+/// where day view is divided into multiple category with fixed time slot.
+/// events can be display overflowed into different time slot but within the same category column
 class CategoryOverflowCalendarDayView<T extends Object> extends StatefulWidget
     implements CalendarDayView<T> {
   const CategoryOverflowCalendarDayView({
@@ -131,11 +135,6 @@ class _CategoryOverflowCalendarDayViewState<T extends Object>
     final rowHeight = widget.heightPerMin * widget.timeGap;
     return LayoutBuilder(
       builder: (context, constraints) {
-        // widget.allowHorizontalScroll
-        //     ? (widget.categories.length * widget.eventColumnWith +
-        //         widget.timeColumnWidth)
-        //     :
-        // final rowLength = constraints.maxWidth - timeColumnWidth;
         final rowLength = constraints.maxWidth - widget.timeColumnWidth;
 
         final tileWidth = widget.allowHorizontalScroll
