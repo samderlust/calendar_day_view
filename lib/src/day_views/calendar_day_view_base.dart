@@ -1,9 +1,14 @@
+import 'package:calendar_day_view/src/day_views/category_overflow_calendar_day_view.dart';
 import 'package:flutter/material.dart';
 
 import '../../calendar_day_view.dart';
 import '../models/typedef.dart';
 
 abstract class CalendarDayView<T extends Object> extends Widget {
+  /// Create [OverFlowCalendarDayView]
+  ///
+  /// where event widget can be display overflowed to other time row
+
   factory CalendarDayView.overflow({
     double? timeTitleColumnWidth,
     bool? showCurrentTimeLine,
@@ -49,6 +54,10 @@ abstract class CalendarDayView<T extends Object> extends Widget {
         controller: controller,
       );
 
+  /// Create [CategoryCalendarDayView]
+  ///
+  /// where day view is divided into multiple category with fixed time slot.
+  /// event will be showed within the correspond event tile only.
   factory CalendarDayView.category({
     required List<CategorizedDayEvent<T>> events,
     required DateTime currentDate,
@@ -94,6 +103,58 @@ abstract class CalendarDayView<T extends Object> extends Widget {
         controlBarBuilder: controlBarBuilder,
       );
 
+  /// Create [CategoryOverflowCalendarDayView]
+  ///
+  /// where day view is divided into multiple category with fixed time slot.
+  /// event can be display overflowed into different time slot but within the same category column
+  factory CalendarDayView.categoryOverflow({
+    required List<CategorizedDayEvent<T>> events,
+    required DateTime currentDate,
+    required List<EventCategory> categories,
+    required CategoryDayViewEventBuilder<T> eventBuilder,
+    double? timeColumnWidth,
+    TimeOfDay? startOfDay,
+    TimeOfDay? endOfDay,
+    int? timeGap,
+    double? heightPerMin,
+    bool? allowHorizontalScroll,
+    double? columnsPerPage,
+    Color? evenRowColor,
+    Color? oddRowColor,
+    VerticalDivider? verticalDivider,
+    Divider? horizontalDivider,
+    TextStyle? timeTextStyle,
+    CategoryDayViewTileTap? onTileTap,
+    BoxDecoration? headerDecoration,
+    Widget? logo,
+    CategoryDayViewControlBarBuilder? controlBarBuilder,
+  }) =>
+      CategoryOverflowCalendarDayView(
+        events: events,
+        currentDate: currentDate,
+        categories: categories,
+        timeColumnWidth: timeColumnWidth ?? 50,
+        heightPerMin: heightPerMin ?? 1.0,
+        startOfDay: startOfDay ?? const TimeOfDay(hour: 7, minute: 00),
+        endOfDay: endOfDay ?? const TimeOfDay(hour: 17, minute: 00),
+        eventBuilder: eventBuilder,
+        timeGap: timeGap ?? 60,
+        allowHorizontalScroll: allowHorizontalScroll ?? false,
+        columnsPerPage: columnsPerPage ?? 3,
+        evenRowColor: evenRowColor,
+        oddRowColor: oddRowColor,
+        verticalDivider: verticalDivider,
+        horizontalDivider: horizontalDivider,
+        timeTextStyle: timeTextStyle,
+        onTileTap: onTileTap,
+        headerDecoration: headerDecoration,
+        logo: logo,
+        controlBarBuilder: controlBarBuilder,
+      );
+
+  /// Create [InRowCalendarDayView]
+  ///
+  /// Show all events that are happened in the same time gap window in a single row
   factory CalendarDayView.inRow({
     required List<DayEvent<T>> events,
     required DateTime currentDate,
@@ -135,6 +196,10 @@ abstract class CalendarDayView<T extends Object> extends Widget {
         controller: controller,
       );
 
+  /// Create [EventCalendarDayView]
+  ///
+  /// this day view doesn't display with a fixed time gap
+  /// it listed and sorted by the time that the events start
   factory CalendarDayView.eventOnly({
     required List<DayEvent<T>> events,
     required EventDayViewItemBuilder<T> eventDayViewItemBuilder,

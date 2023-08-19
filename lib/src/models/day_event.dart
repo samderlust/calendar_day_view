@@ -69,6 +69,11 @@ extension DayEventExtension on DayEvent {
     //         start.minute < (timePoint.minute + gap));
   }
 
+  bool startInThisGap(DateTime timePoint, int gap) {
+    return start.isAfter(timePoint) &&
+        start.isBefore(timePoint.add(Duration(minutes: gap)));
+  }
+
   bool startAt(DateTime timePoint) =>
       start.hour == timePoint.hour && timePoint.minute == start.minute;
 

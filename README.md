@@ -1,6 +1,6 @@
 [!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/samderlust)
 
-## [BREAKING CHANGES] in version 3. please prefer to Changelogs
+## `BREAKING CHANGES` in version 3. please prefer to Changelogs
 
 # Calendar Day View - A fully customizable Calendar day view library
 
@@ -9,10 +9,11 @@ This package aims to give user most customization they want.
 
 ## Features
 
-- Category Day View showing event on a day with multiple categories
-- Over flow day view: like normal calendar where event is displayed expanded on multiple time row to indicate its duration
-- In row day view: show all events that start in the same time gap in a row
-- Event day view: show all events in day
+- `Category Overflow Day View`: where day view is divided into multiple category with fixed time slot. Events can be display overflowed into different time slot but within the same category column
+- `Category Day View`: showing event on a day with multiple categories
+- `Over flow Day View`: like normal calendar where event is displayed expanded on multiple time row to indicate its duration
+- `In Row Day View`: show all events that start in the same time gap in a row
+- `Event Day View`: show all events in day
 - Option to change start of day and end of day in day view
 - Option to change time gap(duration that a single row represent) in day view.
 - Option to show current time on day view as a line
@@ -45,7 +46,7 @@ look at example folder for all use cases
   <img src="https://raw.githubusercontent.com/samderlust/images/main/cagetorydayview.png" alt="Category Day View" style="width:800px;"/>
 
   ```
-  CategoryCalendarDayView(
+   CalendarDayView.categoryOverflow(
             categories: categories,
             events: events,
             currentDate: DateTime.now(),
@@ -84,7 +85,7 @@ look at example folder for all use cases
 | `renderRowAsListView: false`                                                                                               | `renderRowAsListView: true`                                                                                                 |
 
 ```
-OverFlowCalendarDayView(
+ CalendarDayView.overflow(
             events: events,
             dividerColor: Colors.black,
             currentDate: DateTime.now(),
@@ -105,7 +106,7 @@ OverFlowCalendarDayView(
 <img src="https://raw.githubusercontent.com/samderlust/images/main/eventdayview.png" alt="event only day view" style="width:600px;"/>
 
 ```
- EventCalendarDayView(
+ CalendarDayView.eventOnly(
       events: events,
       eventDayViewItemBuilder: (context, event) {
         return Container(
@@ -124,7 +125,7 @@ OverFlowCalendarDayView(
 <img src="https://raw.githubusercontent.com/samderlust/images/main/inrowdayview.png" alt="In Row Day View" style="width:600px;"/>
 
 ```
-InRowCalendarDayView<String>(
+InRowCalendarDaCalendarDayView<String>.inRow(
             events: events,
             heightPerMin: 1,
             showCurrentTimeLine: true,

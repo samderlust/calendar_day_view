@@ -1,6 +1,7 @@
 ## 3.1.0
 
-- user factory constructor to create different Day Views. Reduce confusion.
+- Provide factory constructors to create different Day Views. Reduce confusion.
+- Added `CategoryOverflowCalendarDayView` where day view is divided into multiple category with fixed time slot. Events can be display overflowed into different time slot but within the same category column
 
 ## 3.0.1
 
