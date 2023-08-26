@@ -174,79 +174,74 @@ class _OverFlowCalendarDayViewState<T extends Object>
           primary: widget.primary,
           controller: widget.controller,
           physics: widget.physics ?? const ClampingScrollPhysics(),
-          padding: const EdgeInsets.only(top: 10, bottom: 20),
-          child: Stack(
-            children: [
-              SizedBox(
-                height: totalHeight,
-                child: Stack(
-                  children: [
-                    ListView.builder(
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: timesInDay.length,
-                      itemBuilder: (context, index) {
-                        final time = timesInDay.elementAt(index);
-                        return GestureDetector(
-                          key: ValueKey(time.toString()),
-                          behavior: HitTestBehavior.opaque,
-                          onTap: widget.onTimeTap == null
-                              ? null
-                              : () => widget.onTimeTap!(time),
-                          child: SizedBox(
-                            height: rowHeight,
-                            width: viewWidth,
-                            child: Stack(
-                              children: [
-                                Divider(
-                                  color: widget.dividerColor ?? Colors.amber,
-                                  height: 0,
-                                  thickness: time.minute == 0 ? 1 : .5,
-                                  indent: widget.timeTitleColumnWidth,
-                                ),
-                                Transform(
-                                  transform:
-                                      Matrix4.translationValues(0, -10, 0),
-                                  child: SizedBox(
-                                    width: widget.timeTitleColumnWidth,
-                                    child: Text(
-                                      "${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, "0")}",
-                                      style: widget.timeTextStyle ??
-                                          TextStyle(
-                                              color: widget.timeTextColor),
-                                    ),
-                                  ),
-                                ),
-                              ],
+          padding: const EdgeInsets.only(top: 10, bottom: 10),
+          child: SizedBox(
+            height: totalHeight,
+            child: Stack(
+              clipBehavior: Clip.none,
+              children: [
+                ListView.builder(
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: timesInDay.length,
+                  itemBuilder: (context, index) {
+                    final time = timesInDay.elementAt(index);
+                    return GestureDetector(
+                      key: ValueKey(time.toString()),
+                      behavior: HitTestBehavior.opaque,
+                      onTap: widget.onTimeTap == null
+                          ? null
+                          : () => widget.onTimeTap!(time),
+                      child: SizedBox(
+                        height: rowHeight,
+                        width: viewWidth,
+                        child: Stack(
+                          children: [
+                            Divider(
+                              color: widget.dividerColor ?? Colors.amber,
+                              height: 0,
+                              thickness: time.minute == 0 ? 1 : .5,
+                              indent: widget.timeTitleColumnWidth,
                             ),
-                          ),
-                        );
-                      },
-                    ),
-                    BackgroundIgnorePointer(
-                      ignored: widget.onTimeTap != null,
-                      child: Stack(
-                        fit: StackFit.expand,
-                        // clipBehavior: Clip.none,
-                        children: widget.renderRowAsListView
-                            ? renderAsListView(
-                                heightUnit,
-                                eventColumnWith,
-                                totalHeight,
-                              )
-                            : renderWithFixedWidth(heightUnit, eventColumnWith),
+                            Transform(
+                              transform: Matrix4.translationValues(0, -10, 0),
+                              child: SizedBox(
+                                width: widget.timeTitleColumnWidth,
+                                child: Text(
+                                  "${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, "0")}",
+                                  style: widget.timeTextStyle ??
+                                      TextStyle(color: widget.timeTextColor),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                    if (widget.showCurrentTimeLine)
-                      CurrentTimeLineWidget(
-                        top: _currentTime.minuteFrom(timeStart).toDouble() *
-                            heightUnit,
-                        width: constraints.maxWidth,
-                        color: widget.currentTimeLineColor,
-                      ),
-                  ],
+                    );
+                  },
                 ),
-              ),
-            ],
+                BackgroundIgnorePointer(
+                  ignored: widget.onTimeTap != null,
+                  child: Stack(
+                    fit: StackFit.expand,
+                    // clipBehavior: Clip.none,
+                    children: widget.renderRowAsListView
+                        ? renderAsListView(
+                            heightUnit,
+                            eventColumnWith,
+                            totalHeight,
+                          )
+                        : renderWithFixedWidth(heightUnit, eventColumnWith),
+                  ),
+                ),
+                if (widget.showCurrentTimeLine)
+                  CurrentTimeLineWidget(
+                    top: _currentTime.minuteFrom(timeStart).toDouble() *
+                        heightUnit,
+                    width: constraints.maxWidth,
+                    color: widget.currentTimeLineColor,
+                  ),
+              ],
+            ),
           ),
         ),
       );
