@@ -1,6 +1,7 @@
 ## 3.1.1
 
 - fix Overflow Day View padding
+- fix Overflow Day View item position
 - fix Category Day View layout
 
 ## 3.1.0

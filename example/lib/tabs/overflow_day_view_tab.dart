@@ -36,6 +36,7 @@ class OverflowDayViewTab extends HookWidget {
             overflowItemBuilder: (context, constraints, itemIndex, event) {
               return HookBuilder(builder: (context) {
                 return GestureDetector(
+                  behavior: HitTestBehavior.opaque,
                   key: ValueKey(event.hashCode),
                   onTap: () {
                     print(event.value);
@@ -46,11 +47,12 @@ class OverflowDayViewTab extends HookWidget {
                     margin: const EdgeInsets.only(right: 3),
                     padding: const EdgeInsets.symmetric(horizontal: 5),
                     key: ValueKey(event.hashCode),
-                    width: constraints.minWidth < 100
-                        ? 100
-                        :
-                        // -3 for the margin
-                        constraints.minWidth - 3,
+                    width: constraints.minWidth,
+                    //  constraints.minWidth < 100
+                    //     ? 100
+                    //     :
+                    //     // -3 for the margin
+                    //     constraints.minWidth - 3,
                     height: constraints.maxHeight,
                     decoration: BoxDecoration(
                       color: itemIndex % 2 == 0

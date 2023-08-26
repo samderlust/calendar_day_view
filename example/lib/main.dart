@@ -62,7 +62,8 @@ class CalendarDayViewExample extends HookWidget {
         events: dayEvents.value
             .map(
               (e) => e.copyWith(
-                end: e.start.add(const Duration(minutes: 160)),
+                end: e.start.add(Duration(
+                    minutes: faker.randomGenerator.element([20, 30, 90, 60]))),
               ),
             )
             .toList(),
@@ -71,7 +72,10 @@ class CalendarDayViewExample extends HookWidget {
           DayEvent(
             value: faker.conference.name(),
             start: time,
-            end: time.add(const Duration(minutes: 90)),
+            end: time.add(
+              Duration(
+                  minutes: faker.randomGenerator.element([20, 30, 90, 60])),
+            ),
           )
         ],
       ),
@@ -208,7 +212,9 @@ List<DayEvent<String>> fakeEvents() => faker.randomGenerator.amount(
     (i) => DayEvent(
           value: faker.conference.name(),
           start: DateTime.now().copyWith(
-              hour: faker.randomGenerator.integer(24, min: 0), minute: 0),
+              hour: faker.randomGenerator.integer(24, min: 0),
+              minute: 0,
+              second: 0),
         ),
     30,
     min: 10);

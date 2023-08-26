@@ -266,7 +266,7 @@ class _OverFlowCalendarDayViewState<T extends Object>
               return Positioned(
                 left: widget.timeTitleColumnWidth +
                     oEvents.events.indexOf(event) * width,
-                top: event.minutesFrom(timeStart).toDouble() * heightUnit,
+                top: event.minutesFrom(timeStart) * heightUnit,
                 child: widget.overflowItemBuilder!(
                   context,
                   tileConstraints,

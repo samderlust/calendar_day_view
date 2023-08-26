@@ -399,8 +399,7 @@ class DayViewRow<T extends Object> extends StatelessWidget {
                         var e? => e.minutesFrom(time) * heightPerMin,
                         _ => 0.0,
                       }
-                          .toDouble()
-                          .abs();
+                          .toDouble();
 
                       return [
                         GestureDetector(
