@@ -116,3 +116,70 @@ class OverflowDayViewRow<T extends Object> extends StatelessWidget {
     );
   }
 }
+
+class DayViewRow<T extends Object> extends StatelessWidget {
+  const DayViewRow({
+    super.key,
+    required this.time,
+    required this.timeTextStyle,
+    required this.verticalDivider,
+    required this.categories,
+    required this.rowEvents,
+    required this.onTileTap,
+    required this.tileWidth,
+    required this.rowHeight,
+    required this.eventBuilder,
+    required this.timeColumnWidth,
+  });
+
+  final DateTime time;
+  final TextStyle? timeTextStyle;
+  final VerticalDivider? verticalDivider;
+  final List<EventCategory> categories;
+  final List<CategorizedDayEvent<T>> rowEvents;
+  final CategoryDayViewTileTap<T>? onTileTap;
+  final double tileWidth;
+  final double rowHeight;
+  final CategoryDayViewEventBuilder<T> eventBuilder;
+  final double timeColumnWidth;
+  @override
+  Widget build(BuildContext context) {
+    return IntrinsicHeight(
+      child: Row(
+        children: [
+          ...categories
+              .map((category) {
+                final event = rowEvents
+                    .firstWhereOrNull((e) => e.categoryId == category.id);
+
+                final constraints =
+                    BoxConstraints(maxHeight: rowHeight, maxWidth: tileWidth);
+                return [
+                  GestureDetector(
+                    behavior: HitTestBehavior.translucent,
+                    onTap: (onTileTap == null || event != null)
+                        ? null
+                        : () => onTileTap!(category, time),
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                        minWidth: tileWidth,
+                        minHeight: rowHeight,
+                      ),
+                      child: eventBuilder(
+                        constraints,
+                        category,
+                        time,
+                        event,
+                      ),
+                    ),
+                  ),
+                  verticalDivider ?? const VerticalDivider(width: 0),
+                ];
+              })
+              .expand((element) => element)
+              .toList()
+        ],
+      ),
+    );
+  }
+}

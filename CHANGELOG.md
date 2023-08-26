@@ -4,6 +4,8 @@
 - fix Overflow Day View item position
 - fix Category Day View layout
 - fix Category Day View item size
+- re-organize code base
+- update example
 
 ## 3.1.0
 

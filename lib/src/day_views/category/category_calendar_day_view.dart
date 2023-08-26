@@ -1,4 +1,3 @@
-import 'package:calendar_day_view/src/extensions/list_extensions.dart';
 import 'package:calendar_day_view/src/extensions/time_of_day_extension.dart';
 import 'package:flutter/material.dart';
 
@@ -6,6 +5,7 @@ import '../../../calendar_day_view.dart';
 import '../../models/typedef.dart';
 import '../../utils/date_time_utils.dart';
 import 'widgets/category_title_row.dart';
+import 'widgets/day_view_row.dart';
 import 'widgets/time_and_logo_widget.dart';
 
 /// CategoryCalendarDayView
@@ -200,8 +200,6 @@ class _CategoryCalendarDayViewState<T extends Object>
                             controller: controller,
                             scrollDirection: Axis.horizontal,
                             physics: const ClampingScrollPhysics(),
-                            // physics: const NeverScrollableScrollPhysics(),
-
                             child: SizedBox(
                               width: totalWidth,
                               child: Column(
@@ -291,73 +289,6 @@ class _CategoryCalendarDayViewState<T extends Object>
       (controller.offset + rowLength).clamp(rowLength, totalWidth),
       duration: const Duration(milliseconds: 300),
       curve: Curves.linear,
-    );
-  }
-}
-
-class DayViewRow<T extends Object> extends StatelessWidget {
-  const DayViewRow({
-    super.key,
-    required this.time,
-    required this.timeTextStyle,
-    required this.verticalDivider,
-    required this.categories,
-    required this.rowEvents,
-    required this.onTileTap,
-    required this.tileWidth,
-    required this.rowHeight,
-    required this.eventBuilder,
-    required this.timeColumnWidth,
-  });
-
-  final DateTime time;
-  final TextStyle? timeTextStyle;
-  final VerticalDivider? verticalDivider;
-  final List<EventCategory> categories;
-  final List<CategorizedDayEvent<T>> rowEvents;
-  final CategoryDayViewTileTap<T>? onTileTap;
-  final double tileWidth;
-  final double rowHeight;
-  final CategoryDayViewEventBuilder<T> eventBuilder;
-  final double timeColumnWidth;
-  @override
-  Widget build(BuildContext context) {
-    return IntrinsicHeight(
-      child: Row(
-        children: [
-          ...categories
-              .map((category) {
-                final event = rowEvents
-                    .firstWhereOrNull((e) => e.categoryId == category.id);
-
-                final constraints =
-                    BoxConstraints(maxHeight: rowHeight, maxWidth: tileWidth);
-                return [
-                  GestureDetector(
-                    behavior: HitTestBehavior.translucent,
-                    onTap: (onTileTap == null || event != null)
-                        ? null
-                        : () => onTileTap!(category, time),
-                    child: ConstrainedBox(
-                      constraints: BoxConstraints(
-                        minWidth: tileWidth,
-                        minHeight: rowHeight,
-                      ),
-                      child: eventBuilder(
-                        constraints,
-                        category,
-                        time,
-                        event,
-                      ),
-                    ),
-                  ),
-                  verticalDivider ?? const VerticalDivider(width: 0),
-                ];
-              })
-              .expand((element) => element)
-              .toList()
-        ],
-      ),
     );
   }
 }

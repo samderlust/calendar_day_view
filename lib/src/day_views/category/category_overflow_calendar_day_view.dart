@@ -1,4 +1,3 @@
-import 'package:calendar_day_view/src/extensions/list_extensions.dart';
 import 'package:calendar_day_view/src/extensions/time_of_day_extension.dart';
 import 'package:flutter/material.dart';
 
@@ -8,6 +7,7 @@ import '../../utils/date_time_utils.dart';
 import 'widgets/category_title_row.dart';
 import 'widgets/day_view_row.dart';
 import 'widgets/time_and_logo_widget.dart';
+import 'widgets/time_row_background.dart';
 
 ///CategoryOverflowCalendarDayView
 ///
@@ -307,38 +307,6 @@ class _CategoryOverflowCalendarDayViewState<T extends Object>
       (controller.offset + rowLength).clamp(rowLength, totalWidth),
       duration: const Duration(milliseconds: 300),
       curve: Curves.linear,
-    );
-  }
-}
-
-class TimeRowBackground extends StatelessWidget {
-  const TimeRowBackground({
-    super.key,
-    required this.rowNumber,
-    required this.evenRowColor,
-    required this.oddRowColor,
-    required this.rowHeight,
-  });
-
-  final int rowNumber;
-  final Color? evenRowColor;
-  final Color? oddRowColor;
-  final double rowHeight;
-
-  @override
-  Widget build(BuildContext context) {
-    return ListView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: rowNumber,
-      itemBuilder: (context, index) {
-        return Container(
-          decoration: BoxDecoration(
-            color: index % 2 == 0 ? evenRowColor : oddRowColor,
-          ),
-          constraints: BoxConstraints(minHeight: rowHeight),
-        );
-      },
     );
   }
 }
