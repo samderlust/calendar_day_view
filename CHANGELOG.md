@@ -3,6 +3,7 @@
 - fix Overflow Day View padding
 - fix Overflow Day View item position
 - fix Category Day View layout
+- fix Category Day View item size
 
 ## 3.1.0
 

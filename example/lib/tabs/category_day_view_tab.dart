@@ -15,6 +15,8 @@ class CategoryDayViewTab extends HookWidget {
   final Function(EventCategory, DateTime)? addEventOnClick;
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return CalendarDayView.category(
       allowHorizontalScroll: true,
       categories: categories,
@@ -69,20 +71,22 @@ class CategoryDayViewTab extends HookWidget {
           : GestureDetector(
               onTap: () => print(event),
               child: Container(
+                margin: const EdgeInsets.symmetric(horizontal: 3),
                 constraints: constraints,
-                width: constraints.maxWidth,
+                width: constraints.maxWidth - 6,
                 decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.primary,
-                  border: Border.all(width: .5, color: Colors.black26),
+                  color: colorScheme.secondaryContainer,
+                  border: Border.all(color: colorScheme.tertiary, width: 2),
+                  borderRadius: const BorderRadius.all(Radius.circular(10)),
                 ),
                 child: Center(
                   child: Text(
                     event.value,
                     textAlign: TextAlign.center,
                     overflow: TextOverflow.fade,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                      color: colorScheme.onSecondaryContainer,
                     ),
                   ),
                 ),

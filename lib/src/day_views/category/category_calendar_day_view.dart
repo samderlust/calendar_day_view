@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import '../../../calendar_day_view.dart';
 import '../../models/typedef.dart';
 import '../../utils/date_time_utils.dart';
+import 'widgets/category_title_row.dart';
 import 'widgets/time_and_logo_widget.dart';
 
 /// CategoryCalendarDayView
@@ -356,59 +357,6 @@ class DayViewRow<T extends Object> extends StatelessWidget {
               .expand((element) => element)
               .toList()
         ],
-      ),
-    );
-  }
-}
-
-class CategoryTitleRow extends StatelessWidget {
-  const CategoryTitleRow({
-    super.key,
-    required this.rowHeight,
-    required this.verticalDivider,
-    required this.categories,
-    required this.tileWidth,
-    this.headerDecoration,
-    required this.timeColumnWidth,
-    this.logo,
-  });
-
-  final double rowHeight;
-  final VerticalDivider? verticalDivider;
-  final List<EventCategory> categories;
-  final double tileWidth;
-  final BoxDecoration? headerDecoration;
-  final Widget? logo;
-  final double timeColumnWidth;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: headerDecoration,
-      constraints: BoxConstraints(minHeight: rowHeight),
-      child: IntrinsicHeight(
-        child: Row(
-          children: [
-            ...categories
-                .map(
-                  (category) => [
-                    SizedBox(
-                      width: tileWidth,
-                      height: rowHeight,
-                      child: Center(
-                        child: Text(
-                          category.name,
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                    ),
-                    verticalDivider ?? const VerticalDivider(width: 0),
-                  ],
-                )
-                .expand((e) => e)
-                .toList()
-          ],
-        ),
       ),
     );
   }

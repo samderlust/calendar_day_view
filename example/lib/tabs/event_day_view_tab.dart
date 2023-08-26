@@ -20,16 +20,18 @@ class EventDayViewTab extends StatelessWidget {
         return HookBuilder(builder: (context) {
           return Container(
             decoration: BoxDecoration(
-              color:
-                  index % 2 == 0 ? colorScheme.primary : colorScheme.secondary,
+              color: index % 2 == 0
+                  ? colorScheme.tertiaryContainer
+                  : colorScheme.secondaryContainer,
+              border: Border.all(color: colorScheme.tertiary, width: 2),
               borderRadius: const BorderRadius.all(Radius.circular(10)),
             ),
             height: 50,
             child: Center(
               child: Text(
                 event.value,
-                style: const TextStyle(
-                  color: Colors.white,
+                style: TextStyle(
+                  color: colorScheme.onSecondaryContainer,
                   fontWeight: FontWeight.bold,
                 ),
               ),
