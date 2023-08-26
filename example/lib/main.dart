@@ -1,13 +1,15 @@
 import 'dart:math';
 
 import 'package:calendar_day_view/calendar_day_view.dart';
-import 'package:example/tabs/category_day_view_tab.dart';
+import 'package:example/tabs/category_overflow_day_view_tab.dart';
 import 'package:example/tabs/event_day_view_tab.dart';
 import 'package:example/tabs/in_row_day_view_tab.dart';
 import 'package:example/tabs/overflow_day_view_tab.dart';
 import 'package:faker/faker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+
+import 'tabs/category_day_view_tab.dart';
 
 final rd = Random();
 void main() {
@@ -73,6 +75,19 @@ class CalendarDayViewExample extends HookWidget {
           )
         ],
       ),
+      CategoryOverflowDayViewTab(
+        events: categoryEvents.value,
+        categories: categories.value,
+        addEventOnClick: (cate, time) {
+          categoryEvents.value = [
+            ...categoryEvents.value,
+            CategorizedDayEvent(
+                categoryId: cate.id,
+                value: faker.conference.name(),
+                start: time)
+          ];
+        },
+      ),
       CategoryDayViewTab(
         events: categoryEvents.value,
         categories: categories.value,
@@ -110,6 +125,9 @@ class CalendarDayViewExample extends HookWidget {
               BottomNavigationBarItem(
                   icon: Icon(Icons.calendar_month), label: "Overflow"),
               BottomNavigationBarItem(
+                  icon: Icon(Icons.calendar_view_day),
+                  label: "Category Overflow"),
+              BottomNavigationBarItem(
                   icon: Icon(Icons.calendar_view_day), label: "Category"),
               BottomNavigationBarItem(
                   icon: Icon(Icons.calendar_today_outlined), label: "In Row"),
@@ -119,57 +137,49 @@ class CalendarDayViewExample extends HookWidget {
             onTap: (value) => currentIndex.value = value,
             currentIndex: currentIndex.value,
           ),
-          body: NestedScrollView(
-            headerSliverBuilder: (context, innerBoxScrolled) => [
-              SliverAppBar.large(
-                floating: true,
-                pinned: true,
-                stretch: true,
-                flexibleSpace: Row(
-                  children: [
-                    Expanded(
-                      child: FlexibleSpaceBar(
-                        titlePadding: const EdgeInsets.symmetric(
-                            horizontal: 10, vertical: 20),
-                        title: Text(
-                          getTitle(currentIndex.value),
-                          style: const TextStyle(color: Colors.white),
-                        ),
-                      ),
+          appBar: AppBar(
+            title: Text(
+              getTitle(currentIndex.value),
+              style: const TextStyle(color: Colors.white, fontSize: 30),
+            ),
+            toolbarHeight: 100,
+            centerTitle: false,
+            actions: [
+              Row(
+                children: [
+                  if (currentIndex.value != 1)
+                    TextButton.icon(
+                      style:
+                          TextButton.styleFrom(backgroundColor: Colors.white),
+                      onPressed: () => dayEvents.value = fakeEvents(),
+                      icon: const Icon(Icons.refresh),
+                      label: const Text("events"),
                     ),
-                    if (currentIndex.value != 1)
-                      TextButton.icon(
-                        style:
-                            TextButton.styleFrom(backgroundColor: Colors.white),
-                        onPressed: () => dayEvents.value = fakeEvents(),
-                        icon: const Icon(Icons.refresh),
-                        label: const Text("events"),
-                      ),
-                    if (currentIndex.value == 1) ...[
-                      TextButton.icon(
-                        style:
-                            TextButton.styleFrom(backgroundColor: Colors.white),
-                        onPressed: () => categoryEvents.value =
-                            genEvents(categories.value.length),
-                        icon: const Icon(Icons.refresh),
-                        label: const Text("events"),
-                      ),
-                      const SizedBox(width: 10),
-                      TextButton.icon(
-                        style:
-                            TextButton.styleFrom(backgroundColor: Colors.white),
-                        onPressed: addCategory,
-                        icon: const Icon(Icons.add),
-                        label: const Text("category"),
-                      ),
-                    ],
+                  if (currentIndex.value == 1) ...[
+                    TextButton.icon(
+                      style:
+                          TextButton.styleFrom(backgroundColor: Colors.white),
+                      onPressed: () => categoryEvents.value =
+                          genEvents(categories.value.length),
+                      icon: const Icon(Icons.refresh),
+                      label: const Text("events"),
+                    ),
                     const SizedBox(width: 10),
+                    TextButton.icon(
+                      style: TextButton.styleFrom(
+                        backgroundColor: Colors.white,
+                      ),
+                      onPressed: addCategory,
+                      icon: const Icon(Icons.add),
+                      label: const Text("category"),
+                    ),
                   ],
-                ),
-              ),
+                  const SizedBox(width: 10),
+                ],
+              )
             ],
-            body: bodyItems[currentIndex.value],
           ),
+          body: bodyItems[currentIndex.value],
         ),
       ),
     );
@@ -181,10 +191,12 @@ String getTitle(int index) {
     case 0:
       return "Overflow Day View";
     case 1:
-      return "Category Day View";
+      return "Category Overflow Day View";
     case 2:
-      return "In Row Day View";
+      return "Category Day View";
     case 3:
+      return "In Row Day View";
+    case 4:
       return "Events Day View";
 
     default:

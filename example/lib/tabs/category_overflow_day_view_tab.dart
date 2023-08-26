@@ -2,8 +2,8 @@ import 'package:calendar_day_view/calendar_day_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 
-class CategoryDayViewTab extends HookWidget {
-  const CategoryDayViewTab({
+class CategoryOverflowDayViewTab extends HookWidget {
+  const CategoryOverflowDayViewTab({
     super.key,
     required this.categories,
     required this.events,
@@ -15,7 +15,7 @@ class CategoryDayViewTab extends HookWidget {
   final Function(EventCategory, DateTime)? addEventOnClick;
   @override
   Widget build(BuildContext context) {
-    return CalendarDayView.category(
+    return CalendarDayView.categoryOverflow(
       allowHorizontalScroll: true,
       categories: categories,
       columnsPerPage: 2,

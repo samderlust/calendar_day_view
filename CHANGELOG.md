@@ -1,3 +1,8 @@
+## 3.1.1
+
+- fix Overflow Day View padding
+- fix Category Day View layout
+
 ## 3.1.0
 
 - Provide factory constructors to create different Day Views. Reduce confusion.

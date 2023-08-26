@@ -1,4 +1,4 @@
-import 'package:calendar_day_view/src/day_views/category_overflow_calendar_day_view.dart';
+import 'package:calendar_day_view/src/day_views/category/category_overflow_calendar_day_view.dart';
 import 'package:flutter/material.dart';
 
 import '../../calendar_day_view.dart';
