@@ -17,6 +17,8 @@ class OverflowDayViewTab extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final timeGap = useState<int>(60);
+    final renderAsList = useState<bool>(true);
+    final size = MediaQuery.sizeOf(context);
     final colorScheme = Theme.of(context).colorScheme;
 
     return Column(
@@ -30,12 +32,13 @@ class OverflowDayViewTab extends HookWidget {
             timeGap: timeGap.value,
             heightPerMin: 2,
             startOfDay: const TimeOfDay(hour: 7, minute: 0),
-            renderRowAsListView: true,
+            renderRowAsListView: renderAsList.value,
             showCurrentTimeLine: true,
             showMoreOnRowButton: true,
             overflowItemBuilder: (context, constraints, itemIndex, event) {
               return HookBuilder(builder: (context) {
                 return GestureDetector(
+                  behavior: HitTestBehavior.opaque,
                   key: ValueKey(event.hashCode),
                   onTap: () {
                     print(event.value);
@@ -43,27 +46,27 @@ class OverflowDayViewTab extends HookWidget {
                     print(event.end);
                   },
                   child: Container(
-                    margin: const EdgeInsets.only(right: 3),
+                    margin: const EdgeInsets.only(right: 3, left: 3),
                     padding: const EdgeInsets.symmetric(horizontal: 5),
                     key: ValueKey(event.hashCode),
-                    width: constraints.minWidth < 100
-                        ? 100
-                        :
-                        // -3 for the margin
-                        constraints.minWidth - 3,
+                    width: !renderAsList.value
+                        ? (constraints.minWidth) - 6
+                        : size.width / 4 - 6,
                     height: constraints.maxHeight,
                     decoration: BoxDecoration(
                       color: itemIndex % 2 == 0
-                          ? colorScheme.primary
-                          : colorScheme.secondary,
+                          ? colorScheme.tertiaryContainer
+                          : colorScheme.secondaryContainer,
+                      border: Border.all(color: colorScheme.tertiary, width: 2),
+                      borderRadius: const BorderRadius.all(Radius.circular(10)),
                     ),
                     child: Center(
                       child: Text(
                         event.value,
                         textAlign: TextAlign.center,
                         overflow: TextOverflow.fade,
-                        style: const TextStyle(
-                          color: Colors.white,
+                        style: TextStyle(
+                          color: colorScheme.onSecondaryContainer,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -76,33 +79,74 @@ class OverflowDayViewTab extends HookWidget {
         ),
         Row(
           children: [
-            const Text('TimeGap:'),
-            Radio<int>(
-              value: 15,
-              groupValue: timeGap.value,
-              onChanged: (v) => timeGap.value = v!,
+            Row(
+              children: [
+                const Text("Render List Row"),
+                Radio(
+                    groupValue: renderAsList.value,
+                    value: true,
+                    onChanged: (v) => renderAsList.value = v!)
+              ],
             ),
-            const Text('15m'),
-            Radio<int>(
-              value: 20,
-              groupValue: timeGap.value,
-              onChanged: (v) => timeGap.value = v!,
+            const SizedBox(width: 20),
+            Row(
+              children: [
+                const Text("Render Fix Row"),
+                Radio(
+                    groupValue: renderAsList.value,
+                    value: false,
+                    onChanged: (v) => renderAsList.value = v!)
+              ],
             ),
-            const Text('20m'),
-            Radio<int>(
-              value: 30,
-              groupValue: timeGap.value,
-              onChanged: (v) => timeGap.value = v!,
-            ),
-            const Text('30m'),
-            Radio<int>(
-              value: 60,
-              groupValue: timeGap.value,
-              onChanged: (v) => timeGap.value = v!,
-            ),
-            const Text('60m'),
           ],
         ),
+        TimeGapSelection(
+          timeGap: timeGap.value,
+          onChanged: (p0) => timeGap.value = p0!,
+        ),
+      ],
+    );
+  }
+}
+
+class TimeGapSelection extends StatelessWidget {
+  const TimeGapSelection({
+    super.key,
+    required this.timeGap,
+    required this.onChanged,
+  });
+
+  final int timeGap;
+  final void Function(int?)? onChanged;
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        const Text('TimeGap:'),
+        Radio<int>(
+          value: 15,
+          groupValue: timeGap,
+          onChanged: onChanged,
+        ),
+        const Text('15m'),
+        Radio<int>(
+          value: 20,
+          groupValue: timeGap,
+          onChanged: onChanged,
+        ),
+        const Text('20m'),
+        Radio<int>(
+          value: 30,
+          groupValue: timeGap,
+          onChanged: onChanged,
+        ),
+        const Text('30m'),
+        Radio<int>(
+          value: 60,
+          groupValue: timeGap,
+          onChanged: onChanged,
+        ),
+        const Text('60m'),
       ],
     );
   }

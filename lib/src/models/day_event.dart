@@ -55,7 +55,7 @@ extension DayEventExtension on DayEvent {
 
   int get timeGapFromZero => start.hour * 60 + start.minute;
 
-  int minutesFrom(DateTime timePoint) => timePoint.difference(start).inMinutes;
+  int minutesFrom(DateTime timePoint) => start.difference(timePoint).inMinutes;
   // (start.hour - timePoint.hour) * 60 + (start.minute - timePoint.minute);
 
   bool isInThisGap(DateTime timePoint, int gap) {
