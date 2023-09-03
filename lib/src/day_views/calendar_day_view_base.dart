@@ -30,6 +30,7 @@ abstract class CalendarDayView<T extends Object> extends Widget {
     bool? primary,
     ScrollPhysics? physics,
     ScrollController? controller,
+    bool? cropBottomEvents,
   }) =>
       OverFlowCalendarDayView<T>(
         timeTitleColumnWidth: timeTitleColumnWidth ?? 50,
@@ -52,6 +53,7 @@ abstract class CalendarDayView<T extends Object> extends Widget {
         primary: primary,
         physics: physics,
         controller: controller,
+        cropBottomEvents: cropBottomEvents ?? false,
       );
 
   /// Create [CategoryCalendarDayView]
