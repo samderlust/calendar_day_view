@@ -11,6 +11,7 @@ List<OverflowEventsRow<T>> processOverflowEvents<T extends Object>(
   List<DayEvent<T>> sortedEvents, {
   required DateTime startOfDay,
   required DateTime endOfDay,
+  bool cropBottomEvents = false,
 }) {
   if (sortedEvents.isEmpty) return [];
 
@@ -36,7 +37,11 @@ List<OverflowEventsRow<T>> processOverflowEvents<T extends Object>(
       );
 
       if (event.end!.laterThan(end)) {
-        end = event.end!.isBefore(endOfDay) ? event.end! : endOfDay;
+        if (cropBottomEvents) {
+          end = event.end!.isBefore(endOfDay) ? event.end! : endOfDay;
+        } else {
+          end = event.end!;
+        }
         oM[start] = oM[start]!.copyWith(end: end);
       }
     } else {

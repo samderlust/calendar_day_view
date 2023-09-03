@@ -4,13 +4,13 @@ import 'package:calendar_day_view/calendar_day_view.dart';
 import 'package:calendar_day_view/src/extensions/time_of_day_extension.dart';
 import 'package:flutter/material.dart';
 
-import '../models/overflow_event.dart';
-import '../models/typedef.dart';
-import '../utils/date_time_utils.dart';
-import '../utils/events_utils.dart';
-import '../widgets/background_ignore_pointer.dart';
-import '../widgets/current_time_line_widget.dart';
-import '../widgets/overflow_list_view_row.dart';
+import '../../models/overflow_event.dart';
+import '../../models/typedef.dart';
+import '../../utils/date_time_utils.dart';
+import '../../utils/events_utils.dart';
+import '../../widgets/background_ignore_pointer.dart';
+import '../../widgets/current_time_line_widget.dart';
+import 'widgets/overflow_list_view_row.dart';
 
 class OverFlowCalendarDayView<T extends Object> extends StatefulWidget
     implements CalendarDayView<T> {
@@ -36,6 +36,7 @@ class OverFlowCalendarDayView<T extends Object> extends StatefulWidget
     this.primary,
     this.physics,
     this.controller,
+    this.cropBottomEvents = true,
   }) :
         //  assert(endOfDay.difference(startOfDay).inHours > 0,
         //     "endOfDay and startOfDay must be at least 1 hour different. The different now is: ${endOfDay.difference(startOfDay).inHours}"),
@@ -95,6 +96,10 @@ class OverFlowCalendarDayView<T extends Object> extends StatefulWidget
   /// allow user to tap on Day view
   final OnTimeTap? onTimeTap;
 
+  /// if true, the bottom events' end time will be cropped by the end time of day view
+  /// if false, events that have end time after day view end time will have the show the length that pass through day view end time
+  final bool cropBottomEvents;
+
   final bool? primary;
   final ScrollPhysics? physics;
   final ScrollController? controller;
@@ -125,6 +130,7 @@ class _OverFlowCalendarDayViewState<T extends Object>
       [...widget.events]..sort((a, b) => a.compare(b)),
       startOfDay: widget.currentDate.copyTimeAndMinClean(widget.startOfDay),
       endOfDay: widget.currentDate.copyTimeAndMinClean(widget.endOfDay),
+      cropBottomEvents: widget.cropBottomEvents,
     );
 
     if (widget.showCurrentTimeLine) {
@@ -145,6 +151,7 @@ class _OverFlowCalendarDayViewState<T extends Object>
       [...widget.events]..sort((a, b) => a.compare(b)),
       startOfDay: widget.currentDate.copyTimeAndMinClean(widget.startOfDay),
       endOfDay: widget.currentDate.copyTimeAndMinClean(widget.endOfDay),
+      cropBottomEvents: widget.cropBottomEvents,
     );
   }
 
@@ -222,8 +229,8 @@ class _OverFlowCalendarDayViewState<T extends Object>
                 BackgroundIgnorePointer(
                   ignored: widget.onTimeTap != null,
                   child: Stack(
-                    fit: StackFit.expand,
-                    // clipBehavior: Clip.none,
+                    // fit: StackFit.expand,
+                    clipBehavior: Clip.none,
                     children: widget.renderRowAsListView
                         ? renderAsListView(
                             heightUnit,
@@ -233,7 +240,9 @@ class _OverFlowCalendarDayViewState<T extends Object>
                         : renderWithFixedWidth(heightUnit, eventColumnWith),
                   ),
                 ),
-                if (widget.showCurrentTimeLine)
+                if (widget.showCurrentTimeLine &&
+                    _currentTime.isAfter(timeStart) &&
+                    _currentTime.isBefore(timeEnd))
                   CurrentTimeLineWidget(
                     top: _currentTime.minuteFrom(timeStart).toDouble() *
                         heightUnit,
@@ -249,16 +258,28 @@ class _OverFlowCalendarDayViewState<T extends Object>
   }
 
   List<Widget> renderWithFixedWidth(double heightUnit, double eventColumnWith) {
-    return [
-      for (final oEvents in _overflowEvents)
-        for (var i = 0; i < oEvents.events.length; i++)
+    final widgets = <Widget>[];
+
+    for (final oEvents in _overflowEvents) {
+      final maxHeight =
+          (heightUnit * oEvents.start.minuteUntil(oEvents.end).abs());
+
+      for (var i = 0; i < oEvents.events.length; i++) {
+        widgets.add(
           Builder(
             builder: (context) {
               final event = oEvents.events.elementAt(i);
               final width = eventColumnWith / oEvents.events.length;
+              final topGap = event.minutesFrom(oEvents.start) * heightUnit;
+
+              final tileHeight =
+                  (widget.cropBottomEvents && event.end!.isAfter(timeEnd))
+                      ? (maxHeight - topGap)
+                      : (event.durationInMins * heightUnit);
+
               final tileConstraints = BoxConstraints(
-                maxHeight: event.durationInMins * heightUnit,
-                minHeight: event.durationInMins * heightUnit,
+                maxHeight: tileHeight,
+                minHeight: tileHeight,
                 minWidth: width,
                 maxWidth: eventColumnWith,
               );
@@ -276,7 +297,10 @@ class _OverFlowCalendarDayViewState<T extends Object>
               );
             },
           ),
-    ];
+        );
+      }
+    }
+    return widgets;
   }
 
 // to render all events in same row as a horizontal istView
@@ -296,6 +320,7 @@ class _OverFlowCalendarDayViewState<T extends Object>
             eventColumnWith: eventColumnWith,
             showMoreOnRowButton: widget.showMoreOnRowButton,
             moreOnRowButton: widget.moreOnRowButton,
+            cropBottomEvents: widget.cropBottomEvents,
           ),
         ),
     ];

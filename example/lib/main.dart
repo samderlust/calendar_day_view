@@ -36,7 +36,14 @@ class CalendarDayViewExample extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final dayEvents = useState<List<DayEvent<String>>>(fakeEvents());
+    final dayEvents = useState<List<DayEvent<String>>>(fakeEvents()
+        .map(
+          (e) => e.copyWith(
+            end: e.start.add(Duration(
+                minutes: faker.randomGenerator.element([20, 30, 90, 60]))),
+          ),
+        )
+        .toList());
 
     final categories = useState([
       EventCategory(id: "1", name: "cate 1"),
@@ -59,22 +66,14 @@ class CalendarDayViewExample extends HookWidget {
 
     final bodyItems = [
       OverflowDayViewTab(
-        events: dayEvents.value
-            .map(
-              (e) => e.copyWith(
-                end: e.start.add(Duration(
-                    minutes: faker.randomGenerator.element([20, 30, 90, 60]))),
-              ),
-            )
-            .toList(),
+        events: dayEvents.value,
         onTimeTap: (time) => dayEvents.value = [
           ...dayEvents.value,
           DayEvent(
             value: faker.conference.name(),
             start: time,
             end: time.add(
-              Duration(
-                  minutes: faker.randomGenerator.element([20, 30, 90, 60])),
+              Duration(minutes: faker.randomGenerator.element([20, 140])),
             ),
           )
         ],
@@ -208,16 +207,20 @@ String getTitle(int index) {
   }
 }
 
-List<DayEvent<String>> fakeEvents() => faker.randomGenerator.amount(
-    (i) => DayEvent(
-          value: faker.conference.name(),
-          start: DateTime.now().copyWith(
-              hour: faker.randomGenerator.integer(24, min: 0),
-              minute: 0,
-              second: 0),
+List<DayEvent<String>> fakeEvents() => faker.randomGenerator.amount((i) {
+      final start = DateTime.now().copyWith(
+        hour: faker.randomGenerator.integer(24, min: 0),
+        minute: faker.randomGenerator.element([0, 10, 20, 40]),
+        second: 0,
+      );
+      return DayEvent(
+        value: faker.conference.name(),
+        start: start,
+        end: start.add(
+          Duration(minutes: faker.randomGenerator.element([20, 30, 90, 60])),
         ),
-    30,
-    min: 10);
+      );
+    }, 30, min: 10);
 
 List<CategorizedDayEvent<String>> genEvents(int categoryLength) =>
     faker.randomGenerator.amount(
