@@ -18,6 +18,9 @@ class OverflowDayViewTab extends HookWidget {
   Widget build(BuildContext context) {
     final timeGap = useState<int>(60);
     final renderAsList = useState<bool>(true);
+
+    final cropBottomEvents = useState<bool>(true);
+
     final size = MediaQuery.sizeOf(context);
     final colorScheme = Theme.of(context).colorScheme;
 
@@ -34,6 +37,7 @@ class OverflowDayViewTab extends HookWidget {
             startOfDay: const TimeOfDay(hour: 7, minute: 0),
             renderRowAsListView: renderAsList.value,
             showCurrentTimeLine: true,
+            cropBottomEvents: cropBottomEvents.value,
             showMoreOnRowButton: true,
             overflowItemBuilder: (context, constraints, itemIndex, event) {
               return HookBuilder(builder: (context) {
@@ -98,6 +102,14 @@ class OverflowDayViewTab extends HookWidget {
                     onChanged: (v) => renderAsList.value = v!)
               ],
             ),
+          ],
+        ),
+        Row(
+          children: [
+            const Text("Crop Bottom Events"),
+            Checkbox(
+                value: cropBottomEvents.value,
+                onChanged: (v) => cropBottomEvents.value = v!)
           ],
         ),
         TimeGapSelection(

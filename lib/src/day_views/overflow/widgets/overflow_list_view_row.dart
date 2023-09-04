@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-import '../extensions/time_of_day_extension.dart';
-import '../models/day_event.dart';
-import '../models/overflow_event.dart';
-import '../models/typedef.dart';
-import 'background_ignore_pointer.dart';
+import '../../../extensions/time_of_day_extension.dart';
+import '../../../models/day_event.dart';
+import '../../../models/overflow_event.dart';
+import '../../../models/typedef.dart';
+import '../../../widgets/background_ignore_pointer.dart';
 
 class OverflowListViewRow<T extends Object> extends StatefulWidget {
   const OverflowListViewRow({
@@ -17,6 +17,7 @@ class OverflowListViewRow<T extends Object> extends StatefulWidget {
     this.moreOnRowButton,
     required this.ignored,
     required this.totalHeight,
+    required this.cropBottomEvents,
   }) : super(key: key);
 
   final OverflowEventsRow<T> oEvents;
@@ -26,6 +27,9 @@ class OverflowListViewRow<T extends Object> extends StatefulWidget {
   final double totalHeight;
   final Widget? moreOnRowButton;
   final bool showMoreOnRowButton;
+
+  final bool cropBottomEvents;
+
   final bool ignored;
 
   @override
@@ -88,7 +92,6 @@ class _OverflowListViewRowState<T extends Object>
         minHeight: maxHeight,
       ),
       child: Stack(
-        // clipBehavior: Clip.none,
         children: [
           ListView.builder(
             controller: _scrollCtrl,
@@ -104,7 +107,9 @@ class _OverflowListViewRowState<T extends Object>
 
               final tilePossibleHeight =
                   (event.durationInMins * widget.heightUnit);
-              final tileHeight = (maxHeight < (topGap + tilePossibleHeight))
+
+              final tileHeight = (maxHeight < (topGap + tilePossibleHeight) &&
+                      widget.cropBottomEvents)
                   ? (maxHeight - topGap)
                   : (event.durationInMins * widget.heightUnit);
 
@@ -118,19 +123,14 @@ class _OverflowListViewRowState<T extends Object>
               return Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  SizedBox(
-                    height: topGap,
-                  ),
-                  ConstrainedBox(
-                    constraints: BoxConstraints(maxHeight: tileHeight),
-                    child: StopBackgroundIgnorePointer(
-                      ignored: widget.ignored,
-                      child: widget.overflowItemBuilder(
-                        context,
-                        tileConstraints,
-                        index,
-                        event,
-                      ),
+                  SizedBox(height: topGap),
+                  StopBackgroundIgnorePointer(
+                    ignored: widget.ignored,
+                    child: widget.overflowItemBuilder(
+                      context,
+                      tileConstraints,
+                      index,
+                      event,
                     ),
                   ),
                 ],
