@@ -1,3 +1,8 @@
+## 3.2.0
+
+- add option to crop bottom events in overflow day view
+- hide current timeline if not in day view time range
+
 ## 3.1.1
 
 - fix Overflow Day View padding
