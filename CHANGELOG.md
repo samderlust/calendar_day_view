@@ -1,3 +1,7 @@
+## 3.3.0
+
+- allow to customize how background row render in category overflow
+
 ## 3.2.0
 
 - add option to crop bottom events in overflow day view
