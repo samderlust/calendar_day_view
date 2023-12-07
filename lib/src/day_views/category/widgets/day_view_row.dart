@@ -73,36 +73,44 @@ class OverflowDayViewRow<T extends Object> extends StatelessWidget {
                       );
 
                       return [
-                        GestureDetector(
-                          behavior: HitTestBehavior.translucent,
-                          onTap: (onTileTap == null || event != null)
-                              ? null
-                              : () => onTileTap!(category, time),
-                          child: Container(
-                            constraints: BoxConstraints(
-                              minWidth: tileWidth,
-                              maxWidth: tileWidth,
-                              maxHeight: eventHeight + topGap,
-                            ),
-                            child: SizedBox(
-                              height: eventHeight,
-                              child: Stack(
-                                clipBehavior: Clip.none,
-                                children: [
-                                  Positioned(
-                                    top: topGap,
-                                    child: eventBuilder(
-                                      constraints,
-                                      category,
-                                      time,
-                                      event,
-                                    ),
+                        switch (event) {
+                          var event? => GestureDetector(
+                              behavior: HitTestBehavior.translucent,
+                              onTap: (onTileTap == null)
+                                  ? null
+                                  : () => onTileTap!(category, time),
+                              child: Container(
+                                constraints: BoxConstraints(
+                                  minWidth: tileWidth,
+                                  maxWidth: tileWidth,
+                                  maxHeight: eventHeight + topGap,
+                                ),
+                                child: SizedBox(
+                                  height: eventHeight,
+                                  child: Stack(
+                                    clipBehavior: Clip.none,
+                                    children: [
+                                      Positioned(
+                                        top: topGap,
+                                        child: eventBuilder(
+                                          constraints,
+                                          category,
+                                          time,
+                                          event,
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ],
+                                ),
                               ),
                             ),
-                          ),
-                        ),
+                          _ => SizedBox(
+                              width: constraints.maxWidth,
+                              height: constraints.maxHeight,
+                            ),
+                        },
+                        // if (event == null) const SizedBox.shrink(),
+                        // if (event != null)
                         verticalDivider ?? const VerticalDivider(width: 0),
                       ];
                     })
@@ -155,24 +163,30 @@ class DayViewRow<T extends Object> extends StatelessWidget {
                 final constraints =
                     BoxConstraints(maxHeight: rowHeight, maxWidth: tileWidth);
                 return [
-                  GestureDetector(
-                    behavior: HitTestBehavior.translucent,
-                    onTap: (onTileTap == null || event != null)
-                        ? null
-                        : () => onTileTap!(category, time),
-                    child: ConstrainedBox(
-                      constraints: BoxConstraints(
-                        minWidth: tileWidth,
-                        minHeight: rowHeight,
+                  switch (event) {
+                    var event? => GestureDetector(
+                        behavior: HitTestBehavior.translucent,
+                        onTap: (onTileTap == null)
+                            ? null
+                            : () => onTileTap!(category, time),
+                        child: ConstrainedBox(
+                          constraints: BoxConstraints(
+                            minWidth: tileWidth,
+                            minHeight: rowHeight,
+                          ),
+                          child: eventBuilder(
+                            constraints,
+                            category,
+                            time,
+                            event,
+                          ),
+                        ),
                       ),
-                      child: eventBuilder(
-                        constraints,
-                        category,
-                        time,
-                        event,
+                    _ => SizedBox(
+                        width: constraints.maxWidth,
+                        height: constraints.maxHeight,
                       ),
-                    ),
-                  ),
+                  },
                   verticalDivider ?? const VerticalDivider(width: 0),
                 ];
               })

@@ -37,6 +37,7 @@ class CategoryOverflowCalendarDayView<T extends Object> extends StatefulWidget
     this.allowHorizontalScroll = false,
     this.columnsPerPage = 3,
     this.controlBarBuilder,
+    this.timeRowBuilder,
   }) : super(key: key);
 
   /// List of category
@@ -88,6 +89,9 @@ class CategoryOverflowCalendarDayView<T extends Object> extends StatefulWidget
   ///
   /// provide [EventCategory] and [DateTime]  of that tile
   final CategoryDayViewTileTap? onTileTap;
+
+  ///
+  final CategoryBackgroundTimeRowBuilder? timeRowBuilder;
 
   /// build category header
   // final CategoryDayViewHeaderTileBuilder? headerTileBuilder;
@@ -232,6 +236,8 @@ class _CategoryOverflowCalendarDayViewState<T extends Object>
                                               oddRowColor: widget.oddRowColor,
                                               evenRowColor: widget.evenRowColor,
                                               rowHeight: rowHeight,
+                                              timeList: timeList,
+                                              rowBuilder: widget.timeRowBuilder,
                                             ),
                                             ListView.builder(
                                               clipBehavior: Clip.none,

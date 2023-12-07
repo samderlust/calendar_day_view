@@ -20,6 +20,7 @@ class CategoryOverflowDayViewTab extends HookWidget {
       allowHorizontalScroll: true,
       categories: categories,
       columnsPerPage: 2,
+      endOfDay: const TimeOfDay(hour: 21, minute: 00),
       events: events,
       onTileTap: (category, time) {
         print(category);
@@ -37,6 +38,16 @@ class CategoryOverflowDayViewTab extends HookWidget {
         padding: EdgeInsets.all(8.0),
         child: CircleAvatar(child: Text("C")),
       ),
+      timeRowBuilder: (context, constraints, rowTime, isOdd) {
+        return Container(
+          constraints: constraints,
+          color: (rowTime.isBefore(DateTime.now())
+              ? Colors.grey
+              : isOdd
+                  ? Colors.grey[200]
+                  : Colors.blueGrey),
+        );
+      },
       controlBarBuilder: (goToPreviousTab, goToNextTab) => Container(
         color: Theme.of(context).colorScheme.primaryContainer,
         height: 80,
