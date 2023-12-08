@@ -66,32 +66,30 @@ class CategoryDayViewTab extends HookWidget {
           ],
         ),
       ),
-      eventBuilder: (constraints, category, _, event) => event == null
-          ? const SizedBox.shrink()
-          : GestureDetector(
-              onTap: () => print(event),
-              child: Container(
-                margin: const EdgeInsets.symmetric(horizontal: 3),
-                constraints: constraints,
-                width: constraints.maxWidth - 6,
-                decoration: BoxDecoration(
-                  color: colorScheme.secondaryContainer,
-                  border: Border.all(color: colorScheme.tertiary, width: 2),
-                  borderRadius: const BorderRadius.all(Radius.circular(10)),
-                ),
-                child: Center(
-                  child: Text(
-                    event.value,
-                    textAlign: TextAlign.center,
-                    overflow: TextOverflow.fade,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: colorScheme.onSecondaryContainer,
-                    ),
-                  ),
-                ),
+      eventBuilder: (constraints, category, _, event) => GestureDetector(
+        onTap: () => print(event),
+        child: Container(
+          margin: const EdgeInsets.symmetric(horizontal: 3),
+          constraints: constraints,
+          width: constraints.maxWidth - 6,
+          decoration: BoxDecoration(
+            color: colorScheme.secondaryContainer,
+            border: Border.all(color: colorScheme.tertiary, width: 2),
+            borderRadius: const BorderRadius.all(Radius.circular(10)),
+          ),
+          child: Center(
+            child: Text(
+              event.value,
+              textAlign: TextAlign.center,
+              overflow: TextOverflow.fade,
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: colorScheme.onSecondaryContainer,
               ),
             ),
+          ),
+        ),
+      ),
     );
   }
 }

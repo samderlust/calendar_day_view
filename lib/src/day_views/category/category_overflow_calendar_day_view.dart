@@ -1,3 +1,4 @@
+import 'package:calendar_day_view/src/extensions/list_extensions.dart';
 import 'package:calendar_day_view/src/extensions/time_of_day_extension.dart';
 import 'package:flutter/material.dart';
 
@@ -5,7 +6,6 @@ import '../../../calendar_day_view.dart';
 import '../../models/typedef.dart';
 import '../../utils/date_time_utils.dart';
 import 'widgets/category_title_row.dart';
-import 'widgets/day_view_row.dart';
 import 'widgets/time_and_logo_widget.dart';
 import 'widgets/time_row_background.dart';
 
@@ -37,6 +37,7 @@ class CategoryOverflowCalendarDayView<T extends Object> extends StatefulWidget
     this.allowHorizontalScroll = false,
     this.columnsPerPage = 3,
     this.controlBarBuilder,
+    this.backgroundTimeTileBuilder,
   }) : super(key: key);
 
   /// List of category
@@ -88,6 +89,9 @@ class CategoryOverflowCalendarDayView<T extends Object> extends StatefulWidget
   ///
   /// provide [EventCategory] and [DateTime]  of that tile
   final CategoryDayViewTileTap? onTileTap;
+
+  /// Allow user to customize the UI of each time slot in the background.
+  final CategoryBackgroundTimeTileBuilder? backgroundTimeTileBuilder;
 
   /// build category header
   // final CategoryDayViewHeaderTileBuilder? headerTileBuilder;
@@ -225,54 +229,27 @@ class _CategoryOverflowCalendarDayViewState<T extends Object>
                                         ),
                                         widget.horizontalDivider ??
                                             const Divider(height: 0),
-                                        Stack(
-                                          children: [
-                                            TimeRowBackground(
-                                              rowNumber: timeList.length,
-                                              oddRowColor: widget.oddRowColor,
-                                              evenRowColor: widget.evenRowColor,
-                                              rowHeight: rowHeight,
-                                            ),
-                                            ListView.builder(
-                                              clipBehavior: Clip.none,
-                                              shrinkWrap: true,
-                                              physics:
-                                                  const NeverScrollableScrollPhysics(),
-                                              itemCount: timeList.length,
-                                              itemBuilder: (context, index) {
-                                                final time =
-                                                    timeList.elementAt(index);
-                                                final rowEvents = widget.events
-                                                    .where(
-                                                      (event) =>
-                                                          event.startInThisGap(
-                                                              time,
-                                                              widget.timeGap),
-                                                    )
-                                                    .toList();
-                                                return OverflowDayViewRow<T>(
-                                                  heightPerMin:
-                                                      widget.heightPerMin,
-                                                  time: time,
-                                                  timeTextStyle:
-                                                      widget.timeTextStyle,
-                                                  verticalDivider:
-                                                      widget.verticalDivider,
-                                                  horizontalDivider:
-                                                      widget.horizontalDivider,
-                                                  categories: widget.categories,
-                                                  rowEvents: rowEvents,
-                                                  onTileTap: widget.onTileTap,
-                                                  tileWidth: tileWidth,
-                                                  rowHeight: rowHeight,
-                                                  eventBuilder:
-                                                      widget.eventBuilder,
-                                                  timeColumnWidth:
-                                                      widget.timeColumnWidth,
-                                                );
-                                              },
-                                            ),
-                                          ],
+                                        _DayViewBody(
+                                          timeList: timeList,
+                                          rowHeight: rowHeight,
+                                          tileWidth: tileWidth,
+                                          evenRowColor: widget.evenRowColor,
+                                          oddRowColor: widget.oddRowColor,
+                                          rowBuilder:
+                                              widget.backgroundTimeTileBuilder,
+                                          events: widget.events,
+                                          timeColumnWidth:
+                                              widget.timeColumnWidth,
+                                          categories: widget.categories,
+                                          verticalDivider:
+                                              widget.verticalDivider,
+                                          timeGap: widget.timeGap,
+                                          heightPerMin: widget.heightPerMin,
+                                          timeTextStyle: widget.timeTextStyle,
+                                          eventBuilder: widget.eventBuilder,
+                                          horizontalDivider:
+                                              widget.horizontalDivider,
+                                          onTileTap: widget.onTileTap,
                                         ),
                                       ],
                                     ),
@@ -323,5 +300,132 @@ class VerticalClipper extends CustomClipper<Path> {
   @override
   bool shouldReclip(covariant CustomClipper<Path> oldClipper) {
     return false;
+  }
+}
+
+class _DayViewBody<T extends Object> extends StatelessWidget {
+  const _DayViewBody({
+    super.key,
+    required this.timeList,
+    required this.rowHeight,
+    required this.tileWidth,
+    this.evenRowColor,
+    this.oddRowColor,
+    this.rowBuilder,
+    required this.events,
+    required this.timeGap,
+    required this.heightPerMin,
+    this.timeTextStyle,
+    this.verticalDivider,
+    this.horizontalDivider,
+    required this.eventBuilder,
+    required this.categories,
+    this.onTileTap,
+    required this.timeColumnWidth,
+  });
+
+  final List<DateTime> timeList;
+  final double rowHeight;
+  final double tileWidth;
+  final Color? evenRowColor;
+  final Color? oddRowColor;
+  final CategoryBackgroundTimeTileBuilder? rowBuilder;
+  final List<CategorizedDayEvent<T>> events;
+  final int timeGap;
+  final double heightPerMin;
+  final TextStyle? timeTextStyle;
+  final VerticalDivider? verticalDivider;
+  final Divider? horizontalDivider;
+  final CategoryDayViewEventBuilder<T> eventBuilder;
+  final List<EventCategory> categories;
+  final CategoryDayViewTileTap? onTileTap;
+  final double timeColumnWidth;
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        TimeRowBackground(
+          oddRowColor: oddRowColor,
+          evenRowColor: evenRowColor,
+          rowHeight: rowHeight,
+          timeList: timeList,
+          // rowBuilder: rowBuilder,
+        ),
+        ListView.separated(
+          separatorBuilder: (context, index) =>
+              horizontalDivider ?? const Divider(height: 0),
+          clipBehavior: Clip.none,
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: timeList.length,
+          itemBuilder: (context, index) {
+            final time = timeList.elementAt(index);
+
+            return IntrinsicHeight(
+              child: Row(
+                children: [
+                  ...categories.map(
+                    (c) => [
+                      GestureDetector(
+                        behavior: HitTestBehavior.opaque,
+                        onTap: (onTileTap == null)
+                            ? null
+                            : () => onTileTap!(c, time),
+                        child: SizedBox(
+                          height: rowHeight,
+                          width: tileWidth,
+                          child: rowBuilder?.call(
+                                context,
+                                BoxConstraints(
+                                  maxHeight: rowHeight,
+                                  maxWidth: tileWidth,
+                                ),
+                                time,
+                                c,
+                                index % 2 != 0,
+                              ) ??
+                              const SizedBox.shrink(),
+                        ),
+                      ),
+                      verticalDivider ?? const VerticalDivider(width: 0),
+                    ],
+                  )
+                ].expand((element) => element).toList(),
+              ),
+            );
+          },
+        ),
+        for (var event in events)
+          Builder(
+            builder: (context) {
+              final category =
+                  categories.firstWhereOrNull((c) => c.id == event.categoryId);
+              if (category == null) return const SizedBox.shrink();
+
+              final cateIndex =
+                  categories.indexWhere((c) => c.id == event.categoryId);
+              if (cateIndex == -1) return const SizedBox.shrink();
+
+              final constraints = BoxConstraints(
+                maxHeight: event.durationInMins.toDouble(),
+                maxWidth: tileWidth,
+              );
+
+              return Positioned(
+                top: event.minutesFrom(timeList.first) * heightPerMin,
+                left: cateIndex * tileWidth,
+                child: eventBuilder(
+                  constraints,
+                  category,
+                  event.start,
+                  event,
+                ),
+              );
+            },
+          ),
+      ],
+    );
   }
 }

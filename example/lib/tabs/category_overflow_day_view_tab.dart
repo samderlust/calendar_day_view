@@ -20,10 +20,16 @@ class CategoryOverflowDayViewTab extends HookWidget {
       allowHorizontalScroll: true,
       categories: categories,
       columnsPerPage: 2,
+      endOfDay: const TimeOfDay(hour: 21, minute: 00),
       events: events,
       onTileTap: (category, time) {
-        print(category);
-        print(time);
+        ScaffoldMessenger.of(context).clearSnackBars();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: Colors.green,
+            content: Text("This slot is available $time -- $category"),
+          ),
+        );
       },
       currentDate: DateTime.now(),
       timeGap: 60,
@@ -37,6 +43,27 @@ class CategoryOverflowDayViewTab extends HookWidget {
         padding: EdgeInsets.all(8.0),
         child: CircleAvatar(child: Text("C")),
       ),
+      backgroundTimeTileBuilder:
+          (context, constraints, rowTime, category, isOddRow) {
+        return switch (rowTime) {
+          var t when t.isBefore(DateTime.now()) => GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              onTap: () async {
+                ScaffoldMessenger.of(context).clearSnackBars();
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  backgroundColor: Colors.red,
+                  content:
+                      Text("This slot is Unavailable $rowTime -- $category"),
+                ));
+              },
+              child: Container(
+                constraints: constraints,
+                color: category.id == "1" ? Colors.black54 : Colors.black87,
+              ),
+            ),
+          _ => const SizedBox.shrink(),
+        };
+      },
       controlBarBuilder: (goToPreviousTab, goToNextTab) => Container(
         color: Theme.of(context).colorScheme.primaryContainer,
         height: 80,
@@ -65,32 +92,36 @@ class CategoryOverflowDayViewTab extends HookWidget {
           ],
         ),
       ),
-      eventBuilder: (constraints, category, _, event) => event == null
-          ? const SizedBox.shrink()
-          : GestureDetector(
-              onTap: () => print(event),
-              child: Container(
-                margin: const EdgeInsets.symmetric(horizontal: 3),
-                constraints: constraints,
-                width: constraints.maxWidth - 6,
-                decoration: BoxDecoration(
-                  color: colorScheme.secondaryContainer,
-                  border: Border.all(color: colorScheme.tertiary, width: 2),
-                  borderRadius: const BorderRadius.all(Radius.circular(10)),
-                ),
-                child: Center(
-                  child: Text(
-                    event.value,
-                    textAlign: TextAlign.center,
-                    overflow: TextOverflow.fade,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: colorScheme.onSecondaryContainer,
-                    ),
-                  ),
-                ),
+      eventBuilder: (constraints, category, _, event) => GestureDetector(
+        onTap: () {
+          ScaffoldMessenger.of(context).clearSnackBars();
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            backgroundColor: Colors.teal,
+            content: Text(event.toString()),
+          ));
+        },
+        child: Container(
+          margin: const EdgeInsets.symmetric(horizontal: 3),
+          constraints: constraints,
+          width: constraints.maxWidth - 6,
+          decoration: BoxDecoration(
+            color: colorScheme.secondaryContainer,
+            border: Border.all(color: colorScheme.tertiary, width: 2),
+            borderRadius: const BorderRadius.all(Radius.circular(10)),
+          ),
+          child: Center(
+            child: Text(
+              event.value,
+              textAlign: TextAlign.center,
+              overflow: TextOverflow.fade,
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: colorScheme.onSecondaryContainer,
               ),
             ),
+          ),
+        ),
+      ),
     );
   }
 }

@@ -1,3 +1,9 @@
+## 3.3.0
+
+- Category Overflow DayView:
+  - [Breaking] `CategoryDayViewEventBuilder` now only provide not null event.
+  - Added `CategoryBackgroundTimeTileBuilder` - Allow user to customize the UI of each time slot in the background. (see example)
+
 ## 3.2.0
 
 - add option to crop bottom events in overflow day view
