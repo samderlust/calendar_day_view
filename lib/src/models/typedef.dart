@@ -29,6 +29,13 @@ typedef CategoryBackgroundTimeRowBuilder = Widget Function(
   DateTime rowTime,
   bool isOdd,
 );
+typedef CategoryBackgroundTimeTileBuilder = Widget Function(
+  BuildContext context,
+  BoxConstraints constraints,
+  DateTime rowTime,
+  EventCategory category,
+  bool isOddRow,
+);
 
 typedef OnTimeTap = Function(DateTime time);
 
