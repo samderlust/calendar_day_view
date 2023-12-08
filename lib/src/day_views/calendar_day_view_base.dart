@@ -130,7 +130,7 @@ abstract class CalendarDayView<T extends Object> extends Widget {
     BoxDecoration? headerDecoration,
     Widget? logo,
     CategoryDayViewControlBarBuilder? controlBarBuilder,
-    CategoryBackgroundTimeRowBuilder? timeRowBuilder,
+    CategoryBackgroundTimeTileBuilder? backgroundTimeTileBuilder,
   }) =>
       CategoryOverflowCalendarDayView(
         events: events,
@@ -153,7 +153,7 @@ abstract class CalendarDayView<T extends Object> extends Widget {
         headerDecoration: headerDecoration,
         logo: logo,
         controlBarBuilder: controlBarBuilder,
-        timeRowBuilder: timeRowBuilder,
+        backgroundTimeTileBuilder: backgroundTimeTileBuilder,
       );
 
   /// Create [InRowCalendarDayView]
