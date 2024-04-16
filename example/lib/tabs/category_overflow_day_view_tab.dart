@@ -17,8 +17,10 @@ class CategoryOverflowDayViewTab extends HookWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     return CalendarDayView.categoryOverflow(
+      time12: true,
       allowHorizontalScroll: true,
       categories: categories,
+      timeColumnWidth: 70,
       columnsPerPage: 2,
       endOfDay: const TimeOfDay(hour: 21, minute: 00),
       events: events,

@@ -1,3 +1,4 @@
+import 'package:calendar_day_view/src/extensions/date_time_extension.dart';
 import 'package:flutter/material.dart';
 
 class TimeAndLogoWidget extends StatelessWidget {
@@ -12,6 +13,7 @@ class TimeAndLogoWidget extends StatelessWidget {
     required this.timeList,
     required this.evenRowColor,
     required this.oddRowColor,
+    required this.time12,
     this.timeTextStyle,
   });
 
@@ -25,7 +27,7 @@ class TimeAndLogoWidget extends StatelessWidget {
   final Color? evenRowColor;
   final Color? oddRowColor;
   final TextStyle? timeTextStyle;
-
+  final bool time12;
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -74,10 +76,17 @@ class TimeAndLogoWidget extends StatelessWidget {
                         ),
                         child: SizedBox(
                           width: timeColumnWidth,
-                          child: Center(
-                            child: Text(
-                              "${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, "0")}",
-                              style: timeTextStyle,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 2),
+                            child: FittedBox(
+                              fit: BoxFit.fitWidth,
+                              child: Text(
+                                time12
+                                    ? time.hourDisplay12
+                                    : time.hourDisplay24,
+                                style: timeTextStyle,
+                                maxLines: 1,
+                              ),
                             ),
                           ),
                         )),

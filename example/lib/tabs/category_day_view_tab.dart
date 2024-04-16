@@ -18,6 +18,7 @@ class CategoryDayViewTab extends HookWidget {
     final colorScheme = Theme.of(context).colorScheme;
 
     return CalendarDayView.category(
+      time12: true,
       allowHorizontalScroll: true,
       categories: categories,
       columnsPerPage: 2,

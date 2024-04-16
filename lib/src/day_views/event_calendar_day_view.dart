@@ -1,3 +1,4 @@
+import 'package:calendar_day_view/src/extensions/date_time_extension.dart';
 import 'package:flutter/material.dart';
 
 import '../models/day_event.dart';
@@ -23,6 +24,8 @@ class EventCalendarDayView<T extends Object> extends StatefulWidget
     this.primary,
     this.physics,
     this.controller,
+    this.timeTitleColumnWidth = 50.0,
+    this.time12 = false,
   }) : super(key: key);
 
   /// List of events to be display in the day view
@@ -52,6 +55,12 @@ class EventCalendarDayView<T extends Object> extends StatefulWidget
   final bool? primary;
   final ScrollPhysics? physics;
   final ScrollController? controller;
+
+  /// show time in 12 hour format
+  final bool time12;
+
+  /// The width of the column that contain list of time points
+  final double timeTitleColumnWidth;
   @override
   State<EventCalendarDayView> createState() => _EventCalendarDayViewState<T>();
 }
@@ -113,20 +122,27 @@ class _EventCalendarDayViewState<T extends Object>
                       color: widget.dividerColor ?? Colors.amber,
                       height: 0,
                       thickness: 1,
-                      indent: 40,
+                      indent: widget.timeTitleColumnWidth + 3,
                     ),
                     Row(
                       mainAxisSize: MainAxisSize.max,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Transform(
-                          transform: Matrix4.translationValues(0, -10, 0),
+                          transform: Matrix4.translationValues(0, -20, 0),
                           child: SizedBox(
-                            width: 50,
-                            child: Text(
-                              "${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, "0")}",
-                              style: widget.timeTextStyle ??
-                                  TextStyle(color: widget.timeTextColor),
+                            height: 40,
+                            width: widget.timeTitleColumnWidth,
+                            child: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Text(
+                                widget.time12
+                                    ? time.hourDisplay12
+                                    : time.hourDisplay24,
+                                style: widget.timeTextStyle ??
+                                    TextStyle(color: widget.timeTextColor),
+                                maxLines: 1,
+                              ),
                             ),
                           ),
                         ),

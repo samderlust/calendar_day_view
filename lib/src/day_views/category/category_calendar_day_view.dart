@@ -1,4 +1,4 @@
-import 'package:calendar_day_view/src/extensions/time_of_day_extension.dart';
+import '../../extensions/date_time_extension.dart';
 import 'package:flutter/material.dart';
 
 import '../../../calendar_day_view.dart';
@@ -36,6 +36,7 @@ class CategoryCalendarDayView<T extends Object> extends StatefulWidget
     this.allowHorizontalScroll = false,
     this.columnsPerPage = 3,
     this.controlBarBuilder,
+    this.time12 = false,
   }) : super(key: key);
 
   /// List of category
@@ -108,6 +109,9 @@ class CategoryCalendarDayView<T extends Object> extends StatefulWidget
   /// `goToPreviousTab` to animate to previous tabs
   /// `goToNextTab` to animate to next tabs
   final CategoryDayViewControlBarBuilder? controlBarBuilder;
+
+  /// show time in 12 hour format
+  final bool time12;
 
   @override
   State<CategoryCalendarDayView<T>> createState() =>
@@ -184,6 +188,7 @@ class _CategoryCalendarDayViewState<T extends Object>
                     child: Row(
                       children: [
                         TimeAndLogoWidget(
+                          time12: widget.time12,
                           rowHeight: rowHeight,
                           timeColumnWidth: widget.timeColumnWidth,
                           timeList: timeList,

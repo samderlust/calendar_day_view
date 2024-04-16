@@ -36,4 +36,8 @@ extension DateTimeExtension on DateTime {
       );
 
   DateTime cleanSec() => copyWith(second: 00, millisecond: 0, microsecond: 0);
+  String get hourDisplay24 =>
+      "${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, "0")}";
+  String get hourDisplay12 =>
+      "${(hour % 12).toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')} ${hour >= 12 ? 'PM' : 'AM'}";
 }

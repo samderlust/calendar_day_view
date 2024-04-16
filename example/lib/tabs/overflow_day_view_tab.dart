@@ -39,6 +39,7 @@ class OverflowDayViewTab extends HookWidget {
             showCurrentTimeLine: true,
             cropBottomEvents: cropBottomEvents.value,
             showMoreOnRowButton: true,
+            time12: true,
             overflowItemBuilder: (context, constraints, itemIndex, event) {
               return HookBuilder(builder: (context) {
                 return GestureDetector(

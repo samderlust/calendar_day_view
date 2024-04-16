@@ -1,6 +1,6 @@
+import 'package:calendar_day_view/src/extensions/date_time_extension.dart';
 import 'package:flutter/material.dart';
 
-import '../../../extensions/time_of_day_extension.dart';
 import '../../../models/day_event.dart';
 import '../../../models/overflow_event.dart';
 import '../../../models/typedef.dart';

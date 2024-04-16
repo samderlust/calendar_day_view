@@ -1,9 +1,9 @@
 import 'dart:async';
 
+import '../extensions/date_time_extension.dart';
 import 'package:flutter/material.dart';
 
 import '../../calendar_day_view.dart';
-import '../extensions/time_of_day_extension.dart';
 import '../models/typedef.dart';
 import '../utils/date_time_utils.dart';
 import '../widgets/current_time_line_widget.dart';
@@ -33,7 +33,9 @@ class InRowCalendarDayView<T extends Object> extends StatefulWidget
     this.onTap,
     this.primary,
     this.physics,
+    this.timeTitleColumnWidth = 50.0,
     this.controller,
+    this.time12 = false,
   })  : assert(timeRowBuilder != null || itemBuilder != null),
         assert(timeRowBuilder == null || itemBuilder == null),
         super(key: key);
@@ -86,6 +88,13 @@ class InRowCalendarDayView<T extends Object> extends StatefulWidget
   final bool? primary;
   final ScrollPhysics? physics;
   final ScrollController? controller;
+
+  /// show time in 12 hour format
+  final bool time12;
+
+  /// The width of the column that contain list of time points
+  final double timeTitleColumnWidth;
+
   @override
   State<InRowCalendarDayView> createState() => _InRowCalendarDayViewState<T>();
 }
@@ -185,20 +194,27 @@ class _InRowCalendarDayViewState<T extends Object>
                       color: widget.dividerColor ?? Colors.amber,
                       height: 0,
                       thickness: time.minute == 0 ? 1 : .5,
-                      indent: 50,
+                      indent: widget.timeTitleColumnWidth + 3,
                     ),
                     Row(
                       mainAxisSize: MainAxisSize.max,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Transform(
-                          transform: Matrix4.translationValues(0, -10, 0),
+                          transform: Matrix4.translationValues(0, -20, 0),
                           child: SizedBox(
-                            width: 50,
-                            child: Text(
-                              "${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, "0")}",
-                              style: widget.timeTextStyle ??
-                                  TextStyle(color: widget.timeTextColor),
+                            height: 40,
+                            width: widget.timeTitleColumnWidth,
+                            child: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Text(
+                                widget.time12
+                                    ? time.hourDisplay12
+                                    : time.hourDisplay24,
+                                style: widget.timeTextStyle ??
+                                    TextStyle(color: widget.timeTextColor),
+                                maxLines: 1,
+                              ),
                             ),
                           ),
                         ),

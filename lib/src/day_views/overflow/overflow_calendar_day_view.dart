@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:calendar_day_view/calendar_day_view.dart';
-import 'package:calendar_day_view/src/extensions/time_of_day_extension.dart';
+import '../../../calendar_day_view.dart';
+import '../../extensions/date_time_extension.dart';
 import 'package:flutter/material.dart';
 
 import '../../models/overflow_event.dart';
@@ -17,7 +17,7 @@ class OverFlowCalendarDayView<T extends Object> extends StatefulWidget
   const OverFlowCalendarDayView({
     Key? key,
     required this.events,
-    this.timeTitleColumnWidth = 50.0,
+    this.timeTitleColumnWidth = 70.0,
     this.startOfDay = const TimeOfDay(hour: 7, minute: 00),
     this.endOfDay = const TimeOfDay(hour: 17, minute: 00),
     this.heightPerMin = 1.0,
@@ -37,6 +37,7 @@ class OverFlowCalendarDayView<T extends Object> extends StatefulWidget
     this.physics,
     this.controller,
     this.cropBottomEvents = true,
+    this.time12 = false,
   }) :
         //  assert(endOfDay.difference(startOfDay).inHours > 0,
         //     "endOfDay and startOfDay must be at least 1 hour different. The different now is: ${endOfDay.difference(startOfDay).inHours}"),
@@ -103,6 +104,9 @@ class OverFlowCalendarDayView<T extends Object> extends StatefulWidget
   final bool? primary;
   final ScrollPhysics? physics;
   final ScrollController? controller;
+
+  /// show time in 12 hour format
+  final bool time12;
 
   @override
   State<OverFlowCalendarDayView> createState() =>
@@ -207,16 +211,23 @@ class _OverFlowCalendarDayViewState<T extends Object>
                               color: widget.dividerColor ?? Colors.amber,
                               height: 0,
                               thickness: time.minute == 0 ? 1 : .5,
-                              indent: widget.timeTitleColumnWidth,
+                              indent: widget.timeTitleColumnWidth + 3,
                             ),
                             Transform(
-                              transform: Matrix4.translationValues(0, -10, 0),
+                              transform: Matrix4.translationValues(0, -20, 0),
                               child: SizedBox(
+                                height: 40,
                                 width: widget.timeTitleColumnWidth,
-                                child: Text(
-                                  "${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, "0")}",
-                                  style: widget.timeTextStyle ??
-                                      TextStyle(color: widget.timeTextColor),
+                                child: FittedBox(
+                                  fit: BoxFit.scaleDown,
+                                  child: Text(
+                                    widget.time12
+                                        ? time.hourDisplay12
+                                        : time.hourDisplay24,
+                                    style: widget.timeTextStyle ??
+                                        TextStyle(color: widget.timeTextColor),
+                                    maxLines: 1,
+                                  ),
                                 ),
                               ),
                             ),

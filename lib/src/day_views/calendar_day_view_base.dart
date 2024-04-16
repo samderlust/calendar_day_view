@@ -31,6 +31,7 @@ abstract class CalendarDayView<T extends Object> extends Widget {
     ScrollPhysics? physics,
     ScrollController? controller,
     bool? cropBottomEvents,
+    bool? time12,
   }) =>
       OverFlowCalendarDayView<T>(
         timeTitleColumnWidth: timeTitleColumnWidth ?? 50,
@@ -54,6 +55,7 @@ abstract class CalendarDayView<T extends Object> extends Widget {
         physics: physics,
         controller: controller,
         cropBottomEvents: cropBottomEvents ?? false,
+        time12: time12 ?? false,
       );
 
   /// Create [CategoryCalendarDayView]
@@ -81,8 +83,10 @@ abstract class CalendarDayView<T extends Object> extends Widget {
     BoxDecoration? headerDecoration,
     Widget? logo,
     CategoryDayViewControlBarBuilder? controlBarBuilder,
+    bool? time12,
   }) =>
       CategoryCalendarDayView(
+        time12: time12 ?? false,
         events: events,
         currentDate: currentDate,
         categories: categories,
@@ -131,8 +135,10 @@ abstract class CalendarDayView<T extends Object> extends Widget {
     Widget? logo,
     CategoryDayViewControlBarBuilder? controlBarBuilder,
     CategoryBackgroundTimeTileBuilder? backgroundTimeTileBuilder,
+    bool? time12,
   }) =>
       CategoryOverflowCalendarDayView(
+        time12: time12 ?? false,
         events: events,
         currentDate: currentDate,
         categories: categories,
@@ -178,8 +184,10 @@ abstract class CalendarDayView<T extends Object> extends Widget {
     bool? primary,
     ScrollPhysics? physics,
     ScrollController? controller,
+    bool? time12,
   }) =>
       InRowCalendarDayView(
+        time12: time12 ?? false,
         currentTimeLineColor: currentTimeLineColor,
         startOfDay: startOfDay ?? const TimeOfDay(hour: 7, minute: 00),
         endOfDay: endOfDay ?? const TimeOfDay(hour: 17, minute: 00),
@@ -216,8 +224,10 @@ abstract class CalendarDayView<T extends Object> extends Widget {
     bool? primary,
     ScrollPhysics? physics,
     ScrollController? controller,
+    bool? time12,
   }) =>
       EventCalendarDayView(
+        time12: time12 ?? false,
         events: events,
         eventDayViewItemBuilder: eventDayViewItemBuilder,
         timeTextColor: timeTextColor,
