@@ -29,7 +29,7 @@
 
 ## 3.0.1
 
-- fix padding issue in overflow day view
+dar- fix padding issue in overflow day view
 
 ## 3.0.0
 
