@@ -18,68 +18,23 @@ class CategoryCalendarDayView<T extends Object> extends StatefulWidget
     Key? key,
     required this.categories,
     required this.events,
-    this.startOfDay = const TimeOfDay(hour: 7, minute: 00),
-    this.endOfDay = const TimeOfDay(hour: 17, minute: 00),
-    required this.currentDate,
-    this.timeGap = 60,
-    this.heightPerMin = 1.0,
-    this.evenRowColor,
-    this.oddRowColor,
-    this.verticalDivider,
-    this.horizontalDivider,
-    this.timeTextStyle,
     required this.eventBuilder,
+    required this.options,
     this.onTileTap,
-    this.headerDecoration,
-    this.logo,
-    this.timeColumnWidth = 50,
-    this.allowHorizontalScroll = false,
-    this.columnsPerPage = 3,
     this.controlBarBuilder,
-    this.time12 = false,
+    required this.currentDate,
   }) : super(key: key);
+
+  /// the date that this dayView is presenting
+  final DateTime currentDate;
+
+  final CategoryDayViewOptions options;
 
   /// List of category
   final List<EventCategory> categories;
 
   /// List of events
   final List<CategorizedDayEvent<T>> events;
-
-  /// width of the first column where times are displayed
-  final double timeColumnWidth;
-
-  /// the date that this dayView is presenting
-  final DateTime currentDate;
-
-  /// To set the start time of the day view
-  final TimeOfDay startOfDay;
-
-  /// To set the end time of the day view
-  final TimeOfDay endOfDay;
-
-  /// time gap/duration of a row.
-  ///
-  /// This will determine the minimum height of a row
-  /// row height is calculated by `rowHeight = heightPerMin * timeGap`
-  final int timeGap;
-
-  /// height in pixel per minute
-  final double heightPerMin;
-
-  /// background color of the even-indexed row
-  final Color? evenRowColor;
-
-  /// background color of the odd-indexed row
-  final Color? oddRowColor;
-
-  /// dividers that run vertically in the day view
-  final VerticalDivider? verticalDivider;
-
-  /// dividers that run horizontally in the day view
-  final Divider? horizontalDivider;
-
-  /// time label text style
-  final TextStyle? timeTextStyle;
 
   /// event builder
   final CategoryDayViewEventBuilder<T> eventBuilder;
@@ -89,29 +44,11 @@ class CategoryCalendarDayView<T extends Object> extends StatefulWidget
   /// provide [EventCategory] and [DateTime]  of that tile
   final CategoryDayViewTileTap? onTileTap;
 
-  /// build category header
-  // final CategoryDayViewHeaderTileBuilder? headerTileBuilder;
-
-  /// header row decoration
-  final BoxDecoration? headerDecoration;
-
-  /// The widget that will be place at top left corner tile of this day view
-  final Widget? logo;
-
-  /// if true the day view can be scrolled horizontally to show more categories
-  final bool allowHorizontalScroll;
-
-  /// number of columns per page, only affect when [allowHorizontalScroll] = true
-  final double columnsPerPage;
-
   /// To build the controller bar on the top of the day view
   ///
   /// `goToPreviousTab` to animate to previous tabs
   /// `goToNextTab` to animate to next tabs
   final CategoryDayViewControlBarBuilder? controlBarBuilder;
-
-  /// show time in 12 hour format
-  final bool time12;
 
   @override
   State<CategoryCalendarDayView<T>> createState() =>
@@ -120,40 +57,48 @@ class CategoryCalendarDayView<T extends Object> extends StatefulWidget
 
 class _CategoryCalendarDayViewState<T extends Object>
     extends State<CategoryCalendarDayView<T>> {
-  late ScrollController controller;
+  late ScrollController _hController;
+  late ScrollController _vController;
   @override
   void initState() {
     super.initState();
-    controller = ScrollController();
+    _hController = ScrollController();
+    _vController = ScrollController();
+  }
+
+  @override
+  void dispose() {
+    _hController.dispose();
+    _vController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final timeStart = widget.currentDate.copyTimeAndMinClean(widget.startOfDay);
-    final timeEnd = widget.currentDate.copyTimeAndMinClean(widget.endOfDay);
+    final timeStart =
+        widget.currentDate.copyTimeAndMinClean(widget.options.startOfDay);
+    final timeEnd =
+        widget.currentDate.copyTimeAndMinClean(widget.options.endOfDay);
 
     final timeList = getTimeList(
       timeStart,
       timeEnd,
-      widget.timeGap,
+      widget.options.timeGap,
     );
 
-    final rowHeight = widget.heightPerMin * widget.timeGap;
+    final rowHeight = widget.options.heightPerMin * widget.options.timeGap;
+
     return SafeArea(
       child: LayoutBuilder(
         builder: (context, constraints) {
-          // widget.allowHorizontalScroll
-          //     ? (widget.categories.length * widget.eventColumnWith +
-          //         widget.timeColumnWidth)
-          //     :
-          // final rowLength = constraints.maxWidth - timeColumnWidth;
-          final rowLength = constraints.maxWidth - widget.timeColumnWidth;
+          final rowLength =
+              constraints.maxWidth - widget.options.timeTitleColumnWidth;
 
-          final tileWidth = widget.allowHorizontalScroll
-              ? rowLength / widget.columnsPerPage
+          final tileWidth = widget.options.allowHorizontalScroll
+              ? rowLength / widget.options.columnsPerPage
               : rowLength / widget.categories.length;
 
-          final totalWidth = widget.allowHorizontalScroll
+          final totalWidth = widget.options.allowHorizontalScroll
               ? tileWidth * widget.categories.length
               : rowLength;
 
@@ -188,39 +133,42 @@ class _CategoryCalendarDayViewState<T extends Object>
                     child: Row(
                       children: [
                         TimeAndLogoWidget(
-                          time12: widget.time12,
+                          time12: widget.options.time12,
                           rowHeight: rowHeight,
-                          timeColumnWidth: widget.timeColumnWidth,
+                          timeColumnWidth: widget.options.timeTitleColumnWidth,
                           timeList: timeList,
-                          evenRowColor: widget.evenRowColor,
-                          oddRowColor: widget.oddRowColor,
-                          headerDecoration: widget.headerDecoration,
-                          horizontalDivider: widget.horizontalDivider,
-                          verticalDivider: widget.verticalDivider,
-                          logo: widget.logo,
-                          timeTextStyle: widget.timeTextStyle,
+                          evenRowColor: widget.options.evenRowColor,
+                          oddRowColor: widget.options.oddRowColor,
+                          headerDecoration: widget.options.headerDecoration,
+                          horizontalDivider: widget.options.horizontalDivider,
+                          verticalDivider: widget.options.verticalDivider,
+                          logo: widget.options.logo,
+                          timeTextStyle: widget.options.timeTextStyle,
                         ),
                         Expanded(
                           child: SingleChildScrollView(
-                            controller: controller,
+                            controller: _hController,
                             scrollDirection: Axis.horizontal,
                             physics: const ClampingScrollPhysics(),
                             child: SizedBox(
                               width: totalWidth,
                               child: Column(
                                 children: [
-                                  widget.horizontalDivider ??
+                                  widget.options.horizontalDivider ??
                                       const Divider(height: 0),
                                   CategoryTitleRow(
                                     rowHeight: rowHeight,
-                                    verticalDivider: widget.verticalDivider,
+                                    verticalDivider:
+                                        widget.options.verticalDivider,
                                     categories: widget.categories,
                                     tileWidth: tileWidth,
-                                    headerDecoration: widget.headerDecoration,
-                                    timeColumnWidth: widget.timeColumnWidth,
-                                    logo: widget.logo,
+                                    headerDecoration:
+                                        widget.options.headerDecoration,
+                                    timeColumnWidth:
+                                        widget.options.timeTitleColumnWidth,
+                                    logo: widget.options.logo,
                                   ),
-                                  widget.horizontalDivider ??
+                                  widget.options.horizontalDivider ??
                                       const Divider(height: 0),
                                   ListView.separated(
                                     shrinkWrap: true,
@@ -228,38 +176,39 @@ class _CategoryCalendarDayViewState<T extends Object>
                                         const NeverScrollableScrollPhysics(),
                                     itemCount: timeList.length,
                                     separatorBuilder: (context, index) =>
-                                        widget.horizontalDivider ??
+                                        widget.options.horizontalDivider ??
                                         const Divider(height: 0),
                                     itemBuilder: (context, index) {
                                       final time = timeList.elementAt(index);
                                       final rowEvents = widget.events
                                           .where(
                                             (event) => event.startInThisGap(
-                                                time, widget.timeGap),
+                                                time, widget.options.timeGap),
                                           )
                                           .toList();
                                       return Container(
                                         decoration: BoxDecoration(
                                           color: index % 2 == 0
-                                              ? widget.evenRowColor
-                                              : widget.oddRowColor,
+                                              ? widget.options.evenRowColor
+                                              : widget.options.oddRowColor,
                                         ),
                                         constraints: BoxConstraints(
                                           minHeight: rowHeight,
                                         ),
                                         child: DayViewRow<T>(
                                           time: time,
-                                          timeTextStyle: widget.timeTextStyle,
+                                          timeTextStyle:
+                                              widget.options.timeTextStyle,
                                           verticalDivider:
-                                              widget.verticalDivider,
+                                              widget.options.verticalDivider,
                                           categories: widget.categories,
                                           rowEvents: rowEvents,
                                           onTileTap: widget.onTileTap,
                                           tileWidth: tileWidth,
                                           rowHeight: rowHeight,
                                           eventBuilder: widget.eventBuilder,
-                                          timeColumnWidth:
-                                              widget.timeColumnWidth,
+                                          timeColumnWidth: widget
+                                              .options.timeTitleColumnWidth,
                                         ),
                                       );
                                     },
@@ -282,16 +231,16 @@ class _CategoryCalendarDayViewState<T extends Object>
   }
 
   void goBack(double rowLength, double totalWidth) {
-    controller.animateTo(
-      (controller.offset - rowLength).clamp(0, totalWidth),
+    _hController.animateTo(
+      (_hController.offset - rowLength).clamp(0, totalWidth),
       duration: const Duration(milliseconds: 300),
       curve: Curves.linear,
     );
   }
 
   void goNext(double rowLength, double totalWidth) {
-    controller.animateTo(
-      (controller.offset + rowLength).clamp(rowLength, totalWidth),
+    _hController.animateTo(
+      (_hController.offset + rowLength).clamp(rowLength, totalWidth),
       duration: const Duration(milliseconds: 300),
       curve: Curves.linear,
     );

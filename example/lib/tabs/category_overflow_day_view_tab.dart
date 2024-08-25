@@ -17,12 +17,7 @@ class CategoryOverflowDayViewTab extends HookWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     return CalendarDayView.categoryOverflow(
-      time12: true,
-      allowHorizontalScroll: true,
       categories: categories,
-      timeColumnWidth: 70,
-      columnsPerPage: 2,
-      endOfDay: const TimeOfDay(hour: 21, minute: 00),
       events: events,
       onTileTap: (category, time) {
         ScaffoldMessenger.of(context).clearSnackBars();
@@ -34,16 +29,23 @@ class CategoryOverflowDayViewTab extends HookWidget {
         );
       },
       currentDate: DateTime.now(),
-      timeGap: 60,
-      heightPerMin: 1,
-      evenRowColor: Colors.white,
-      oddRowColor: Colors.grey[200],
-      headerDecoration: BoxDecoration(
-        color: Colors.lightBlueAccent.withOpacity(.5),
-      ),
-      logo: const Padding(
-        padding: EdgeInsets.all(8.0),
-        child: CircleAvatar(child: Text("C")),
+      options: CategoryDayViewOptions(
+        time12: true,
+        allowHorizontalScroll: true,
+        timeTitleColumnWidth: 70,
+        columnsPerPage: 2,
+        endOfDay: const TimeOfDay(hour: 21, minute: 00),
+        timeGap: 60,
+        heightPerMin: 1,
+        evenRowColor: Colors.white,
+        oddRowColor: Colors.grey[200],
+        headerDecoration: BoxDecoration(
+          color: Colors.lightBlueAccent.withOpacity(.5),
+        ),
+        logo: const Padding(
+          padding: EdgeInsets.all(8.0),
+          child: CircleAvatar(child: Text("C")),
+        ),
       ),
       backgroundTimeTileBuilder:
           (context, constraints, rowTime, category, isOddRow) {

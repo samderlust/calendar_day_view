@@ -18,26 +18,28 @@ class CategoryDayViewTab extends HookWidget {
     final colorScheme = Theme.of(context).colorScheme;
 
     return CalendarDayView.category(
-      time12: true,
-      allowHorizontalScroll: true,
       categories: categories,
-      columnsPerPage: 2,
       events: events,
       onTileTap: (category, time) {
         print(category);
         print(time);
       },
       currentDate: DateTime.now(),
-      timeGap: 60,
-      heightPerMin: 1,
-      evenRowColor: Colors.white,
-      oddRowColor: Colors.grey[200],
-      headerDecoration: BoxDecoration(
-        color: Colors.lightBlueAccent.withOpacity(.5),
-      ),
-      logo: const Padding(
-        padding: EdgeInsets.all(8.0),
-        child: CircleAvatar(child: Text("C")),
+      options: CategoryDayViewOptions(
+        time12: true,
+        allowHorizontalScroll: true,
+        columnsPerPage: 2,
+        timeGap: 60,
+        heightPerMin: 1,
+        evenRowColor: Colors.white,
+        oddRowColor: Colors.grey[200],
+        headerDecoration: BoxDecoration(
+          color: Colors.lightBlueAccent.withOpacity(.5),
+        ),
+        logo: const Padding(
+          padding: EdgeInsets.all(8.0),
+          child: CircleAvatar(child: Text("C")),
+        ),
       ),
       controlBarBuilder: (goToPreviousTab, goToNextTab) => Container(
         color: Theme.of(context).colorScheme.primaryContainer,

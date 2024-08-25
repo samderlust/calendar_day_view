@@ -1,9 +1,9 @@
 import 'dart:async';
 
-import '../../../calendar_day_view.dart';
-import '../../extensions/date_time_extension.dart';
 import 'package:flutter/material.dart';
 
+import '../../../calendar_day_view.dart';
+import '../../extensions/date_time_extension.dart';
 import '../../models/overflow_event.dart';
 import '../../models/typedef.dart';
 import '../../utils/date_time_utils.dart';
@@ -16,20 +16,11 @@ class OverFlowCalendarDayView<T extends Object> extends StatefulWidget
     implements CalendarDayView<T> {
   const OverFlowCalendarDayView({
     Key? key,
+    required this.options,
     required this.events,
-    this.timeTitleColumnWidth = 70.0,
-    this.startOfDay = const TimeOfDay(hour: 7, minute: 00),
-    this.endOfDay = const TimeOfDay(hour: 17, minute: 00),
-    this.heightPerMin = 1.0,
-    this.timeGap = 60,
-    this.showCurrentTimeLine = false,
+    required this.currentDate,
     this.renderRowAsListView = false,
     this.showMoreOnRowButton = false,
-    required this.currentDate,
-    this.timeTextColor,
-    this.timeTextStyle,
-    this.dividerColor,
-    this.currentTimeLineColor,
     this.overflowItemBuilder,
     this.moreOnRowButton,
     this.onTimeTap,
@@ -37,7 +28,6 @@ class OverFlowCalendarDayView<T extends Object> extends StatefulWidget
     this.physics,
     this.controller,
     this.cropBottomEvents = true,
-    this.time12 = false,
   }) :
         //  assert(endOfDay.difference(startOfDay).inHours > 0,
         //     "endOfDay and startOfDay must be at least 1 hour different. The different now is: ${endOfDay.difference(startOfDay).inHours}"),
@@ -45,41 +35,13 @@ class OverFlowCalendarDayView<T extends Object> extends StatefulWidget
         //     "endOfDay and startOfDay must be at max 24 hour different. The different now is: ${endOfDay.difference(startOfDay).inHours}"),
         super(key: key);
 
-  /// The width of the column that contain list of time points
-  final double timeTitleColumnWidth;
-
-  /// To show a line that indicate current hour and minute;
-  final bool showCurrentTimeLine;
-
-  /// Color of the current time line
-  final Color? currentTimeLineColor;
-
-  /// height in pixel per minute
-  final double heightPerMin;
-
-  /// List of events to be display in the day view
-  final List<DayEvent<T>> events;
+  final DayViewOptions options;
 
   /// the date that this dayView is presenting
   final DateTime currentDate;
 
-  /// To set the start time of the day view
-  final TimeOfDay startOfDay;
-
-  /// To set the end time of the day view
-  final TimeOfDay endOfDay;
-
-  /// time gap/duration of a row.
-  final int timeGap;
-
-  /// color of time point label
-  final Color? timeTextColor;
-
-  /// style of time point label
-  final TextStyle? timeTextStyle;
-
-  /// time slot divider color
-  final Color? dividerColor;
+  /// List of events to be display in the day view
+  final List<DayEvent<T>> events;
 
   /// builder for single event
   final DayViewItemBuilder<T>? overflowItemBuilder;
@@ -105,9 +67,6 @@ class OverFlowCalendarDayView<T extends Object> extends StatefulWidget
   final ScrollPhysics? physics;
   final ScrollController? controller;
 
-  /// show time in 12 hour format
-  final bool time12;
-
   @override
   State<OverFlowCalendarDayView> createState() =>
       _OverFlowCalendarDayViewState<T>();
@@ -127,17 +86,19 @@ class _OverFlowCalendarDayViewState<T extends Object>
   void initState() {
     super.initState();
     _rowScale = 1;
-    timeStart = widget.currentDate.copyTimeAndMinClean(widget.startOfDay);
-    timeEnd = widget.currentDate.copyTimeAndMinClean(widget.endOfDay);
+    timeStart =
+        widget.currentDate.copyTimeAndMinClean(widget.options.startOfDay);
+    timeEnd = widget.currentDate.copyTimeAndMinClean(widget.options.endOfDay);
 
     _overflowEvents = processOverflowEvents(
       [...widget.events]..sort((a, b) => a.compare(b)),
-      startOfDay: widget.currentDate.copyTimeAndMinClean(widget.startOfDay),
-      endOfDay: widget.currentDate.copyTimeAndMinClean(widget.endOfDay),
+      startOfDay:
+          widget.currentDate.copyTimeAndMinClean(widget.options.startOfDay),
+      endOfDay: widget.currentDate.copyTimeAndMinClean(widget.options.endOfDay),
       cropBottomEvents: widget.cropBottomEvents,
     );
 
-    if (widget.showCurrentTimeLine) {
+    if (widget.options.showCurrentTimeLine) {
       _timer = Timer.periodic(const Duration(minutes: 1), (_) {
         setState(() {
           _currentTime = DateTime.now();
@@ -149,12 +110,14 @@ class _OverFlowCalendarDayViewState<T extends Object>
   @override
   void didUpdateWidget(covariant OverFlowCalendarDayView<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
-    timeStart = widget.currentDate.copyTimeAndMinClean(widget.startOfDay);
-    timeEnd = widget.currentDate.copyTimeAndMinClean(widget.endOfDay);
+    timeStart =
+        widget.currentDate.copyTimeAndMinClean(widget.options.startOfDay);
+    timeEnd = widget.currentDate.copyTimeAndMinClean(widget.options.endOfDay);
     _overflowEvents = processOverflowEvents(
       [...widget.events]..sort((a, b) => a.compare(b)),
-      startOfDay: widget.currentDate.copyTimeAndMinClean(widget.startOfDay),
-      endOfDay: widget.currentDate.copyTimeAndMinClean(widget.endOfDay),
+      startOfDay:
+          widget.currentDate.copyTimeAndMinClean(widget.options.startOfDay),
+      endOfDay: widget.currentDate.copyTimeAndMinClean(widget.options.endOfDay),
       cropBottomEvents: widget.cropBottomEvents,
     );
   }
@@ -167,18 +130,19 @@ class _OverFlowCalendarDayViewState<T extends Object>
 
   @override
   Widget build(BuildContext context) {
-    final heightUnit = widget.heightPerMin * _rowScale;
-    final rowHeight = widget.timeGap * widget.heightPerMin * _rowScale;
+    final heightUnit = widget.options.heightPerMin * _rowScale;
+    final rowHeight =
+        widget.options.timeGap * widget.options.heightPerMin * _rowScale;
     final timesInDay = getTimeList(
       timeStart,
       timeEnd,
-      widget.timeGap,
+      widget.options.timeGap,
     );
     final totalHeight = timesInDay.length * rowHeight;
 
     return LayoutBuilder(builder: (context, constraints) {
       final viewWidth = constraints.maxWidth;
-      final eventColumnWith = viewWidth - widget.timeTitleColumnWidth;
+      final eventColumnWith = viewWidth - widget.options.timeTitleColumnWidth;
 
       return SafeArea(
         child: SingleChildScrollView(
@@ -208,24 +172,27 @@ class _OverFlowCalendarDayViewState<T extends Object>
                         child: Stack(
                           children: [
                             Divider(
-                              color: widget.dividerColor ?? Colors.amber,
+                              color:
+                                  widget.options.dividerColor ?? Colors.amber,
                               height: 0,
                               thickness: time.minute == 0 ? 1 : .5,
-                              indent: widget.timeTitleColumnWidth + 3,
+                              indent: widget.options.timeTitleColumnWidth + 3,
                             ),
                             Transform(
                               transform: Matrix4.translationValues(0, -20, 0),
                               child: SizedBox(
                                 height: 40,
-                                width: widget.timeTitleColumnWidth,
+                                width: widget.options.timeTitleColumnWidth,
                                 child: FittedBox(
                                   fit: BoxFit.scaleDown,
                                   child: Text(
-                                    widget.time12
+                                    widget.options.time12
                                         ? time.hourDisplay12
                                         : time.hourDisplay24,
-                                    style: widget.timeTextStyle ??
-                                        TextStyle(color: widget.timeTextColor),
+                                    style: widget.options.timeTextStyle ??
+                                        TextStyle(
+                                            color:
+                                                widget.options.timeTextColor),
                                     maxLines: 1,
                                   ),
                                 ),
@@ -251,14 +218,14 @@ class _OverFlowCalendarDayViewState<T extends Object>
                         : renderWithFixedWidth(heightUnit, eventColumnWith),
                   ),
                 ),
-                if (widget.showCurrentTimeLine &&
+                if (widget.options.showCurrentTimeLine &&
                     _currentTime.isAfter(timeStart) &&
                     _currentTime.isBefore(timeEnd))
                   CurrentTimeLineWidget(
                     top: _currentTime.minuteFrom(timeStart).toDouble() *
                         heightUnit,
                     width: constraints.maxWidth,
-                    color: widget.currentTimeLineColor,
+                    color: widget.options.currentTimeLineColor,
                   ),
               ],
             ),
@@ -296,7 +263,7 @@ class _OverFlowCalendarDayViewState<T extends Object>
               );
 
               return Positioned(
-                left: widget.timeTitleColumnWidth +
+                left: widget.options.timeTitleColumnWidth +
                     oEvents.events.indexOf(event) * width,
                 top: event.minutesFrom(timeStart) * heightUnit,
                 child: widget.overflowItemBuilder!(
@@ -321,7 +288,7 @@ class _OverFlowCalendarDayViewState<T extends Object>
       for (final oEvents in _overflowEvents)
         Positioned(
           top: oEvents.start.minuteFrom(timeStart) * heightUnit,
-          left: widget.timeTitleColumnWidth,
+          left: widget.options.timeTitleColumnWidth,
           child: OverflowListViewRow(
             totalHeight: totalHeight,
             oEvents: oEvents,
