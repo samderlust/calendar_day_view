@@ -1,3 +1,8 @@
+## 3.3.2
+
+- Fix bug in EventOnly Day view, where it duplicate events
+- add `showHourly` in EventOnly Day view.
+
 ## 3.3.1
 
 - add `time12` property to all dayviews. This allow to display hour in 12 hour format

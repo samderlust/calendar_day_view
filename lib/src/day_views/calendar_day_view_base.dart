@@ -225,6 +225,7 @@ abstract class CalendarDayView<T extends Object> extends Widget {
     ScrollPhysics? physics,
     ScrollController? controller,
     bool? time12,
+    bool? showHourly,
   }) =>
       EventCalendarDayView(
         time12: time12 ?? false,
@@ -239,5 +240,6 @@ abstract class CalendarDayView<T extends Object> extends Widget {
         primary: primary,
         physics: physics,
         controller: controller,
+        showHourly: showHourly ?? false,
       );
 }

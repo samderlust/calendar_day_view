@@ -26,6 +26,7 @@ class EventCalendarDayView<T extends Object> extends StatefulWidget
     this.controller,
     this.timeTitleColumnWidth = 50.0,
     this.time12 = false,
+    this.showHourly = false,
   }) : super(key: key);
 
   /// List of events to be display in the day view
@@ -59,8 +60,12 @@ class EventCalendarDayView<T extends Object> extends StatefulWidget
   /// show time in 12 hour format
   final bool time12;
 
+  /// show event by hour only
+  final bool showHourly;
+
   /// The width of the column that contain list of time points
   final double timeTitleColumnWidth;
+
   @override
   State<EventCalendarDayView> createState() => _EventCalendarDayViewState<T>();
 }
@@ -77,7 +82,9 @@ class _EventCalendarDayViewState<T extends Object>
 
   List<DateTime> getTimeList() {
     Set<DateTime> list = {};
-    list.addAll(widget.events.map((e) => e.start.cleanSec()).toList()
+    list.addAll(widget.events
+        .map((e) => widget.showHourly ? e.start.hourOnly() : e.start.cleanSec())
+        .toList()
       ..sort(
         (a, b) {
           int hourComparison = a.hour.compareTo(b.hour);
@@ -112,7 +119,9 @@ class _EventCalendarDayViewState<T extends Object>
             itemBuilder: (context, index) {
               final time = _timesInDay.elementAt(index);
               final events = widget.events.where(
-                (event) => event.startAt(time),
+                (event) => widget.showHourly
+                    ? event.startAtHour(time)
+                    : event.startAt(time),
               );
 
               return Padding(
