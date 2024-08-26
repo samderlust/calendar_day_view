@@ -77,12 +77,15 @@ class _EventCalendarDayViewState<T extends Object>
 
   List<DateTime> getTimeList() {
     Set<DateTime> list = {};
-    list.addAll(widget.events.map((e) => e.start).toList()
+    list.addAll(widget.events.map((e) => e.start.cleanSec()).toList()
       ..sort(
         (a, b) {
-          if (a.hour > b.hour) return 1;
-          if (a.hour == b.hour && a.minute > b.minute) return 1;
-          return -1;
+          int hourComparison = a.hour.compareTo(b.hour);
+          if (hourComparison != 0) {
+            return hourComparison;
+          } else {
+            return a.minute.compareTo(b.minute);
+          }
         },
       ));
     return list.toList();
