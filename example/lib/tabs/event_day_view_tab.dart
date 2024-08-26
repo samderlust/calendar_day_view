@@ -14,6 +14,7 @@ class EventDayViewTab extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
     return CalendarDayView.eventOnly(
       events: events,
+      showHourly: true,
       eventDayViewItemBuilder: (context, index, event) {
         return HookBuilder(builder: (context) {
           return Container(
