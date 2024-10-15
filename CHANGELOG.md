@@ -1,3 +1,7 @@
+## 3.3.3
+
+- [Fix incorrect display 12hours format](https://github.com/samderlust/calendar_day_view/issues/27) Thanks to @ArizArmeidi
+
 ## 3.3.2
 
 - Fix bug in EventOnly Day view, where it duplicate events
