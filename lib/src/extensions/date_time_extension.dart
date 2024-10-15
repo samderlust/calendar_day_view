@@ -41,5 +41,5 @@ extension DateTimeExtension on DateTime {
   String get hourDisplay24 =>
       "${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, "0")}";
   String get hourDisplay12 =>
-      "${(hour % 12).toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')} ${hour >= 12 ? 'PM' : 'AM'}";
+      "${(hour % 12 == 0 ? 12 : hour % 12).toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')} ${hour >= 12 ? 'PM' : 'AM'}";
 }
