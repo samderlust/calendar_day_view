@@ -150,33 +150,36 @@ class CalendarDayViewExample extends HookWidget {
             actions: [
               Row(
                 children: [
-                  if (currentIndex.value != 1)
-                    TextButton.icon(
-                      style:
-                          TextButton.styleFrom(backgroundColor: Colors.white),
-                      onPressed: () => dayEvents.value = fakeEvents(),
-                      icon: const Icon(Icons.refresh),
-                      label: const Text("events"),
-                    ),
-                  if (currentIndex.value == 1) ...[
-                    TextButton.icon(
-                      style:
-                          TextButton.styleFrom(backgroundColor: Colors.white),
-                      onPressed: () => categoryEvents.value =
-                          genEvents(categories.value.length),
-                      icon: const Icon(Icons.refresh),
-                      label: const Text("events"),
-                    ),
-                    const SizedBox(width: 10),
-                    TextButton.icon(
-                      style: TextButton.styleFrom(
-                        backgroundColor: Colors.white,
+                  switch (currentIndex.value) {
+                    var i when (i == 1 || i == 2) => Row(
+                        children: [
+                          TextButton.icon(
+                            style: TextButton.styleFrom(
+                                backgroundColor: Colors.white),
+                            onPressed: () => categoryEvents.value =
+                                genEvents(categories.value.length),
+                            icon: const Icon(Icons.refresh),
+                            label: const Text("events"),
+                          ),
+                          const SizedBox(width: 10),
+                          TextButton.icon(
+                            style: TextButton.styleFrom(
+                              backgroundColor: Colors.white,
+                            ),
+                            onPressed: addCategory,
+                            icon: const Icon(Icons.add),
+                            label: const Text("category"),
+                          ),
+                        ],
                       ),
-                      onPressed: addCategory,
-                      icon: const Icon(Icons.add),
-                      label: const Text("category"),
-                    ),
-                  ],
+                    _ => TextButton.icon(
+                        style:
+                            TextButton.styleFrom(backgroundColor: Colors.white),
+                        onPressed: () => dayEvents.value = fakeEvents(),
+                        icon: const Icon(Icons.refresh),
+                        label: const Text("events"),
+                      ),
+                  },
                   const SizedBox(width: 10),
                 ],
               )

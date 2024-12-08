@@ -6,6 +6,60 @@ import '../../../models/overflow_event.dart';
 import '../../../models/typedef.dart';
 import '../../../widgets/background_ignore_pointer.dart';
 
+class OverFlowListViewRowView<T extends Object> extends StatelessWidget {
+  const OverFlowListViewRowView({
+    super.key,
+    required this.overflowEvents,
+    required this.overflowItemBuilder,
+    required this.heightUnit,
+    required this.eventColumnWith,
+    required this.showMoreOnRowButton,
+    this.moreOnRowButton,
+    required this.cropBottomEvents,
+    required this.timeStart,
+    required this.totalHeight,
+    required this.timeTitleColumnWidth,
+    this.onTimeTap,
+  });
+
+  final List<OverflowEventsRow<T>> overflowEvents;
+  final DayViewItemBuilder<T> overflowItemBuilder;
+  final double heightUnit;
+  final double eventColumnWith;
+  final bool showMoreOnRowButton;
+  final Widget? moreOnRowButton;
+  final bool cropBottomEvents;
+  final DateTime timeStart;
+  final double totalHeight;
+  final double timeTitleColumnWidth;
+  final Function(DateTime, T)? onTimeTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        for (final oEvents in overflowEvents)
+          Positioned(
+            top: oEvents.start.minuteFrom(timeStart) * heightUnit,
+            left: timeTitleColumnWidth,
+            child: OverflowListViewRow(
+              totalHeight: totalHeight,
+              oEvents: oEvents,
+              ignored: onTimeTap != null,
+              overflowItemBuilder: overflowItemBuilder,
+              heightUnit: heightUnit,
+              eventColumnWith: eventColumnWith,
+              showMoreOnRowButton: showMoreOnRowButton,
+              moreOnRowButton: moreOnRowButton,
+              cropBottomEvents: cropBottomEvents,
+            ),
+          ),
+      ],
+    );
+  }
+}
+
 class OverflowListViewRow<T extends Object> extends StatefulWidget {
   const OverflowListViewRow({
     Key? key,

@@ -13,4 +13,5 @@ export 'src/day_views/category/category_calendar_day_view.dart';
 export 'src/models/day_event.dart';
 export 'src/models/categorized_day_event.dart';
 export 'src/models/event_category.dart';
+export 'src/day_views/dav_view_options.dart';
 export 'src/day_views/calendar_day_view_base.dart';

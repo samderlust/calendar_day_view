@@ -10,6 +10,7 @@ import '../../utils/date_time_utils.dart';
 import '../../utils/events_utils.dart';
 import '../../widgets/background_ignore_pointer.dart';
 import '../../widgets/current_time_line_widget.dart';
+import 'widgets/overflow_fixed_width_events_widget.dart';
 import 'widgets/overflow_list_view_row.dart';
 
 class OverFlowCalendarDayView<T extends Object> extends StatefulWidget
@@ -151,6 +152,7 @@ class _OverFlowCalendarDayViewState<T extends Object>
     super.didUpdateWidget(oldWidget);
     timeStart = widget.currentDate.copyTimeAndMinClean(widget.startOfDay);
     timeEnd = widget.currentDate.copyTimeAndMinClean(widget.endOfDay);
+
     _overflowEvents = processOverflowEvents(
       [...widget.events]..sort((a, b) => a.compare(b)),
       startOfDay: widget.currentDate.copyTimeAndMinClean(widget.startOfDay),
@@ -239,17 +241,28 @@ class _OverFlowCalendarDayViewState<T extends Object>
                 ),
                 BackgroundIgnorePointer(
                   ignored: widget.onTimeTap != null,
-                  child: Stack(
-                    // fit: StackFit.expand,
-                    clipBehavior: Clip.none,
-                    children: widget.renderRowAsListView
-                        ? renderAsListView(
-                            heightUnit,
-                            eventColumnWith,
-                            totalHeight,
-                          )
-                        : renderWithFixedWidth(heightUnit, eventColumnWith),
-                  ),
+                  child: widget.renderRowAsListView
+                      ? OverFlowListViewRowView(
+                          overflowEvents: _overflowEvents,
+                          overflowItemBuilder: widget.overflowItemBuilder!,
+                          heightUnit: heightUnit,
+                          eventColumnWith: eventColumnWith,
+                          showMoreOnRowButton: widget.showMoreOnRowButton,
+                          cropBottomEvents: widget.cropBottomEvents,
+                          timeStart: timeStart,
+                          totalHeight: totalHeight,
+                          timeTitleColumnWidth: widget.timeTitleColumnWidth,
+                        )
+                      : OverflowFixedWidthEventsWidget(
+                          heightUnit: heightUnit,
+                          eventColumnWidth: eventColumnWith,
+                          timeTitleColumnWidth: widget.timeTitleColumnWidth,
+                          timeStart: timeStart,
+                          overflowEvents: _overflowEvents,
+                          overflowItemBuilder: widget.overflowItemBuilder!,
+                          cropBottomEvents: widget.cropBottomEvents,
+                          timeEnd: timeEnd,
+                        ),
                 ),
                 if (widget.showCurrentTimeLine &&
                     _currentTime.isAfter(timeStart) &&
@@ -266,74 +279,5 @@ class _OverFlowCalendarDayViewState<T extends Object>
         ),
       );
     });
-  }
-
-  List<Widget> renderWithFixedWidth(double heightUnit, double eventColumnWith) {
-    final widgets = <Widget>[];
-
-    for (final oEvents in _overflowEvents) {
-      final maxHeight =
-          (heightUnit * oEvents.start.minuteUntil(oEvents.end).abs());
-
-      for (var i = 0; i < oEvents.events.length; i++) {
-        widgets.add(
-          Builder(
-            builder: (context) {
-              final event = oEvents.events.elementAt(i);
-              final width = eventColumnWith / oEvents.events.length;
-              final topGap = event.minutesFrom(oEvents.start) * heightUnit;
-
-              final tileHeight =
-                  (widget.cropBottomEvents && event.end!.isAfter(timeEnd))
-                      ? (maxHeight - topGap)
-                      : (event.durationInMins * heightUnit);
-
-              final tileConstraints = BoxConstraints(
-                maxHeight: tileHeight,
-                minHeight: tileHeight,
-                minWidth: width,
-                maxWidth: eventColumnWith,
-              );
-
-              return Positioned(
-                left: widget.timeTitleColumnWidth +
-                    oEvents.events.indexOf(event) * width,
-                top: event.minutesFrom(timeStart) * heightUnit,
-                child: widget.overflowItemBuilder!(
-                  context,
-                  tileConstraints,
-                  i,
-                  event,
-                ),
-              );
-            },
-          ),
-        );
-      }
-    }
-    return widgets;
-  }
-
-// to render all events in same row as a horizontal istView
-  List<Widget> renderAsListView(
-      double heightUnit, double eventColumnWith, double totalHeight) {
-    return [
-      for (final oEvents in _overflowEvents)
-        Positioned(
-          top: oEvents.start.minuteFrom(timeStart) * heightUnit,
-          left: widget.timeTitleColumnWidth,
-          child: OverflowListViewRow(
-            totalHeight: totalHeight,
-            oEvents: oEvents,
-            ignored: widget.onTimeTap != null,
-            overflowItemBuilder: widget.overflowItemBuilder!,
-            heightUnit: heightUnit,
-            eventColumnWith: eventColumnWith,
-            showMoreOnRowButton: widget.showMoreOnRowButton,
-            moreOnRowButton: widget.moreOnRowButton,
-            cropBottomEvents: widget.cropBottomEvents,
-          ),
-        ),
-    ];
   }
 }

@@ -1,37 +1,19 @@
+import 'package:calendar_day_view/calendar_day_view.dart';
 import 'package:calendar_day_view/src/extensions/date_time_extension.dart';
 import 'package:flutter/material.dart';
 
 class TimeAndLogoWidget extends StatelessWidget {
   const TimeAndLogoWidget({
     super.key,
-    required this.rowHeight,
-    required this.timeColumnWidth,
-    this.logo,
-    this.headerDecoration,
-    this.verticalDivider,
-    this.horizontalDivider,
-    required this.timeList,
-    required this.evenRowColor,
-    required this.oddRowColor,
-    required this.time12,
-    this.timeTextStyle,
+    required this.config,
   });
 
-  final double rowHeight;
-  final double timeColumnWidth;
-  final Widget? logo;
-  final BoxDecoration? headerDecoration;
-  final VerticalDivider? verticalDivider;
-  final Divider? horizontalDivider;
-  final List<DateTime> timeList;
-  final Color? evenRowColor;
-  final Color? oddRowColor;
-  final TextStyle? timeTextStyle;
-  final bool time12;
+  final CategoryDavViewConfig config;
+
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: timeColumnWidth,
+      width: config.timeColumnWidth,
       child: Column(
         children: [
           IntrinsicHeight(
@@ -39,28 +21,28 @@ class TimeAndLogoWidget extends StatelessWidget {
               children: [
                 ConstrainedBox(
                   constraints: BoxConstraints(
-                    maxWidth: timeColumnWidth,
-                    minWidth: timeColumnWidth,
-                    minHeight: rowHeight,
+                    maxWidth: config.timeColumnWidth,
+                    minWidth: config.timeColumnWidth,
+                    minHeight: config.rowHeight,
                   ),
-                  child: logo ??
+                  child: config.logo ??
                       Container(
-                        decoration: headerDecoration,
+                        decoration: config.headerDecoration,
                       ),
                 ),
-                verticalDivider ?? const VerticalDivider(width: 0),
+                config.verticalDivider ?? const VerticalDivider(width: 0),
               ],
             ),
           ),
-          horizontalDivider ?? const Divider(height: 0),
+          config.horizontalDivider ?? const Divider(height: 0),
           ListView.separated(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            itemCount: timeList.length,
+            itemCount: config.timeList.length,
             separatorBuilder: (context, index) =>
-                horizontalDivider ?? const Divider(height: 0),
+                config.horizontalDivider ?? const Divider(height: 0),
             itemBuilder: (context, index) {
-              final time = timeList.elementAt(index);
+              final time = config.timeList.elementAt(index);
 
               return IntrinsicHeight(
                 key: ValueKey(time),
@@ -68,29 +50,31 @@ class TimeAndLogoWidget extends StatelessWidget {
                   children: [
                     Container(
                         decoration: BoxDecoration(
-                          color: index % 2 == 0 ? evenRowColor : oddRowColor,
+                          color: index % 2 == 0
+                              ? config.evenRowColor
+                              : config.oddRowColor,
                         ),
                         constraints: BoxConstraints(
-                          maxHeight: rowHeight,
-                          minHeight: rowHeight,
+                          maxHeight: config.rowHeight,
+                          minHeight: config.rowHeight,
                         ),
                         child: SizedBox(
-                          width: timeColumnWidth,
+                          width: config.timeColumnWidth,
                           child: Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 2),
                             child: FittedBox(
                               fit: BoxFit.fitWidth,
                               child: Text(
-                                time12
+                                config.time12
                                     ? time.hourDisplay12
                                     : time.hourDisplay24,
-                                style: timeTextStyle,
+                                style: config.timeTextStyle,
                                 maxLines: 1,
                               ),
                             ),
                           ),
                         )),
-                    verticalDivider ?? const VerticalDivider(width: 0),
+                    config.verticalDivider ?? const VerticalDivider(width: 0),
                   ],
                 ),
               );

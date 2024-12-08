@@ -1,10 +1,8 @@
-import '../../extensions/date_time_extension.dart';
-import '../../extensions/list_extensions.dart';
 import 'package:flutter/material.dart';
 
 import '../../../calendar_day_view.dart';
+import '../../extensions/list_extensions.dart';
 import '../../models/typedef.dart';
-import '../../utils/date_time_utils.dart';
 import 'widgets/category_title_row.dart';
 import 'widgets/time_and_logo_widget.dart';
 import 'widgets/time_row_background.dart';
@@ -19,69 +17,20 @@ class CategoryOverflowCalendarDayView<T extends Object> extends StatefulWidget
     Key? key,
     required this.categories,
     required this.events,
-    this.startOfDay = const TimeOfDay(hour: 7, minute: 00),
-    this.endOfDay = const TimeOfDay(hour: 17, minute: 00),
-    required this.currentDate,
-    this.timeGap = 60,
-    this.heightPerMin = 1.0,
-    this.evenRowColor,
-    this.oddRowColor,
-    this.verticalDivider,
-    this.horizontalDivider,
-    this.timeTextStyle,
     required this.eventBuilder,
     this.onTileTap,
-    this.headerDecoration,
-    this.logo,
-    this.timeColumnWidth = 50,
-    this.allowHorizontalScroll = false,
-    this.columnsPerPage = 3,
     this.controlBarBuilder,
     this.backgroundTimeTileBuilder,
-    this.time12 = false,
+    required this.config,
   }) : super(key: key);
+
+  final CategoryDavViewConfig config;
 
   /// List of category
   final List<EventCategory> categories;
 
   /// List of events
   final List<CategorizedDayEvent<T>> events;
-
-  /// width of the first column where times are displayed
-  final double timeColumnWidth;
-
-  /// the date that this dayView is presenting
-  final DateTime currentDate;
-
-  /// To set the start time of the day view
-  final TimeOfDay startOfDay;
-
-  /// To set the end time of the day view
-  final TimeOfDay endOfDay;
-
-  /// time gap/duration of a row.
-  ///
-  /// This will determine the minimum height of a row
-  /// row height is calculated by `rowHeight = heightPerMin * timeGap`
-  final int timeGap;
-
-  /// height in pixel per minute
-  final double heightPerMin;
-
-  /// background color of the even-indexed row
-  final Color? evenRowColor;
-
-  /// background color of the odd-indexed row
-  final Color? oddRowColor;
-
-  /// dividers that run vertically in the day view
-  final VerticalDivider? verticalDivider;
-
-  /// dividers that run horizontally in the day view
-  final Divider? horizontalDivider;
-
-  /// time label text style
-  final TextStyle? timeTextStyle;
 
   /// event builder
   final CategoryDayViewEventBuilder<T> eventBuilder;
@@ -94,29 +43,11 @@ class CategoryOverflowCalendarDayView<T extends Object> extends StatefulWidget
   /// Allow user to customize the UI of each time slot in the background.
   final CategoryBackgroundTimeTileBuilder? backgroundTimeTileBuilder;
 
-  /// build category header
-  // final CategoryDayViewHeaderTileBuilder? headerTileBuilder;
-
-  /// header row decoration
-  final BoxDecoration? headerDecoration;
-
-  /// The widget that will be place at top left corner tile of this day view
-  final Widget? logo;
-
-  /// if true the day view can be scrolled horizontally to show more categories
-  final bool allowHorizontalScroll;
-
-  /// number of columns per page, only affect when [allowHorizontalScroll] = true
-  final double columnsPerPage;
-
   /// To build the controller bar on the top of the day view
   ///
   /// `goToPreviousTab` to animate to previous tabs
   /// `goToNextTab` to animate to next tabs
   final CategoryDayViewControlBarBuilder? controlBarBuilder;
-
-  /// show time in 12 hour format
-  final bool time12;
   @override
   State<CategoryOverflowCalendarDayView<T>> createState() =>
       _CategoryOverflowCalendarDayViewState<T>();
@@ -133,26 +64,17 @@ class _CategoryOverflowCalendarDayViewState<T extends Object>
 
   @override
   Widget build(BuildContext context) {
-    final timeStart = widget.currentDate.copyTimeAndMinClean(widget.startOfDay);
-    final timeEnd = widget.currentDate.copyTimeAndMinClean(widget.endOfDay);
-
-    final timeList = getTimeList(
-      timeStart,
-      timeEnd,
-      widget.timeGap,
-    );
-
-    final rowHeight = widget.heightPerMin * widget.timeGap;
     return SafeArea(
       child: LayoutBuilder(
         builder: (context, constraints) {
-          final rowLength = constraints.maxWidth - widget.timeColumnWidth;
+          final rowLength =
+              constraints.maxWidth - widget.config.timeColumnWidth;
 
-          final tileWidth = widget.allowHorizontalScroll
-              ? rowLength / widget.columnsPerPage
+          final tileWidth = widget.config.allowHorizontalScroll
+              ? rowLength / widget.config.columnsPerPage
               : rowLength / widget.categories.length;
 
-          final totalWidth = widget.allowHorizontalScroll
+          final totalWidth = widget.config.allowHorizontalScroll
               ? tileWidth * widget.categories.length
               : rowLength;
 
@@ -174,7 +96,10 @@ class _CategoryOverflowCalendarDayViewState<T extends Object>
                             onPressed: () => goBack(rowLength, totalWidth),
                             icon: const Icon(Icons.arrow_left),
                           ),
-                          Text(widget.currentDate.toString().split(":").first),
+                          Text(widget.config.currentDate
+                              .toString()
+                              .split(":")
+                              .first),
                           IconButton.filledTonal(
                             onPressed: () => goNext(rowLength, totalWidth),
                             icon: const Icon(Icons.arrow_right),
@@ -187,19 +112,7 @@ class _CategoryOverflowCalendarDayViewState<T extends Object>
                     child: Row(
                       children: [
                         //TIME LABELS COLUMN
-                        TimeAndLogoWidget(
-                          time12: widget.time12,
-                          rowHeight: rowHeight,
-                          timeColumnWidth: widget.timeColumnWidth,
-                          timeList: timeList,
-                          evenRowColor: widget.evenRowColor,
-                          oddRowColor: widget.oddRowColor,
-                          headerDecoration: widget.headerDecoration,
-                          horizontalDivider: widget.horizontalDivider,
-                          verticalDivider: widget.verticalDivider,
-                          logo: widget.logo,
-                          timeTextStyle: widget.timeTextStyle,
-                        ),
+                        TimeAndLogoWidget(config: widget.config),
                         // EVENT VIEW
                         Expanded(
                           child: ClipPath(
@@ -217,43 +130,24 @@ class _CategoryOverflowCalendarDayViewState<T extends Object>
                                   children: [
                                     Column(
                                       children: [
-                                        widget.horizontalDivider ??
+                                        widget.config.horizontalDivider ??
                                             const Divider(height: 0),
                                         CategoryTitleRow(
-                                          rowHeight: rowHeight,
-                                          verticalDivider:
-                                              widget.verticalDivider,
-                                          categories: widget.categories,
                                           tileWidth: tileWidth,
-                                          headerDecoration:
-                                              widget.headerDecoration,
-                                          timeColumnWidth:
-                                              widget.timeColumnWidth,
-                                          logo: widget.logo,
+                                          categories: widget.categories,
+                                          config: widget.config,
                                         ),
-                                        widget.horizontalDivider ??
+                                        widget.config.horizontalDivider ??
                                             const Divider(height: 0),
                                         _DayViewBody(
-                                          timeList: timeList,
-                                          rowHeight: rowHeight,
                                           tileWidth: tileWidth,
-                                          evenRowColor: widget.evenRowColor,
-                                          oddRowColor: widget.oddRowColor,
                                           rowBuilder:
                                               widget.backgroundTimeTileBuilder,
                                           events: widget.events,
-                                          timeColumnWidth:
-                                              widget.timeColumnWidth,
                                           categories: widget.categories,
-                                          verticalDivider:
-                                              widget.verticalDivider,
-                                          timeGap: widget.timeGap,
-                                          heightPerMin: widget.heightPerMin,
-                                          timeTextStyle: widget.timeTextStyle,
                                           eventBuilder: widget.eventBuilder,
-                                          horizontalDivider:
-                                              widget.horizontalDivider,
                                           onTileTap: widget.onTileTap,
+                                          config: widget.config,
                                         ),
                                       ],
                                     ),
@@ -310,40 +204,22 @@ class VerticalClipper extends CustomClipper<Path> {
 class _DayViewBody<T extends Object> extends StatelessWidget {
   const _DayViewBody({
     super.key,
-    required this.timeList,
-    required this.rowHeight,
-    required this.tileWidth,
-    this.evenRowColor,
-    this.oddRowColor,
     this.rowBuilder,
     required this.events,
-    required this.timeGap,
-    required this.heightPerMin,
-    this.timeTextStyle,
-    this.verticalDivider,
-    this.horizontalDivider,
     required this.eventBuilder,
     required this.categories,
     this.onTileTap,
-    required this.timeColumnWidth,
+    required this.tileWidth,
+    required this.config,
   });
-
-  final List<DateTime> timeList;
-  final double rowHeight;
+  final CategoryDavViewConfig config;
   final double tileWidth;
-  final Color? evenRowColor;
-  final Color? oddRowColor;
+
   final CategoryBackgroundTimeTileBuilder? rowBuilder;
   final List<CategorizedDayEvent<T>> events;
-  final int timeGap;
-  final double heightPerMin;
-  final TextStyle? timeTextStyle;
-  final VerticalDivider? verticalDivider;
-  final Divider? horizontalDivider;
   final CategoryDayViewEventBuilder<T> eventBuilder;
   final List<EventCategory> categories;
   final CategoryDayViewTileTap? onTileTap;
-  final double timeColumnWidth;
 
   @override
   Widget build(BuildContext context) {
@@ -351,21 +227,21 @@ class _DayViewBody<T extends Object> extends StatelessWidget {
       clipBehavior: Clip.none,
       children: [
         TimeRowBackground(
-          oddRowColor: oddRowColor,
-          evenRowColor: evenRowColor,
-          rowHeight: rowHeight,
-          timeList: timeList,
+          oddRowColor: config.oddRowColor,
+          evenRowColor: config.evenRowColor,
+          rowHeight: config.rowHeight,
+          timeList: config.timeList,
           // rowBuilder: rowBuilder,
         ),
         ListView.separated(
           separatorBuilder: (context, index) =>
-              horizontalDivider ?? const Divider(height: 0),
+              config.horizontalDivider ?? const Divider(height: 0),
           clipBehavior: Clip.none,
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
-          itemCount: timeList.length,
+          itemCount: config.timeList.length,
           itemBuilder: (context, index) {
-            final time = timeList.elementAt(index);
+            final time = config.timeList.elementAt(index);
 
             return IntrinsicHeight(
               child: Row(
@@ -378,12 +254,12 @@ class _DayViewBody<T extends Object> extends StatelessWidget {
                             ? null
                             : () => onTileTap!(c, time),
                         child: SizedBox(
-                          height: rowHeight,
+                          height: config.rowHeight,
                           width: tileWidth,
                           child: rowBuilder?.call(
                                 context,
                                 BoxConstraints(
-                                  maxHeight: rowHeight,
+                                  maxHeight: config.rowHeight,
                                   maxWidth: tileWidth,
                                 ),
                                 time,
@@ -393,7 +269,7 @@ class _DayViewBody<T extends Object> extends StatelessWidget {
                               const SizedBox.shrink(),
                         ),
                       ),
-                      verticalDivider ?? const VerticalDivider(width: 0),
+                      config.verticalDivider ?? const VerticalDivider(width: 0),
                     ],
                   )
                 ].expand((element) => element).toList(),
@@ -418,7 +294,8 @@ class _DayViewBody<T extends Object> extends StatelessWidget {
               );
 
               return Positioned(
-                top: event.minutesFrom(timeList.first) * heightPerMin,
+                top: event.minutesFrom(config.timeList.first) *
+                    config.heightPerMin,
                 left: cateIndex * tileWidth,
                 child: eventBuilder(
                   constraints,
