@@ -181,105 +181,159 @@ class _InRowCalendarDayViewState<T extends Object>
                 return const SizedBox.shrink();
               }
 
-              return ConstrainedBox(
-                constraints: BoxConstraints(
-                  minHeight: _rowHeight,
-                  maxHeight: _rowHeight,
-                  maxWidth: viewWidth,
-                  minWidth: 0,
-                ),
-                child: Stack(
-                  children: [
-                    Divider(
-                      color: widget.dividerColor ?? Colors.amber,
-                      height: 0,
-                      thickness: time.minute == 0 ? 1 : .5,
-                      indent: widget.timeTitleColumnWidth + 3,
-                    ),
-                    Row(
-                      mainAxisSize: MainAxisSize.max,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Transform(
-                          transform: Matrix4.translationValues(0, -20, 0),
-                          child: SizedBox(
-                            height: 40,
-                            width: widget.timeTitleColumnWidth,
-                            child: FittedBox(
-                              fit: BoxFit.scaleDown,
-                              child: Text(
-                                widget.time12
-                                    ? time.hourDisplay12
-                                    : time.hourDisplay24,
-                                style: widget.timeTextStyle ??
-                                    TextStyle(color: widget.timeTextColor),
-                                maxLines: 1,
-                              ),
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          child: GestureDetector(
-                            onTap: widget.onTap == null
-                                ? null
-                                : () => widget.onTap!(time),
-                            child: LayoutBuilder(
-                              builder: (context, constrains) {
-                                final tileConstraints = BoxConstraints(
-                                  maxHeight: _rowHeight,
-                                  maxWidth:
-                                      constrains.maxWidth / rowEvents.length,
-                                );
-
-                                return SizedBox(
-                                  height: _rowHeight,
-                                  child: Builder(
-                                    builder: (context) {
-                                      if (widget.timeRowBuilder != null) {
-                                        return widget.timeRowBuilder!(
-                                          context,
-                                          constrains,
-                                          rowEvents.toList(),
-                                        );
-                                      } else {
-                                        return Row(
-                                          children: [
-                                            for (var i = 0;
-                                                i < rowEvents.length;
-                                                i++)
-                                              widget.itemBuilder!(
-                                                context,
-                                                tileConstraints,
-                                                i,
-                                                rowEvents.elementAt(i),
-                                              )
-                                          ],
-                                        );
-                                      }
-                                    },
-                                  ),
-                                );
-                              },
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    if (widget.showCurrentTimeLine &&
-                        _currentTime.inTheGap(time, widget.timeGap))
-                      CurrentTimeLineWidget(
-                        top:
-                            (_currentTime.minute - time.minute) * _heightPerMin,
-                        color: widget.currentTimeLineColor,
-                        width: viewWidth,
-                      ),
-                  ],
-                ),
+              return InRowEventRowWidget(
+                rowHeight: _rowHeight,
+                viewWidth: viewWidth,
+                time: time,
+                rowEvents: rowEvents,
+                currentTime: _currentTime,
+                heightPerMin: _heightPerMin,
+                dividerColor: widget.dividerColor,
+                timeTextStyle: widget.timeTextStyle,
+                timeTextColor: widget.timeTextColor,
+                time12: widget.time12,
+                timeTitleColumnWidth: widget.timeTitleColumnWidth,
+                onTap: widget.onTap,
+                showCurrentTimeLine: widget.showCurrentTimeLine,
+                currentTimeLineColor: widget.currentTimeLineColor,
+                itemBuilder: widget.itemBuilder,
+                timeRowBuilder: widget.timeRowBuilder,
+                timeGap: widget.timeGap,
               );
             },
           ),
         ),
       );
     });
+  }
+}
+
+class InRowEventRowWidget<T extends Object> extends StatelessWidget {
+  const InRowEventRowWidget({
+    super.key,
+    required this.rowHeight,
+    required this.viewWidth,
+    required this.time,
+    required this.rowEvents,
+    required this.currentTime,
+    required this.heightPerMin,
+    required this.dividerColor,
+    required this.timeTextStyle,
+    required this.timeTextColor,
+    required this.time12,
+    required this.timeTitleColumnWidth,
+    required this.onTap,
+    required this.showCurrentTimeLine,
+    required this.currentTimeLineColor,
+    required this.itemBuilder,
+    required this.timeRowBuilder,
+    required this.timeGap,
+  });
+
+  final double rowHeight;
+  final double viewWidth;
+  final DateTime time;
+  final Iterable<DayEvent<T>> rowEvents;
+  final DateTime currentTime;
+  final double heightPerMin;
+  final Color? dividerColor;
+  final TextStyle? timeTextStyle;
+  final Color? timeTextColor;
+  final bool time12;
+  final double timeTitleColumnWidth;
+  final void Function(DateTime)? onTap;
+  final bool showCurrentTimeLine;
+  final Color? currentTimeLineColor;
+  final DayViewItemBuilder<T>? itemBuilder;
+  final DayViewTimeRowBuilder<T>? timeRowBuilder;
+  final int timeGap;
+
+  @override
+  Widget build(BuildContext context) {
+    return ConstrainedBox(
+      constraints: BoxConstraints(
+        minHeight: rowHeight,
+        maxHeight: rowHeight,
+        maxWidth: viewWidth,
+        minWidth: 0,
+      ),
+      child: Stack(
+        children: [
+          Divider(
+            color: dividerColor ?? Colors.amber,
+            height: 0,
+            thickness: time.minute == 0 ? 1 : .5,
+            indent: timeTitleColumnWidth + 3,
+          ),
+          Row(
+            mainAxisSize: MainAxisSize.max,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Transform(
+                transform: Matrix4.translationValues(0, -20, 0),
+                child: SizedBox(
+                  height: 40,
+                  width: timeTitleColumnWidth,
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                      time12 ? time.hourDisplay12 : time.hourDisplay24,
+                      style: timeTextStyle ?? TextStyle(color: timeTextColor),
+                      maxLines: 1,
+                    ),
+                  ),
+                ),
+              ),
+              Expanded(
+                child: GestureDetector(
+                  onTap: onTap == null ? null : () => onTap!(time),
+                  child: LayoutBuilder(
+                    builder: (context, constrains) {
+                      final tileConstraints = BoxConstraints(
+                        maxHeight: rowHeight,
+                        maxWidth: constrains.maxWidth / rowEvents.length,
+                      );
+
+                      return SizedBox(
+                        height: rowHeight,
+                        child: Builder(
+                          builder: (context) {
+                            if (timeRowBuilder != null) {
+                              return timeRowBuilder!(
+                                context,
+                                constrains,
+                                rowEvents.toList(),
+                              );
+                            } else {
+                              return Row(
+                                children: [
+                                  for (var i = 0; i < rowEvents.length; i++)
+                                    itemBuilder!(
+                                      context,
+                                      tileConstraints,
+                                      i,
+                                      rowEvents.elementAt(i),
+                                    )
+                                ],
+                              );
+                            }
+                          },
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ),
+            ],
+          ),
+          if (showCurrentTimeLine && currentTime.inTheGap(time, timeGap))
+            CurrentTimeLineWidget(
+              top: (currentTime.minute - time.minute) * heightPerMin,
+              color: currentTimeLineColor,
+              width: viewWidth,
+            ),
+        ],
+      ),
+    );
   }
 }
