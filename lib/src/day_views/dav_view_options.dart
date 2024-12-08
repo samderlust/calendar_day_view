@@ -1,5 +1,4 @@
 import 'package:calendar_day_view/src/extensions/date_time_extension.dart';
-import 'package:calendar_day_view/src/utils/events_utils.dart';
 import 'package:flutter/material.dart';
 
 import '../utils/date_time_utils.dart';
@@ -36,7 +35,7 @@ class DavViewConfig {
   final bool showCurrentTimeLine;
 
   const DavViewConfig({
-    this.timeColumnWidth = 50,
+    this.timeColumnWidth = 70,
     this.startOfDay = const TimeOfDay(hour: 7, minute: 0),
     this.endOfDay = const TimeOfDay(hour: 18, minute: 59),
     required this.currentDate,
@@ -53,6 +52,9 @@ class DavViewConfig {
         currentDate.copyTimeAndMinClean(endOfDay),
         timeGap,
       );
+
+  DateTime get timeStart => currentDate.copyTimeAndMinClean(startOfDay);
+  DateTime get timeEnd => currentDate.copyTimeAndMinClean(endOfDay);
 }
 
 /// Configuration for [CategoryDavView] and [CategoryOverflowCalendarDayView]
@@ -105,5 +107,59 @@ class CategoryDavViewConfig extends DavViewConfig {
     super.heightPerMin,
     super.showCurrentTimeLine,
     super.timeColumnWidth,
+  });
+}
+
+class OverFlowDayViewConfig extends DavViewConfig {
+  /// color of time point label
+  final Color? timeTextColor;
+
+  /// style of time point label
+  final TextStyle? timeTextStyle;
+
+  /// time slot divider color
+  final Color? dividerColor;
+
+  /// allow render an events row as a ListView
+  final bool renderRowAsListView;
+
+  /// allow render button indicate there are more events on the row
+  /// also tap to scroll the list to the right
+  final bool showMoreOnRowButton;
+
+  /// customized button that indicate there are more events on the row
+  final Widget? moreOnRowButton;
+
+  /// if true, the bottom events' end time will be cropped by the end time of day view
+  /// if false, events that have end time after day view end time will have the show the length that pass through day view end time
+  final bool cropBottomEvents;
+
+  /// Color of the current time line
+  final Color? currentTimeLineColor;
+
+  final bool? primary;
+  final ScrollPhysics? physics;
+  final ScrollController? controller;
+
+  const OverFlowDayViewConfig({
+    required super.currentDate,
+    super.startOfDay,
+    super.endOfDay,
+    super.timeGap,
+    super.time12,
+    super.heightPerMin,
+    super.showCurrentTimeLine,
+    super.timeColumnWidth,
+    this.timeTextColor,
+    this.timeTextStyle,
+    this.dividerColor,
+    this.renderRowAsListView = false,
+    this.showMoreOnRowButton = false,
+    this.cropBottomEvents = false,
+    this.moreOnRowButton,
+    this.currentTimeLineColor,
+    this.primary,
+    this.physics,
+    this.controller,
   });
 }
