@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 
 import '../../calendar_day_view.dart';
 import '../models/typedef.dart';
-import 'dav_view_options.dart';
 
 abstract class CalendarDayView<T extends Object> extends Widget {
   /// Create [OverFlowCalendarDayView]
@@ -72,45 +71,17 @@ abstract class CalendarDayView<T extends Object> extends Widget {
   /// Show all events that are happened in the same time gap window in a single row
   factory CalendarDayView.inRow({
     required List<DayEvent<T>> events,
-    required DateTime currentDate,
-    TimeOfDay? startOfDay,
-    TimeOfDay? endOfDay,
-    Color? currentTimeLineColor,
-    bool? showCurrentTimeLine,
-    double? heightPerMin,
-    bool? showWithEventOnly,
-    int? timeGap,
-    Color? timeTextColor,
-    TextStyle? timeTextStyle,
-    Color? dividerColor,
     DayViewItemBuilder<T>? itemBuilder,
     DayViewTimeRowBuilder<T>? timeRowBuilder,
     OnTimeTap? onTap,
-    bool? primary,
-    ScrollPhysics? physics,
-    ScrollController? controller,
-    bool? time12,
+    required InRowDayViewConfig config,
   }) =>
       InRowCalendarDayView(
-        time12: time12 ?? false,
-        currentTimeLineColor: currentTimeLineColor,
-        startOfDay: startOfDay ?? const TimeOfDay(hour: 7, minute: 00),
-        endOfDay: endOfDay ?? const TimeOfDay(hour: 17, minute: 00),
-        showCurrentTimeLine: showCurrentTimeLine ?? false,
-        heightPerMin: heightPerMin ?? 1.0,
-        showWithEventOnly: showWithEventOnly ?? false,
-        timeGap: timeGap ?? 60,
-        currentDate: currentDate,
         events: events,
-        timeTextColor: timeTextColor,
-        timeTextStyle: timeTextStyle,
-        dividerColor: dividerColor,
         itemBuilder: itemBuilder,
         timeRowBuilder: timeRowBuilder,
         onTap: onTap,
-        primary: primary,
-        physics: physics,
-        controller: controller,
+        config: config,
       );
 
   /// Create [EventCalendarDayView]
@@ -120,31 +91,13 @@ abstract class CalendarDayView<T extends Object> extends Widget {
   factory CalendarDayView.eventOnly({
     required List<DayEvent<T>> events,
     required EventDayViewItemBuilder<T> eventDayViewItemBuilder,
-    Color? timeTextColor,
-    TextStyle? timeTextStyle,
     IndexedWidgetBuilder? itemSeparatorBuilder,
-    Color? dividerColor,
-    EdgeInsetsGeometry? rowPadding,
-    EdgeInsetsGeometry? timeSlotPadding,
-    bool? primary,
-    ScrollPhysics? physics,
-    ScrollController? controller,
-    bool? time12,
-    bool? showHourly,
+    required EventDayViewConfig config,
   }) =>
       EventCalendarDayView(
-        time12: time12 ?? false,
+        itemSeparatorBuilder: itemSeparatorBuilder,
         events: events,
         eventDayViewItemBuilder: eventDayViewItemBuilder,
-        timeTextColor: timeTextColor,
-        timeTextStyle: timeTextStyle,
-        itemSeparatorBuilder: itemSeparatorBuilder,
-        dividerColor: dividerColor,
-        rowPadding: rowPadding,
-        timeSlotPadding: timeSlotPadding,
-        primary: primary,
-        physics: physics,
-        controller: controller,
-        showHourly: showHourly ?? false,
+        config: config,
       );
 }

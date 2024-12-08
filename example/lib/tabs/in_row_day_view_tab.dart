@@ -17,13 +17,15 @@ class InRowDayViewTab extends HookWidget {
       children: [
         Expanded(
           child: CalendarDayView<String>.inRow(
+            config: InRowDayViewConfig(
+              heightPerMin: 1,
+              showCurrentTimeLine: true,
+              dividerColor: Colors.black,
+              timeGap: timeGap.value,
+              showWithEventOnly: withEventOnly.value,
+              currentDate: DateTime.now(),
+            ),
             events: UnmodifiableListView(events),
-            heightPerMin: 1,
-            showCurrentTimeLine: true,
-            dividerColor: Colors.black,
-            timeGap: timeGap.value,
-            showWithEventOnly: withEventOnly.value,
-            currentDate: DateTime.now(),
             itemBuilder: (context, constraints, itemIndex, event) => Flexible(
               child: HookBuilder(builder: (context) {
                 return SizedBox(

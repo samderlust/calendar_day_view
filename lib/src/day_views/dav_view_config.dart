@@ -34,6 +34,13 @@ class DavViewConfig {
   /// To show a line that indicate current hour and minute;
   final bool showCurrentTimeLine;
 
+  /// time slot divider color
+  final Color? dividerColor;
+
+  final bool? primary;
+  final ScrollPhysics? physics;
+  final ScrollController? controller;
+
   const DavViewConfig({
     this.timeColumnWidth = 70,
     this.startOfDay = const TimeOfDay(hour: 7, minute: 0),
@@ -44,6 +51,10 @@ class DavViewConfig {
     this.time12 = true,
     this.heightPerMin = 1,
     this.showCurrentTimeLine = true,
+    this.primary,
+    this.physics,
+    this.controller,
+    this.dividerColor,
   });
 
   double get rowHeight => heightPerMin * timeGap;
@@ -117,9 +128,6 @@ class OverFlowDayViewConfig extends DavViewConfig {
   /// style of time point label
   final TextStyle? timeTextStyle;
 
-  /// time slot divider color
-  final Color? dividerColor;
-
   /// allow render an events row as a ListView
   final bool renderRowAsListView;
 
@@ -137,10 +145,6 @@ class OverFlowDayViewConfig extends DavViewConfig {
   /// Color of the current time line
   final Color? currentTimeLineColor;
 
-  final bool? primary;
-  final ScrollPhysics? physics;
-  final ScrollController? controller;
-
   const OverFlowDayViewConfig({
     required super.currentDate,
     super.startOfDay,
@@ -150,16 +154,71 @@ class OverFlowDayViewConfig extends DavViewConfig {
     super.heightPerMin,
     super.showCurrentTimeLine,
     super.timeColumnWidth,
+    super.primary,
+    super.physics,
+    super.controller,
     this.timeTextColor,
     this.timeTextStyle,
-    this.dividerColor,
+    super.dividerColor,
     this.renderRowAsListView = false,
     this.showMoreOnRowButton = false,
     this.cropBottomEvents = false,
     this.moreOnRowButton,
     this.currentTimeLineColor,
-    this.primary,
-    this.physics,
-    this.controller,
+  });
+}
+
+class EventDayViewConfig extends DavViewConfig {
+  /// padding for event row
+  final EdgeInsetsGeometry? rowPadding;
+
+  ///padding for time slot
+  final EdgeInsetsGeometry? timeSlotPadding;
+
+  /// show event by hour only
+  final bool showHourly;
+
+  const EventDayViewConfig({
+    required super.currentDate,
+    super.startOfDay,
+    super.endOfDay,
+    super.timeGap,
+    super.time12,
+    super.heightPerMin,
+    super.showCurrentTimeLine,
+    super.timeColumnWidth,
+    super.primary,
+    super.physics,
+    super.dividerColor,
+    super.controller,
+    this.rowPadding,
+    this.timeSlotPadding,
+    this.showHourly = false,
+  });
+}
+
+class InRowDayViewConfig extends EventDayViewConfig {
+  /// if true, only display row with events. Default to false
+  final bool showWithEventOnly;
+
+  final Color? currentTimeLineColor;
+  InRowDayViewConfig({
+    required super.currentDate,
+    super.startOfDay,
+    super.endOfDay,
+    super.timeGap,
+    super.time12,
+    super.heightPerMin,
+    super.showCurrentTimeLine,
+    super.timeColumnWidth,
+    super.primary,
+    super.physics,
+    super.dividerColor,
+    super.controller,
+    super.rowPadding,
+    super.timeSlotPadding,
+    super.showHourly,
+    this.showWithEventOnly = false,
+    this.currentTimeLineColor,
   });
 }

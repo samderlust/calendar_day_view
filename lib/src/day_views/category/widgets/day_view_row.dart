@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../calendar_day_view.dart';
 import '../../../models/typedef.dart';
+import '../../dav_view_config.dart';
 
 class OverflowDayViewRow<T extends Object> extends StatelessWidget {
   const OverflowDayViewRow({

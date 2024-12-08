@@ -95,111 +95,128 @@ class _OverFlowCalendarDayViewState<T extends Object>
   @override
   Widget build(BuildContext context) {
     final totalHeight = widget.config.timeList.length * widget.config.rowHeight;
+    final viewWidth = MediaQuery.sizeOf(context).width;
 
-    return LayoutBuilder(builder: (context, constraints) {
-      final viewWidth = constraints.maxWidth;
-      final eventColumnWith = viewWidth - widget.config.timeColumnWidth;
+    final eventColumnWith = viewWidth - widget.config.timeColumnWidth;
 
-      return SafeArea(
-        child: SingleChildScrollView(
-          primary: widget.config.primary,
-          controller: widget.config.controller,
-          physics: widget.config.physics ?? const ClampingScrollPhysics(),
-          padding: const EdgeInsets.only(top: 10, bottom: 10),
-          child: SizedBox(
-            height: totalHeight,
-            child: Stack(
-              clipBehavior: Clip.none,
-              children: [
-                ListView.builder(
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: widget.config.timeList.length,
-                  itemBuilder: (context, index) {
-                    final time = widget.config.timeList.elementAt(index);
-                    return GestureDetector(
-                      key: ValueKey(time.toString()),
-                      behavior: HitTestBehavior.opaque,
-                      onTap: widget.onTimeTap == null
-                          ? null
-                          : () => widget.onTimeTap!(time),
-                      child: SizedBox(
-                        height: widget.config.rowHeight,
-                        width: viewWidth,
-                        child: Stack(
-                          children: [
-                            Divider(
-                              color: widget.config.dividerColor ?? Colors.amber,
-                              height: 0,
-                              thickness: time.minute == 0 ? 1 : .5,
-                              indent: widget.config.timeColumnWidth + 3,
-                            ),
-                            Transform(
-                              transform: Matrix4.translationValues(0, -20, 0),
-                              child: SizedBox(
-                                height: 40,
-                                width: widget.config.timeColumnWidth,
-                                child: FittedBox(
-                                  fit: BoxFit.scaleDown,
-                                  child: Text(
-                                    widget.config.time12
-                                        ? time.hourDisplay12
-                                        : time.hourDisplay24,
-                                    style: widget.config.timeTextStyle ??
-                                        TextStyle(
-                                            color: widget.config.timeTextColor),
-                                    maxLines: 1,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+    return SafeArea(
+      child: SingleChildScrollView(
+        primary: widget.config.primary,
+        controller: widget.config.controller,
+        physics: widget.config.physics ?? const ClampingScrollPhysics(),
+        padding: const EdgeInsets.only(top: 10, bottom: 10),
+        child: SizedBox(
+          height: totalHeight,
+          child: Stack(
+            clipBehavior: Clip.none,
+            children: [
+              ListView.builder(
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: widget.config.timeList.length,
+                itemBuilder: (context, index) {
+                  final time = widget.config.timeList.elementAt(index);
+                  return OverflowTimeRowWidget(
+                    time: time,
+                    viewWidth: viewWidth,
+                    config: widget.config,
+                    onTimeTap: widget.onTimeTap,
+                  );
+                },
+              ),
+              BackgroundIgnorePointer(
+                ignored: widget.onTimeTap != null,
+                child: widget.config.renderRowAsListView
+                    ? OverFlowListViewRowView(
+                        overflowEvents: _overflowEvents,
+                        overflowItemBuilder: widget.overflowItemBuilder!,
+                        heightUnit: widget.config.heightPerMin,
+                        eventColumnWith: eventColumnWith,
+                        showMoreOnRowButton: widget.config.showMoreOnRowButton,
+                        cropBottomEvents: widget.config.cropBottomEvents,
+                        timeStart: widget.config.timeStart,
+                        totalHeight: totalHeight,
+                        timeTitleColumnWidth: widget.config.timeColumnWidth,
+                      )
+                    : OverflowFixedWidthEventsWidget(
+                        heightUnit: widget.config.heightPerMin,
+                        eventColumnWidth: eventColumnWith,
+                        timeTitleColumnWidth: widget.config.timeColumnWidth,
+                        timeStart: widget.config.timeStart,
+                        overflowEvents: _overflowEvents,
+                        overflowItemBuilder: widget.overflowItemBuilder!,
+                        cropBottomEvents: widget.config.cropBottomEvents,
+                        timeEnd: widget.config.timeEnd,
                       ),
-                    );
-                  },
+              ),
+              if (widget.config.showCurrentTimeLine &&
+                  _currentTime.isAfter(widget.config.timeStart) &&
+                  _currentTime.isBefore(widget.config.timeEnd))
+                CurrentTimeLineWidget(
+                  top: _currentTime
+                          .minuteFrom(widget.config.timeStart)
+                          .toDouble() *
+                      widget.config.heightPerMin,
+                  width: viewWidth,
+                  color: widget.config.currentTimeLineColor,
                 ),
-                BackgroundIgnorePointer(
-                  ignored: widget.onTimeTap != null,
-                  child: widget.config.renderRowAsListView
-                      ? OverFlowListViewRowView(
-                          overflowEvents: _overflowEvents,
-                          overflowItemBuilder: widget.overflowItemBuilder!,
-                          heightUnit: widget.config.heightPerMin,
-                          eventColumnWith: eventColumnWith,
-                          showMoreOnRowButton:
-                              widget.config.showMoreOnRowButton,
-                          cropBottomEvents: widget.config.cropBottomEvents,
-                          timeStart: widget.config.timeStart,
-                          totalHeight: totalHeight,
-                          timeTitleColumnWidth: widget.config.timeColumnWidth,
-                        )
-                      : OverflowFixedWidthEventsWidget(
-                          heightUnit: widget.config.heightPerMin,
-                          eventColumnWidth: eventColumnWith,
-                          timeTitleColumnWidth: widget.config.timeColumnWidth,
-                          timeStart: widget.config.timeStart,
-                          overflowEvents: _overflowEvents,
-                          overflowItemBuilder: widget.overflowItemBuilder!,
-                          cropBottomEvents: widget.config.cropBottomEvents,
-                          timeEnd: widget.config.timeEnd,
-                        ),
-                ),
-                if (widget.config.showCurrentTimeLine &&
-                    _currentTime.isAfter(widget.config.timeStart) &&
-                    _currentTime.isBefore(widget.config.timeEnd))
-                  CurrentTimeLineWidget(
-                    top: _currentTime
-                            .minuteFrom(widget.config.timeStart)
-                            .toDouble() *
-                        widget.config.heightPerMin,
-                    width: constraints.maxWidth,
-                    color: widget.config.currentTimeLineColor,
-                  ),
-              ],
-            ),
+            ],
           ),
         ),
-      );
-    });
+      ),
+    );
+  }
+}
+
+class OverflowTimeRowWidget extends StatelessWidget {
+  const OverflowTimeRowWidget({
+    super.key,
+    required this.time,
+    required this.viewWidth,
+    required this.config,
+    required this.onTimeTap,
+  });
+
+  final DateTime time;
+  final double viewWidth;
+  final OverFlowDayViewConfig config;
+  final OnTimeTap? onTimeTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      key: ValueKey(time.toString()),
+      behavior: HitTestBehavior.opaque,
+      onTap: onTimeTap == null ? null : () => onTimeTap!(time),
+      child: SizedBox(
+        height: config.rowHeight,
+        width: viewWidth,
+        child: Stack(
+          children: [
+            Divider(
+              color: config.dividerColor ?? Colors.amber,
+              height: 0,
+              thickness: time.minute == 0 ? 1 : .5,
+              indent: config.timeColumnWidth + 3,
+            ),
+            Transform(
+              transform: Matrix4.translationValues(0, -20, 0),
+              child: SizedBox(
+                height: 40,
+                width: config.timeColumnWidth,
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    config.time12 ? time.hourDisplay12 : time.hourDisplay24,
+                    style: config.timeTextStyle ??
+                        TextStyle(color: config.timeTextColor),
+                    maxLines: 1,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

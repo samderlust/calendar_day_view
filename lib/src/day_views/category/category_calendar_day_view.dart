@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../calendar_day_view.dart';
 import '../../models/typedef.dart';
-import '../dav_view_options.dart';
+import '../dav_view_config.dart';
 import 'widgets/category_title_row.dart';
 import 'widgets/day_view_row.dart';
 import 'widgets/time_and_logo_widget.dart';

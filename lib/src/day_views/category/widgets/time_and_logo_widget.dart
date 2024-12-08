@@ -1,6 +1,7 @@
-import 'package:calendar_day_view/calendar_day_view.dart';
-import 'package:calendar_day_view/src/extensions/date_time_extension.dart';
 import 'package:flutter/material.dart';
+
+import '../../../extensions/date_time_extension.dart';
+import '../../dav_view_config.dart';
 
 class TimeAndLogoWidget extends StatelessWidget {
   const TimeAndLogoWidget({
