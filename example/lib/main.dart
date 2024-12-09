@@ -142,41 +142,47 @@ class CalendarDayViewExample extends HookWidget {
           ),
           appBar: AppBar(
             title: Text(
-              getTitle(currentIndex.value),
-              style: const TextStyle(color: Colors.white, fontSize: 30),
+              "${getTitle(currentIndex.value)} - ${switch (currentIndex.value) {
+                var i when (i == 1 || i == 2) => categoryEvents.value.length,
+                _ => dayEvents.value.length,
+              }} events",
+              style: const TextStyle(color: Colors.teal, fontSize: 30),
             ),
             toolbarHeight: 100,
             centerTitle: false,
             actions: [
               Row(
                 children: [
-                  if (currentIndex.value != 1)
-                    TextButton.icon(
-                      style:
-                          TextButton.styleFrom(backgroundColor: Colors.white),
-                      onPressed: () => dayEvents.value = fakeEvents(),
-                      icon: const Icon(Icons.refresh),
-                      label: const Text("events"),
-                    ),
-                  if (currentIndex.value == 1) ...[
-                    TextButton.icon(
-                      style:
-                          TextButton.styleFrom(backgroundColor: Colors.white),
-                      onPressed: () => categoryEvents.value =
-                          genEvents(categories.value.length),
-                      icon: const Icon(Icons.refresh),
-                      label: const Text("events"),
-                    ),
-                    const SizedBox(width: 10),
-                    TextButton.icon(
-                      style: TextButton.styleFrom(
-                        backgroundColor: Colors.white,
+                  switch (currentIndex.value) {
+                    var i when (i == 1 || i == 2) => Row(
+                        children: [
+                          TextButton.icon(
+                            style: TextButton.styleFrom(
+                                backgroundColor: Colors.white),
+                            onPressed: () => categoryEvents.value =
+                                genEvents(categories.value.length),
+                            icon: const Icon(Icons.refresh),
+                            label: const Text("events"),
+                          ),
+                          const SizedBox(width: 10),
+                          TextButton.icon(
+                            style: TextButton.styleFrom(
+                              backgroundColor: Colors.white,
+                            ),
+                            onPressed: addCategory,
+                            icon: const Icon(Icons.add),
+                            label: const Text("category"),
+                          ),
+                        ],
                       ),
-                      onPressed: addCategory,
-                      icon: const Icon(Icons.add),
-                      label: const Text("category"),
-                    ),
-                  ],
+                    _ => TextButton.icon(
+                        style:
+                            TextButton.styleFrom(backgroundColor: Colors.white),
+                        onPressed: () => dayEvents.value = fakeEvents(),
+                        icon: const Icon(Icons.refresh),
+                        label: const Text("events"),
+                      ),
+                  },
                   const SizedBox(width: 10),
                 ],
               )
@@ -209,7 +215,7 @@ String getTitle(int index) {
 
 List<DayEvent<String>> fakeEvents() => faker.randomGenerator.amount((i) {
       final start = DateTime.now().copyWith(
-        hour: faker.randomGenerator.integer(24, min: 0),
+        hour: faker.randomGenerator.integer(19, min: 5),
         minute: faker.randomGenerator.element([0, 10, 20, 40]),
         second: 0,
       );

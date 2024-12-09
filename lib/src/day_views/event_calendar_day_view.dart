@@ -1,6 +1,7 @@
 import 'package:calendar_day_view/src/extensions/date_time_extension.dart';
 import 'package:flutter/material.dart';
 
+import '../../calendar_day_view.dart';
 import '../models/day_event.dart';
 import '../models/typedef.dart';
 import 'calendar_day_view_base.dart';
@@ -15,56 +16,20 @@ class EventCalendarDayView<T extends Object> extends StatefulWidget
     Key? key,
     required this.events,
     required this.eventDayViewItemBuilder,
-    this.timeTextColor,
-    this.timeTextStyle,
-    this.dividerColor,
     this.itemSeparatorBuilder,
-    this.rowPadding,
-    this.timeSlotPadding,
-    this.primary,
-    this.physics,
-    this.controller,
-    this.timeTitleColumnWidth = 50.0,
-    this.time12 = false,
-    this.showHourly = false,
+    required this.config,
   }) : super(key: key);
+
+  final EventDayViewConfig config;
 
   /// List of events to be display in the day view
   final List<DayEvent<T>> events;
-
-  /// color of time point label
-  final Color? timeTextColor;
-
-  /// style of time point label
-  final TextStyle? timeTextStyle;
 
   /// builder for each item
   final EventDayViewItemBuilder<T> eventDayViewItemBuilder;
 
   /// build separator between each item
   final IndexedWidgetBuilder? itemSeparatorBuilder;
-
-  /// time slot divider color
-  final Color? dividerColor;
-
-  /// padding for event row
-  final EdgeInsetsGeometry? rowPadding;
-
-  ///padding for time slot
-  final EdgeInsetsGeometry? timeSlotPadding;
-
-  final bool? primary;
-  final ScrollPhysics? physics;
-  final ScrollController? controller;
-
-  /// show time in 12 hour format
-  final bool time12;
-
-  /// show event by hour only
-  final bool showHourly;
-
-  /// The width of the column that contain list of time points
-  final double timeTitleColumnWidth;
 
   @override
   State<EventCalendarDayView> createState() => _EventCalendarDayViewState<T>();
@@ -83,7 +48,8 @@ class _EventCalendarDayViewState<T extends Object>
   List<DateTime> getTimeList() {
     Set<DateTime> list = {};
     list.addAll(widget.events
-        .map((e) => widget.showHourly ? e.start.hourOnly() : e.start.cleanSec())
+        .map((e) =>
+            widget.config.showHourly ? e.start.hourOnly() : e.start.cleanSec())
         .toList()
       ..sort(
         (a, b) {
@@ -111,30 +77,30 @@ class _EventCalendarDayViewState<T extends Object>
         return SafeArea(
           child: ListView.builder(
             shrinkWrap: true,
-            primary: widget.primary,
-            controller: widget.controller,
-            physics: widget.physics ?? const ClampingScrollPhysics(),
+            primary: widget.config.primary,
+            controller: widget.config.controller,
+            physics: widget.config.physics ?? const ClampingScrollPhysics(),
             padding: const EdgeInsets.only(top: 20, bottom: 20),
             itemCount: _timesInDay.length,
             itemBuilder: (context, index) {
               final time = _timesInDay.elementAt(index);
               final events = widget.events.where(
-                (event) => widget.showHourly
+                (event) => widget.config.showHourly
                     ? event.startAtHour(time)
                     : event.startAt(time),
               );
 
               return Padding(
-                padding: widget.timeSlotPadding ??
+                padding: widget.config.timeSlotPadding ??
                     const EdgeInsets.symmetric(vertical: 5),
                 child: Stack(
                   clipBehavior: Clip.none,
                   children: [
                     Divider(
-                      color: widget.dividerColor ?? Colors.amber,
+                      color: widget.config.dividerColor ?? Colors.amber,
                       height: 0,
                       thickness: 1,
-                      indent: widget.timeTitleColumnWidth + 3,
+                      indent: widget.config.timeColumnWidth + 3,
                     ),
                     Row(
                       mainAxisSize: MainAxisSize.max,
@@ -144,15 +110,14 @@ class _EventCalendarDayViewState<T extends Object>
                           transform: Matrix4.translationValues(0, -20, 0),
                           child: SizedBox(
                             height: 40,
-                            width: widget.timeTitleColumnWidth,
+                            width: widget.config.timeColumnWidth,
                             child: FittedBox(
                               fit: BoxFit.scaleDown,
                               child: Text(
-                                widget.time12
+                                widget.config.time12
                                     ? time.hourDisplay12
                                     : time.hourDisplay24,
-                                style: widget.timeTextStyle ??
-                                    TextStyle(color: widget.timeTextColor),
+                                style: widget.config.timeTextStyle,
                                 maxLines: 1,
                               ),
                             ),
@@ -160,8 +125,8 @@ class _EventCalendarDayViewState<T extends Object>
                         ),
                         Expanded(
                           child: Padding(
-                            padding:
-                                widget.rowPadding ?? const EdgeInsets.all(0),
+                            padding: widget.config.rowPadding ??
+                                const EdgeInsets.all(0),
                             child: ListView.separated(
                               physics: const NeverScrollableScrollPhysics(),
                               shrinkWrap: true,

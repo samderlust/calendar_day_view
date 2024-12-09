@@ -1,32 +1,26 @@
 import 'package:flutter/material.dart';
 
 import '../../../../calendar_day_view.dart';
+import '../../dav_view_config.dart';
 
 class CategoryTitleRow extends StatelessWidget {
   const CategoryTitleRow({
     super.key,
-    required this.rowHeight,
-    required this.verticalDivider,
+    required this.config,
     required this.categories,
     required this.tileWidth,
-    this.headerDecoration,
-    required this.timeColumnWidth,
-    this.logo,
   });
 
-  final double rowHeight;
-  final VerticalDivider? verticalDivider;
+  final CategoryDavViewConfig config;
+
   final List<EventCategory> categories;
   final double tileWidth;
-  final BoxDecoration? headerDecoration;
-  final Widget? logo;
-  final double timeColumnWidth;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: headerDecoration,
-      constraints: BoxConstraints(minHeight: rowHeight),
+      decoration: config.headerDecoration,
+      constraints: BoxConstraints(minHeight: config.rowHeight),
       child: IntrinsicHeight(
         child: Row(
           children: [
@@ -35,7 +29,7 @@ class CategoryTitleRow extends StatelessWidget {
                   (category) => [
                     SizedBox(
                       width: tileWidth,
-                      height: rowHeight,
+                      height: config.rowHeight,
                       child: Center(
                         child: Text(
                           category.name,
@@ -43,7 +37,7 @@ class CategoryTitleRow extends StatelessWidget {
                         ),
                       ),
                     ),
-                    verticalDivider ?? const VerticalDivider(width: 0),
+                    config.verticalDivider ?? const VerticalDivider(width: 0),
                   ],
                 )
                 .expand((e) => e)

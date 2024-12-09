@@ -28,18 +28,24 @@ class OverflowDayViewTab extends HookWidget {
       children: [
         Expanded(
           child: CalendarDayView.overflow(
-            onTimeTap: onTimeTap ?? print,
+            config: OverFlowDayViewConfig(
+              dividerColor: Colors.black,
+              currentDate: DateTime.now(),
+              timeGap: timeGap.value,
+              heightPerMin: 2,
+              endOfDay: const TimeOfDay(hour: 20, minute: 0),
+              startOfDay: const TimeOfDay(hour: 4, minute: 0),
+              renderRowAsListView: renderAsList.value,
+              showCurrentTimeLine: true,
+              cropBottomEvents: cropBottomEvents.value,
+              showMoreOnRowButton: true,
+              time12: true,
+            ),
+            onTimeTap: (t) {
+              print(t);
+              onTimeTap?.call(t);
+            },
             events: UnmodifiableListView(events),
-            dividerColor: Colors.black,
-            currentDate: DateTime.now(),
-            timeGap: timeGap.value,
-            heightPerMin: 2,
-            startOfDay: const TimeOfDay(hour: 7, minute: 0),
-            renderRowAsListView: renderAsList.value,
-            showCurrentTimeLine: true,
-            cropBottomEvents: cropBottomEvents.value,
-            showMoreOnRowButton: true,
-            time12: true,
             overflowItemBuilder: (context, constraints, itemIndex, event) {
               return HookBuilder(builder: (context) {
                 return GestureDetector(

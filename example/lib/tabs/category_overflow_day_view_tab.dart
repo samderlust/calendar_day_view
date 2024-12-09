@@ -17,12 +17,26 @@ class CategoryOverflowDayViewTab extends HookWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     return CalendarDayView.categoryOverflow(
-      time12: true,
-      allowHorizontalScroll: true,
+      config: CategoryDavViewConfig(
+        columnsPerPage: 2,
+        endOfDay: const TimeOfDay(hour: 21, minute: 00),
+        time12: true,
+        allowHorizontalScroll: true,
+        currentDate: DateTime.now(),
+        timeGap: 60,
+        heightPerMin: 1,
+        evenRowColor: Colors.white,
+        oddRowColor: Colors.grey[200],
+        headerDecoration: BoxDecoration(
+          color: Colors.lightBlueAccent.withOpacity(.5),
+        ),
+        logo: const Padding(
+          padding: EdgeInsets.all(8.0),
+          child: CircleAvatar(child: Text("C")),
+        ),
+        timeColumnWidth: 70,
+      ),
       categories: categories,
-      timeColumnWidth: 70,
-      columnsPerPage: 2,
-      endOfDay: const TimeOfDay(hour: 21, minute: 00),
       events: events,
       onTileTap: (category, time) {
         ScaffoldMessenger.of(context).clearSnackBars();
@@ -33,18 +47,6 @@ class CategoryOverflowDayViewTab extends HookWidget {
           ),
         );
       },
-      currentDate: DateTime.now(),
-      timeGap: 60,
-      heightPerMin: 1,
-      evenRowColor: Colors.white,
-      oddRowColor: Colors.grey[200],
-      headerDecoration: BoxDecoration(
-        color: Colors.lightBlueAccent.withOpacity(.5),
-      ),
-      logo: const Padding(
-        padding: EdgeInsets.all(8.0),
-        child: CircleAvatar(child: Text("C")),
-      ),
       backgroundTimeTileBuilder:
           (context, constraints, rowTime, category, isOddRow) {
         return switch (rowTime) {
@@ -60,7 +62,9 @@ class CategoryOverflowDayViewTab extends HookWidget {
               },
               child: Container(
                 constraints: constraints,
-                color: category.id == "1" ? Colors.black54 : Colors.black87,
+                color: categories.indexOf(category) % 2 == 0
+                    ? Colors.black54
+                    : Colors.black87,
               ),
             ),
           _ => const SizedBox.shrink(),

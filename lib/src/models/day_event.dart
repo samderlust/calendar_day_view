@@ -59,14 +59,11 @@ extension DayEventExtension on DayEvent {
   // (start.hour - timePoint.hour) * 60 + (start.minute - timePoint.minute);
 
   bool isInThisGap(DateTime timePoint, int gap) {
-    final dif = start
+    final dif = timePoint
         .copyWith(second: 00)
-        .difference(timePoint.copyWith(second: 00))
-        .inSeconds;
-    return dif <= gap && dif >= 0;
-    // return start.hour == timePoint.hour &&
-    //     (start.minute >= timePoint.minute &&
-    //         start.minute < (timePoint.minute + gap));
+        .difference(start.copyWith(second: 00))
+        .inMinutes;
+    return dif >= 0 && dif <= gap;
   }
 
   bool startInThisGap(DateTime timePoint, int gap) {

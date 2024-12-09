@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../calendar_day_view.dart';
 import '../../../models/typedef.dart';
+import '../../dav_view_config.dart';
 
 class OverflowDayViewRow<T extends Object> extends StatelessWidget {
   const OverflowDayViewRow({
@@ -129,27 +130,22 @@ class DayViewRow<T extends Object> extends StatelessWidget {
   const DayViewRow({
     super.key,
     required this.time,
-    required this.timeTextStyle,
-    required this.verticalDivider,
     required this.categories,
     required this.rowEvents,
     required this.onTileTap,
     required this.tileWidth,
-    required this.rowHeight,
+    required this.config,
     required this.eventBuilder,
-    required this.timeColumnWidth,
   });
 
+  final CategoryDavViewConfig config;
   final DateTime time;
-  final TextStyle? timeTextStyle;
-  final VerticalDivider? verticalDivider;
   final List<EventCategory> categories;
   final List<CategorizedDayEvent<T>> rowEvents;
   final CategoryDayViewTileTap<T>? onTileTap;
   final double tileWidth;
-  final double rowHeight;
   final CategoryDayViewEventBuilder<T> eventBuilder;
-  final double timeColumnWidth;
+
   @override
   Widget build(BuildContext context) {
     return IntrinsicHeight(
@@ -160,14 +156,14 @@ class DayViewRow<T extends Object> extends StatelessWidget {
                 final event = rowEvents
                     .firstWhereOrNull((e) => e.categoryId == category.id);
 
-                final constraints =
-                    BoxConstraints(maxHeight: rowHeight, maxWidth: tileWidth);
+                final constraints = BoxConstraints(
+                    maxHeight: config.rowHeight, maxWidth: tileWidth);
                 return [
                   switch (event) {
                     var event? => ConstrainedBox(
                         constraints: BoxConstraints(
                           minWidth: tileWidth,
-                          minHeight: rowHeight,
+                          minHeight: config.rowHeight,
                         ),
                         child: eventBuilder(
                           constraints,
@@ -187,7 +183,7 @@ class DayViewRow<T extends Object> extends StatelessWidget {
                         ),
                       ),
                   },
-                  verticalDivider ?? const VerticalDivider(width: 0),
+                  config.verticalDivider ?? const VerticalDivider(width: 0),
                 ];
               })
               .expand((element) => element)
