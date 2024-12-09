@@ -290,7 +290,7 @@ class _DayViewBody<T extends Object> extends StatelessWidget {
               if (cateIndex == -1) return const SizedBox.shrink();
 
               final constraints = BoxConstraints(
-                maxHeight: event.durationInMins.toDouble(),
+                maxHeight: event.durationInMins * config.heightPerMin,
                 maxWidth: tileWidth,
               );
 
