@@ -1,4 +1,4 @@
-import 'package:calendar_day_view/src/extensions/date_time_extension.dart';
+import '../extensions/date_time_extension.dart';
 import 'package:flutter/material.dart';
 
 import '../utils/date_time_utils.dart';
@@ -68,8 +68,8 @@ abstract class DavViewConfig {
   DateTime get timeEnd => currentDate.copyTimeAndMinClean(endOfDay);
 }
 
-/// Configuration for [CategoryDavView] and [CategoryOverflowCalendarDayView]
-class CategoryDavViewConfig extends DavViewConfig {
+/// Configuration for [CategoryCalendarDayView] and [CategoryOverflowCalendarDayView]
+final class CategoryDavViewConfig extends DavViewConfig {
   /// build category header
   // final CategoryDayViewHeaderTileBuilder? headerTileBuilder;
 
@@ -121,7 +121,7 @@ class CategoryDavViewConfig extends DavViewConfig {
   });
 }
 
-class OverFlowDayViewConfig extends DavViewConfig {
+final class OverFlowDayViewConfig extends DavViewConfig {
   /// color of time point label
   final Color? timeTextColor;
 
@@ -168,7 +168,7 @@ class OverFlowDayViewConfig extends DavViewConfig {
   });
 }
 
-class EventDayViewConfig extends DavViewConfig {
+final class EventDayViewConfig extends DavViewConfig {
   /// padding for event row
   final EdgeInsetsGeometry? rowPadding;
 
@@ -197,7 +197,7 @@ class EventDayViewConfig extends DavViewConfig {
   });
 }
 
-class InRowDayViewConfig extends EventDayViewConfig {
+final class InRowDayViewConfig extends EventDayViewConfig {
   /// if true, only display row with events. Default to false
   final bool showWithEventOnly;
 
