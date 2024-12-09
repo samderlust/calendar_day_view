@@ -1,8 +1,10 @@
-## 3.4.0
+## 4.0.0
 
 - optimize code where needed
 - group parameters in each constructor into config class.
 - introduce `CategoryDavViewConfig`, `OverFlowDayViewConfig`, `EventDayViewConfig`, `InRowDayViewConfig`
+- update example
+- fix InRowDayView issue
 
 ## 3.3.3
 

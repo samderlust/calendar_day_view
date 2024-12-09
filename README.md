@@ -1,6 +1,6 @@
 [!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/samderlust)
 
-## `BREAKING CHANGES` in version 3. please prefer to Changelogs
+## `BREAKING CHANGES` in version 4. please prefer to Changelogs
 
 ### Example here: https://samderlust.github.io/calendardayview
 
@@ -20,6 +20,7 @@ This package aims to give user most customization they want.
 - Option to change time gap(duration that a single row represent) in day view.
 - Option to show current time on day view as a line
 - Allow user to tap on day view (ex: to create event at that specific time)
+- **BREAKING** `CategoryDavViewConfig`, `OverFlowDayViewConfig`, `EventDayViewConfig`, `InRowDayViewConfig` are introduced to centralize config parameter of Day views
 
 ## Installing and import the library:
 
@@ -48,31 +49,29 @@ look at example folder for all use cases
   <img src="https://raw.githubusercontent.com/samderlust/images/main/cagetorydayview.png" alt="Category Day View" style="width:800px;"/>
 
   ```
-   CalendarDayView.categoryOverflow(
-            categories: categories,
-            events: events,
-            currentDate: DateTime.now(),
-            onTileTap: addEventOnClick,
-            timeGap: 60,
-            columnsPerPage: 3,
-            heightPerMin: 1,
-            evenRowColor: Colors.white,
-            oddRowColor: Colors.grey,
-            headerDecoration: BoxDecoration(
-              color: Colors.lightBlueAccent.withOpacity(.5),
-            ),
-            eventBuilder: (constraints, category, event) => GestureDetector(
-              onTap: () => print(event),
-              child: Container(
-                constraints: constraints,
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.primary,
-                  border: Border.all(width: .5, color: Colors.black26),
-                ),
-                child:<<ItemWidget>>
-              ),
-            ),
-          )
+   CalendarDayView.category(
+        config: CategoryDavViewConfig(
+          time12: true,
+          allowHorizontalScroll: true,
+          columnsPerPage: 2,
+          currentDate: DateTime.now(),
+          timeGap: 60,
+          heightPerMin: 1,
+          evenRowColor: Colors.white,
+          oddRowColor: Colors.grey[200],
+          headerDecoration: BoxDecoration(
+            color: Colors.lightBlueAccent.withOpacity(.5),
+          ),
+          logo: const Padding(
+            padding: EdgeInsets.all(8.0),
+            child: CircleAvatar(child: Text("C")),
+          ),
+        ),
+        categories: categories,
+        events: events,
+        onTileTap: (category, time) {},
+        controlBarBuilder: (goToPreviousTab, goToNextTab) =>  <<Widget>> ,
+        eventBuilder: (constraints, category, _, event) => <<Widget>>;
   ```
 
 ## Overflow Day View
@@ -87,15 +86,22 @@ look at example folder for all use cases
 | `renderRowAsListView: false`                                                                                               | `renderRowAsListView: true`                                                                                                 |
 
 ```
- CalendarDayView.overflow(
-            events: events,
-            dividerColor: Colors.black,
-            currentDate: DateTime.now(),
-            timeGap: 60,
-            renderRowAsListView: true,
-            showCurrentTimeLine: true,
-            showMoreOnRowButton: true,
-            overflowItemBuilder: (context, constraints, event) {
+CalendarDayView.overflow(
+            config: OverFlowDayViewConfig(
+              currentDate: DateTime.now(),
+              timeGap: timeGap.value,
+              heightPerMin: 2,
+              endOfDay: const TimeOfDay(hour: 20, minute: 0),
+              startOfDay: const TimeOfDay(hour: 4, minute: 0),
+              renderRowAsListView: true,
+              time12: true,
+            ),
+            onTimeTap: (t) {
+              print(t);
+              onTimeTap?.call(t);
+            },
+            events: UnmodifiableListView(events),
+            overflowItemBuilder: (context, constraints, itemIndex, event)  {
               return <<ItemWidget>>
             },
           )
@@ -109,8 +115,12 @@ look at example folder for all use cases
 
 ```
  CalendarDayView.eventOnly(
+      config: EventDayViewConfig(
+        showHourly: true,
+        currentDate: DateTime.now(),
+      ),
       events: events,
-      eventDayViewItemBuilder: (context, event) {
+      eventDayViewItemBuilder: (context, index, event) (context, event) {
         return Container(
           color: getRandomColor(),
           height: 50,
@@ -127,16 +137,18 @@ look at example folder for all use cases
 <img src="https://raw.githubusercontent.com/samderlust/images/main/inrowdayview.png" alt="In Row Day View" style="width:600px;"/>
 
 ```
-InRowCalendarDaCalendarDayView<String>.inRow(
-            events: events,
-            heightPerMin: 1,
-            showCurrentTimeLine: true,
-            dividerColor: Colors.black,
-            timeGap: 15,
-            currentDate: DateTime.now(),
-            showWithEventOnly: withEventOnly.value,
-            startOfDay: const TimeOfDay(hour: 00, minute: 0),
-            endOfDay: const TimeOfDay(hour: 22, minute: 0),
+CalendarDayView<String>.inRow(
+            config: InRowDayViewConfig(
+              heightPerMin: 1,
+              showCurrentTimeLine: true,
+              dividerColor: Colors.black,
+              timeGap: timeGap.value,
+              showWithEventOnly: withEventOnly.value,
+              currentDate: DateTime.now(),
+              startOfDay: TimeOfDay(hour: 3, minute: 00),
+              endOfDay: TimeOfDay(hour: 22, minute: 00),
+            ),
+            events: UnmodifiableListView(events),
             itemBuilder: (context, constraints, event) => Flexible(
               child:<<ITEM WIDGET>>
             ),
