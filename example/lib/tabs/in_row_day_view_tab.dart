@@ -13,6 +13,7 @@ class InRowDayViewTab extends HookWidget {
     final timeGap = useState<int>(60);
     final withEventOnly = useState<bool>(false);
     final colorScheme = Theme.of(context).colorScheme;
+
     return Column(
       children: [
         Expanded(
@@ -24,6 +25,8 @@ class InRowDayViewTab extends HookWidget {
               timeGap: timeGap.value,
               showWithEventOnly: withEventOnly.value,
               currentDate: DateTime.now(),
+              startOfDay: TimeOfDay(hour: 3, minute: 00),
+              endOfDay: TimeOfDay(hour: 22, minute: 00),
             ),
             events: UnmodifiableListView(events),
             itemBuilder: (context, constraints, itemIndex, event) => Flexible(

@@ -142,8 +142,11 @@ class CalendarDayViewExample extends HookWidget {
           ),
           appBar: AppBar(
             title: Text(
-              getTitle(currentIndex.value),
-              style: const TextStyle(color: Colors.white, fontSize: 30),
+              "${getTitle(currentIndex.value)} - ${switch (currentIndex.value) {
+                var i when (i == 1 || i == 2) => categoryEvents.value.length,
+                _ => dayEvents.value.length,
+              }} events",
+              style: const TextStyle(color: Colors.teal, fontSize: 30),
             ),
             toolbarHeight: 100,
             centerTitle: false,
@@ -212,7 +215,7 @@ String getTitle(int index) {
 
 List<DayEvent<String>> fakeEvents() => faker.randomGenerator.amount((i) {
       final start = DateTime.now().copyWith(
-        hour: faker.randomGenerator.integer(24, min: 0),
+        hour: faker.randomGenerator.integer(19, min: 5),
         minute: faker.randomGenerator.element([0, 10, 20, 40]),
         second: 0,
       );

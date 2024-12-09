@@ -1,3 +1,9 @@
+## 3.4.0
+
+- optimize code where needed
+- group parameters in each constructor into config class.
+- introduce `CategoryDavViewConfig`, `OverFlowDayViewConfig`, `EventDayViewConfig`, `InRowDayViewConfig`
+
 ## 3.3.3
 
 - [Fix incorrect display 12hours format](https://github.com/samderlust/calendar_day_view/issues/27) Thanks to @ArizArmeidi

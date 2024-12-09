@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../utils/date_time_utils.dart';
 
-class DavViewConfig {
+abstract class DavViewConfig {
   /// width of the first column where times are displayed
   final double timeColumnWidth;
 
