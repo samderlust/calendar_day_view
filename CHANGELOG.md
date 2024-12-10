@@ -1,3 +1,7 @@
+## 4.0.1
+
+- fix CategoryOverflowCalendarDayView maxHeight of event issue [#25](https://github.com/samderlust/calendar_day_view/issues/25)
+
 ## 4.0.0
 
 - optimize code where needed

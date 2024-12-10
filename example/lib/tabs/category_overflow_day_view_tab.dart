@@ -24,7 +24,7 @@ class CategoryOverflowDayViewTab extends HookWidget {
         allowHorizontalScroll: true,
         currentDate: DateTime.now(),
         timeGap: 60,
-        heightPerMin: 1,
+        heightPerMin: 3,
         evenRowColor: Colors.white,
         oddRowColor: Colors.grey[200],
         headerDecoration: BoxDecoration(
