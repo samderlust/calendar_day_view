@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../extensions/date_time_extension.dart';
-import '../../dav_view_config.dart';
+import '../../day_view_config.dart';
 
 class TimeAndLogoWidget extends StatelessWidget {
   const TimeAndLogoWidget({
@@ -63,16 +63,20 @@ class TimeAndLogoWidget extends StatelessWidget {
                           width: config.timeColumnWidth,
                           child: Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 2),
-                            child: FittedBox(
-                              fit: BoxFit.fitWidth,
-                              child: Text(
-                                config.time12
-                                    ? time.hourDisplay12
-                                    : time.hourDisplay24,
-                                style: config.timeTextStyle,
-                                maxLines: 1,
-                              ),
-                            ),
+                            child: config.timeLabelBuilder?.call(
+                                  context,
+                                  time,
+                                ) ??
+                                FittedBox(
+                                  fit: BoxFit.fitWidth,
+                                  child: Text(
+                                    config.time12
+                                        ? time.hourDisplay12
+                                        : time.hourDisplay24,
+                                    style: config.timeTextStyle,
+                                    maxLines: 1,
+                                  ),
+                                ),
                           ),
                         )),
                     config.verticalDivider ?? const VerticalDivider(width: 0),

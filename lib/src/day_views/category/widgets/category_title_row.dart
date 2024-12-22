@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../calendar_day_view.dart';
-import '../../dav_view_config.dart';
+import '../../day_view_config.dart';
 
 class CategoryTitleRow extends StatelessWidget {
   const CategoryTitleRow({

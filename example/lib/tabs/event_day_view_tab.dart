@@ -2,6 +2,8 @@ import 'package:calendar_day_view/calendar_day_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 
+import '../main.dart';
+
 class EventDayViewTab extends StatelessWidget {
   const EventDayViewTab({
     Key? key,
@@ -16,6 +18,10 @@ class EventDayViewTab extends StatelessWidget {
       config: EventDayViewConfig(
         showHourly: true,
         currentDate: DateTime.now(),
+        timeLabelBuilder: (context, time) => Text(
+          timeFormat.format(time),
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
       ),
       events: events,
       eventDayViewItemBuilder: (context, index, event) {

@@ -1,3 +1,8 @@
+## 4.0.2
+
+- added TimeLabelBuilder to DayViewConfig which allow users to customize how time label display.
+- fix CategoryCalendarDayView issue where event start at minute 0 doesn't show
+
 ## 4.0.1
 
 - fix CategoryOverflowCalendarDayView maxHeight of event issue [#25](https://github.com/samderlust/calendar_day_view/issues/25)

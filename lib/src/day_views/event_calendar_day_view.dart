@@ -2,9 +2,7 @@ import 'package:calendar_day_view/src/extensions/date_time_extension.dart';
 import 'package:flutter/material.dart';
 
 import '../../calendar_day_view.dart';
-import '../models/day_event.dart';
 import '../models/typedef.dart';
-import 'calendar_day_view_base.dart';
 
 /// Day View that only show time slot with Events
 ///
@@ -111,16 +109,20 @@ class _EventCalendarDayViewState<T extends Object>
                           child: SizedBox(
                             height: 40,
                             width: widget.config.timeColumnWidth,
-                            child: FittedBox(
-                              fit: BoxFit.scaleDown,
-                              child: Text(
-                                widget.config.time12
-                                    ? time.hourDisplay12
-                                    : time.hourDisplay24,
-                                style: widget.config.timeTextStyle,
-                                maxLines: 1,
-                              ),
-                            ),
+                            child: widget.config.timeLabelBuilder?.call(
+                                  context,
+                                  time,
+                                ) ??
+                                FittedBox(
+                                  fit: BoxFit.scaleDown,
+                                  child: Text(
+                                    widget.config.time12
+                                        ? time.hourDisplay12
+                                        : time.hourDisplay24,
+                                    style: widget.config.timeTextStyle,
+                                    maxLines: 1,
+                                  ),
+                                ),
                           ),
                         ),
                         Expanded(
