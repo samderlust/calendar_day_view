@@ -120,6 +120,7 @@ class _OverFlowCalendarDayViewState<T extends Object>
                     viewWidth: viewWidth,
                     config: widget.config,
                     onTimeTap: widget.onTimeTap,
+                    timeLabelBuilder: widget.config.timeLabelBuilder,
                   );
                 },
               ),
@@ -174,12 +175,14 @@ class OverflowTimeRowWidget extends StatelessWidget {
     required this.viewWidth,
     required this.config,
     required this.onTimeTap,
+    this.timeLabelBuilder,
   });
 
   final DateTime time;
   final double viewWidth;
   final OverFlowDayViewConfig config;
   final OnTimeTap? onTimeTap;
+  final TimeLabelBuilder? timeLabelBuilder;
 
   @override
   Widget build(BuildContext context) {
@@ -203,15 +206,16 @@ class OverflowTimeRowWidget extends StatelessWidget {
               child: SizedBox(
                 height: 40,
                 width: config.timeColumnWidth,
-                child: FittedBox(
-                  fit: BoxFit.scaleDown,
-                  child: Text(
-                    config.time12 ? time.hourDisplay12 : time.hourDisplay24,
-                    style: config.timeTextStyle ??
-                        TextStyle(color: config.timeTextColor),
-                    maxLines: 1,
-                  ),
-                ),
+                child: timeLabelBuilder?.call(context, time) ??
+                    FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(
+                        config.time12 ? time.hourDisplay12 : time.hourDisplay24,
+                        style: config.timeTextStyle ??
+                            TextStyle(color: config.timeTextColor),
+                        maxLines: 1,
+                      ),
+                    ),
               ),
             ),
           ],

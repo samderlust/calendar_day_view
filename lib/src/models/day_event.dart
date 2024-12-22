@@ -55,9 +55,13 @@ extension DayEventExtension on DayEvent {
 
   int get timeGapFromZero => start.hour * 60 + start.minute;
 
+  // duration in minutes
+  // from the start time to the time point
   int minutesFrom(DateTime timePoint) => start.difference(timePoint).inMinutes;
   // (start.hour - timePoint.hour) * 60 + (start.minute - timePoint.minute);
 
+  // check if the event is in the gap
+  // either start in this gap or it's happening in this gap
   bool isInThisGap(DateTime timePoint, int gap) {
     final dif = timePoint
         .copyWith(second: 00)
@@ -66,8 +70,9 @@ extension DayEventExtension on DayEvent {
     return dif >= 0 && dif <= gap;
   }
 
+  // only if the start time is in the gap
   bool startInThisGap(DateTime timePoint, int gap) {
-    return start.isAfter(timePoint) &&
+    return (start.isAfter(timePoint) || start.isAtSameMomentAs(timePoint)) &&
         start.isBefore(timePoint.add(Duration(minutes: gap)));
   }
 
@@ -75,13 +80,8 @@ extension DayEventExtension on DayEvent {
       start.hour == timePoint.hour && timePoint.minute == start.minute;
   bool startAtHour(DateTime timePoint) => start.hour == timePoint.hour;
 
+  // compare start time
   int compare(DayEvent other) {
     return start.isBefore(other.start) ? -1 : 1;
-
-    // if (start.hour > other.start.hour) return 1;
-    // if (start.hour == other.start.hour && start.minute > other.start.minute) {
-    //   return 1;
-    // }
-    // return -1;
   }
 }

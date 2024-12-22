@@ -8,8 +8,11 @@ import 'package:example/tabs/overflow_day_view_tab.dart';
 import 'package:faker/faker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:intl/intl.dart';
 
 import 'tabs/category_day_view_tab.dart';
+
+final timeFormat = DateFormat('ha');
 
 final rd = Random();
 void main() {

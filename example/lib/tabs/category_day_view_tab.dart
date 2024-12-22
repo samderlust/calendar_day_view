@@ -2,6 +2,8 @@ import 'package:calendar_day_view/calendar_day_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 
+import '../main.dart';
+
 class CategoryDayViewTab extends HookWidget {
   const CategoryDayViewTab({
     super.key,
@@ -24,11 +26,15 @@ class CategoryDayViewTab extends HookWidget {
         columnsPerPage: 2,
         currentDate: DateTime.now(),
         timeGap: 60,
-        heightPerMin: 3,
+        heightPerMin: 1,
         evenRowColor: Colors.white,
         oddRowColor: Colors.grey[200],
         headerDecoration: BoxDecoration(
           color: Colors.lightBlueAccent.withOpacity(.5),
+        ),
+        timeLabelBuilder: (context, time) => Text(
+          timeFormat.format(time),
+          style: const TextStyle(fontWeight: FontWeight.bold),
         ),
         logo: const Padding(
           padding: EdgeInsets.all(8.0),
@@ -38,8 +44,8 @@ class CategoryDayViewTab extends HookWidget {
       categories: categories,
       events: events,
       onTileTap: (category, time) {
-        print(category);
-        print(time);
+        debugPrint(category.toString());
+        debugPrint(time.toString());
       },
       controlBarBuilder: (goToPreviousTab, goToNextTab) => Container(
         color: Theme.of(context).colorScheme.primaryContainer,

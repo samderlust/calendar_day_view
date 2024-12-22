@@ -64,7 +64,13 @@ typedef CategoryDayViewControlBarBuilder = Widget Function(
   void Function() goToNextTab,
 );
 
+/// category header tile builder
+/// allow custom category header tile
 typedef CategoryDayViewHeaderTileBuilder = Function(
   BoxConstraints constraints,
   EventCategory category,
 );
+
+/// time label builder
+/// allow custom time label
+typedef TimeLabelBuilder = Widget Function(BuildContext context, DateTime time);

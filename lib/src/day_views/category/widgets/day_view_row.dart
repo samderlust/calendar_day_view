@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../calendar_day_view.dart';
 import '../../../models/typedef.dart';
-import '../../dav_view_config.dart';
+import '../../day_view_config.dart';
 
 class OverflowDayViewRow<T extends Object> extends StatelessWidget {
   const OverflowDayViewRow({
@@ -157,7 +157,9 @@ class DayViewRow<T extends Object> extends StatelessWidget {
                     .firstWhereOrNull((e) => e.categoryId == category.id);
 
                 final constraints = BoxConstraints(
-                    maxHeight: config.rowHeight, maxWidth: tileWidth);
+                  maxHeight: config.rowHeight,
+                  maxWidth: tileWidth,
+                );
                 return [
                   switch (event) {
                     var event? => ConstrainedBox(

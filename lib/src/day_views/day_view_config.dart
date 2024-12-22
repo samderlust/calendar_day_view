@@ -1,6 +1,7 @@
 import '../extensions/date_time_extension.dart';
 import 'package:flutter/material.dart';
 
+import '../models/typedef.dart';
 import '../utils/date_time_utils.dart';
 
 abstract class DavViewConfig {
@@ -41,6 +42,11 @@ abstract class DavViewConfig {
   final ScrollPhysics? physics;
   final ScrollController? controller;
 
+  /// allow custom time label
+  /// if not provided, the time will be display as default time format
+  /// either 12 hour or 24 hour format based on [time12]
+  final TimeLabelBuilder? timeLabelBuilder;
+
   const DavViewConfig({
     this.timeColumnWidth = 70,
     this.startOfDay = const TimeOfDay(hour: 7, minute: 0),
@@ -55,6 +61,7 @@ abstract class DavViewConfig {
     this.physics,
     this.controller,
     this.dividerColor,
+    this.timeLabelBuilder,
   });
 
   double get rowHeight => heightPerMin * timeGap;
@@ -118,6 +125,7 @@ final class CategoryDavViewConfig extends DavViewConfig {
     super.heightPerMin,
     super.showCurrentTimeLine,
     super.timeColumnWidth,
+    super.timeLabelBuilder,
   });
 }
 
@@ -160,6 +168,7 @@ final class OverFlowDayViewConfig extends DavViewConfig {
     this.timeTextColor,
     this.timeTextStyle,
     super.dividerColor,
+    super.timeLabelBuilder,
     this.renderRowAsListView = false,
     this.showMoreOnRowButton = false,
     this.cropBottomEvents = false,
@@ -190,6 +199,7 @@ final class EventDayViewConfig extends DavViewConfig {
     super.primary,
     super.physics,
     super.dividerColor,
+    super.timeLabelBuilder,
     super.controller,
     this.rowPadding,
     this.timeSlotPadding,
@@ -204,6 +214,7 @@ final class InRowDayViewConfig extends EventDayViewConfig {
   final Color? currentTimeLineColor;
   InRowDayViewConfig({
     required super.currentDate,
+    super.timeLabelBuilder,
     super.startOfDay,
     super.endOfDay,
     super.timeGap,

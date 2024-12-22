@@ -160,14 +160,17 @@ class InRowEventRowWidget<T extends Object> extends StatelessWidget {
                 child: SizedBox(
                   height: 40,
                   width: config.timeColumnWidth,
-                  child: FittedBox(
-                    fit: BoxFit.scaleDown,
-                    child: Text(
-                      config.time12 ? time.hourDisplay12 : time.hourDisplay24,
-                      style: config.timeTextStyle,
-                      maxLines: 1,
-                    ),
-                  ),
+                  child: config.timeLabelBuilder?.call(context, time) ??
+                      FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Text(
+                          config.time12
+                              ? time.hourDisplay12
+                              : time.hourDisplay24,
+                          style: config.timeTextStyle,
+                          maxLines: 1,
+                        ),
+                      ),
                 ),
               ),
               Expanded(

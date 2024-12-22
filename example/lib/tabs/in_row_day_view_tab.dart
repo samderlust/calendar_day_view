@@ -4,6 +4,8 @@ import 'package:calendar_day_view/calendar_day_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 
+import '../main.dart';
+
 class InRowDayViewTab extends HookWidget {
   const InRowDayViewTab({Key? key, required this.events}) : super(key: key);
   final List<DayEvent<String>> events;
@@ -27,6 +29,10 @@ class InRowDayViewTab extends HookWidget {
               currentDate: DateTime.now(),
               startOfDay: TimeOfDay(hour: 3, minute: 00),
               endOfDay: TimeOfDay(hour: 22, minute: 00),
+              timeLabelBuilder: (context, time) => Text(
+                timeFormat.format(time),
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
             ),
             events: UnmodifiableListView(events),
             itemBuilder: (context, constraints, itemIndex, event) => Flexible(
