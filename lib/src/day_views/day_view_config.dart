@@ -65,6 +65,8 @@ abstract class DavViewConfig {
   });
 
   double get rowHeight => heightPerMin * timeGap;
+
+  /// number of time rows to display
   List<DateTime> get timeList => getTimeList(
         currentDate.copyTimeAndMinClean(startOfDay),
         currentDate.copyTimeAndMinClean(endOfDay),

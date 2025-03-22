@@ -119,8 +119,8 @@ class CalendarDayViewExample extends HookWidget {
       length: 4,
       child: SafeArea(
         child: Scaffold(
-          extendBodyBehindAppBar: true,
-          backgroundColor: Theme.of(context).colorScheme.background,
+          // extendBodyBehindAppBar: true,
+          backgroundColor: Theme.of(context).colorScheme.surface,
           bottomNavigationBar: BottomNavigationBar(
             showUnselectedLabels: true,
             showSelectedLabels: true,
@@ -151,7 +151,7 @@ class CalendarDayViewExample extends HookWidget {
               }} events",
               style: const TextStyle(color: Colors.teal, fontSize: 30),
             ),
-            toolbarHeight: 100,
+            // toolbarHeight: 100,
             centerTitle: false,
             actions: [
               Row(
