@@ -15,3 +15,4 @@ export 'src/models/categorized_day_event.dart';
 export 'src/models/event_category.dart';
 export 'src/day_views/day_view_config.dart';
 export 'src/day_views/calendar_day_view_base.dart';
+export 'src/day_views/category/category_2d_day_view.dart';
