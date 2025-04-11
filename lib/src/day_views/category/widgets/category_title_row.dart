@@ -24,6 +24,24 @@ class CategoryTitleRow extends StatelessWidget {
       child: IntrinsicHeight(
         child: Row(
           children: [
+            if (config.stickyCategories)
+              IntrinsicHeight(
+                child: Row(
+                  children: [
+                    ConstrainedBox(
+                      constraints: BoxConstraints(
+                        maxWidth: config.timeColumnWidth,
+                        minWidth: config.timeColumnWidth,
+                        minHeight: config.rowHeight,
+                      ),
+                      child:
+                          config.logo ??
+                          Container(decoration: config.headerDecoration),
+                    ),
+                    config.verticalDivider ?? const VerticalDivider(width: 0),
+                  ],
+                ),
+              ),
             ...categories
                 .map(
                   (category) => [
@@ -41,7 +59,7 @@ class CategoryTitleRow extends StatelessWidget {
                   ],
                 )
                 .expand((e) => e)
-                .toList()
+                .toList(),
           ],
         ),
       ),

@@ -66,10 +66,10 @@ abstract class DavViewConfig {
 
   double get rowHeight => heightPerMin * timeGap;
   List<DateTime> get timeList => getTimeList(
-        currentDate.copyTimeAndMinClean(startOfDay),
-        currentDate.copyTimeAndMinClean(endOfDay),
-        timeGap,
-      );
+    currentDate.copyTimeAndMinClean(startOfDay),
+    currentDate.copyTimeAndMinClean(endOfDay),
+    timeGap,
+  );
 
   DateTime get timeStart => currentDate.copyTimeAndMinClean(startOfDay);
   DateTime get timeEnd => currentDate.copyTimeAndMinClean(endOfDay);
@@ -107,6 +107,9 @@ final class CategoryDavViewConfig extends DavViewConfig {
   /// time label text style
   final TextStyle? timeTextStyle;
 
+  /// make categories sticky to the top
+  final bool stickyCategories;
+
   const CategoryDavViewConfig({
     this.headerDecoration,
     this.logo,
@@ -126,6 +129,7 @@ final class CategoryDavViewConfig extends DavViewConfig {
     super.showCurrentTimeLine,
     super.timeColumnWidth,
     super.timeLabelBuilder,
+    this.stickyCategories = false,
   });
 }
 
