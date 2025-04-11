@@ -70,17 +70,13 @@ class _CategoryOverflowCalendarDayViewState<T extends Object>
 
   void controllerListener() {
     if (controller.offset != stickyCategoriesController.offset) {
-      setState(() {
-        stickyCategoriesController.jumpTo(controller.offset);
-      });
+      stickyCategoriesController.jumpTo(controller.offset);
     }
   }
 
   void stickyCategoriescontrollerListener() {
     if (controller.offset != stickyCategoriesController.offset) {
-      setState(() {
-        controller.jumpTo(stickyCategoriesController.offset);
-      });
+      controller.jumpTo(stickyCategoriesController.offset);
     }
   }
 
