@@ -206,16 +206,20 @@ class OverflowTimeRowWidget extends StatelessWidget {
               child: SizedBox(
                 height: 40,
                 width: config.timeColumnWidth,
-                child: timeLabelBuilder?.call(context, time) ??
-                    FittedBox(
-                      fit: BoxFit.scaleDown,
-                      child: Text(
-                        config.time12 ? time.hourDisplay12 : time.hourDisplay24,
-                        style: config.timeTextStyle ??
-                            TextStyle(color: config.timeTextColor),
-                        maxLines: 1,
+                child: Center(
+                  child: timeLabelBuilder?.call(context, time) ??
+                      FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Text(
+                          config.time12
+                              ? time.hourDisplay12
+                              : time.hourDisplay24,
+                          style: config.timeTextStyle ??
+                              TextStyle(color: config.timeTextColor),
+                          maxLines: 1,
+                        ),
                       ),
-                    ),
+                ),
               ),
             ),
           ],

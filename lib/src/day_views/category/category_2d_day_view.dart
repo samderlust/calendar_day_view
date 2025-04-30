@@ -56,11 +56,18 @@ class _Category2DDayViewState<T extends Object>
         : rowLength / widget.categories.length;
 
     return TableView.builder(
-      // diagonalDragBehavior: DiagonalDragBehavior.,
       columnCount: widget.categories.length + 1,
       rowCount: widget.config.timeList.length + 1,
       pinnedColumnCount: 1,
       pinnedRowCount: 1,
+      verticalDetails: const ScrollableDetails(
+        direction: AxisDirection.down,
+        physics: ClampingScrollPhysics(),
+      ),
+      horizontalDetails: const ScrollableDetails(
+        direction: AxisDirection.right,
+        physics: ClampingScrollPhysics(),
+      ),
       columnBuilder: (int index) {
         return TableSpan(
           foregroundDecoration: SpanDecoration(
@@ -72,7 +79,8 @@ class _Category2DDayViewState<T extends Object>
                       : const BorderSide(color: Colors.grey, width: 1),
             ),
           ),
-          extent: FixedTableSpanExtent(index == 0 ? 50 : tileWidth),
+          extent: FixedTableSpanExtent(
+              index == 0 ? widget.config.timeColumnWidth : tileWidth),
         );
       },
       rowBuilder: (rowIndex) {
