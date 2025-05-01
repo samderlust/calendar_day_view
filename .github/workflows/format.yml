@@ -1,0 +1,27 @@
+name: Format Dart Code
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dart-lang/setup-dart@v1
+        with:
+          sdk: stable
+
+      - name: Install dependencies
+        run: dart pub get
+
+      - name: Format code
+        run: dart format --line-length 200 lib/ test/ example/
+
+      - name: Check for changes
+        run: |
+          git diff --exit-code || (echo "::error::Code formatting issues found. Run 'dart format --line-length 200 lib/ test/ example/' to fix." && exit 1)

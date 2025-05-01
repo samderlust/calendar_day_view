@@ -37,6 +37,14 @@ Then import it wherever you want to use it:
 import 'package:calendar_day_view/calendar_day_view.dart';
 ```
 
+## Code Formatting
+
+This project enforces a maximum line length of 200 characters. To format the code:
+
+```bash
+dart format --line-length 200 lib/
+```
+
 ## Usage
 
 look at example folder for all use cases

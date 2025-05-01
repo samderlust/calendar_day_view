@@ -27,8 +27,7 @@ class CurrentTimeLineWidget extends StatelessWidget {
             child: Container(
               height: 10,
               width: 10,
-              decoration: BoxDecoration(
-                  color: color ?? Colors.red, shape: BoxShape.circle),
+              decoration: BoxDecoration(color: color ?? Colors.red, shape: BoxShape.circle),
             ),
           ),
           Divider(

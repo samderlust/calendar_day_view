@@ -11,8 +11,7 @@ import 'widgets/time_and_logo_widget.dart';
 /// where day view is divided into multiple category with fixed time slot.
 /// events will be showed within the correspond event tile only.
 
-class CategoryCalendarDayView<T extends Object> extends StatefulWidget
-    implements CalendarDayView<T> {
+class CategoryCalendarDayView<T extends Object> extends StatefulWidget implements CalendarDayView<T> {
   const CategoryCalendarDayView({
     Key? key,
     required this.categories,
@@ -46,12 +45,10 @@ class CategoryCalendarDayView<T extends Object> extends StatefulWidget
   final CategoryDayViewControlBarBuilder? controlBarBuilder;
 
   @override
-  State<CategoryCalendarDayView<T>> createState() =>
-      _CategoryCalendarDayViewState<T>();
+  State<CategoryCalendarDayView<T>> createState() => _CategoryCalendarDayViewState<T>();
 }
 
-class _CategoryCalendarDayViewState<T extends Object>
-    extends State<CategoryCalendarDayView<T>> {
+class _CategoryCalendarDayViewState<T extends Object> extends State<CategoryCalendarDayView<T>> {
   late ScrollController controller;
   @override
   void initState() {
@@ -61,16 +58,11 @@ class _CategoryCalendarDayViewState<T extends Object>
 
   @override
   Widget build(BuildContext context) {
-    final rowLength =
-        MediaQuery.sizeOf(context).width - widget.config.timeColumnWidth;
+    final rowLength = MediaQuery.sizeOf(context).width - widget.config.timeColumnWidth;
 
-    final tileWidth = widget.config.allowHorizontalScroll
-        ? rowLength / widget.config.columnsPerPage
-        : rowLength / widget.categories.length;
+    final tileWidth = widget.config.allowHorizontalScroll ? rowLength / widget.config.columnsPerPage : rowLength / widget.categories.length;
 
-    final totalWidth = widget.config.allowHorizontalScroll
-        ? tileWidth * widget.categories.length
-        : rowLength;
+    final totalWidth = widget.config.allowHorizontalScroll ? tileWidth * widget.categories.length : rowLength;
 
     return SafeArea(
       child: ScrollConfiguration(
@@ -90,10 +82,7 @@ class _CategoryCalendarDayViewState<T extends Object>
                         onPressed: () => goBack(rowLength, totalWidth),
                         icon: const Icon(Icons.arrow_left),
                       ),
-                      Text(widget.config.currentDate
-                          .toString()
-                          .split(":")
-                          .first),
+                      Text(widget.config.currentDate.toString().split(":").first),
                       IconButton.filledTonal(
                         onPressed: () => goNext(rowLength, totalWidth),
                         icon: const Icon(Icons.arrow_right),
@@ -115,36 +104,28 @@ class _CategoryCalendarDayViewState<T extends Object>
                           width: totalWidth,
                           child: Column(
                             children: [
-                              widget.config.horizontalDivider ??
-                                  const Divider(height: 0),
+                              widget.config.horizontalDivider ?? const Divider(height: 0),
                               CategoryTitleRow(
                                 categories: widget.categories,
                                 tileWidth: tileWidth,
                                 config: widget.config,
                               ),
-                              widget.config.horizontalDivider ??
-                                  const Divider(height: 0),
+                              widget.config.horizontalDivider ?? const Divider(height: 0),
                               ListView.separated(
                                 shrinkWrap: true,
                                 physics: const NeverScrollableScrollPhysics(),
                                 itemCount: widget.config.timeList.length,
-                                separatorBuilder: (context, index) =>
-                                    widget.config.horizontalDivider ??
-                                    const Divider(height: 0),
+                                separatorBuilder: (context, index) => widget.config.horizontalDivider ?? const Divider(height: 0),
                                 itemBuilder: (context, index) {
-                                  final time =
-                                      widget.config.timeList.elementAt(index);
+                                  final time = widget.config.timeList.elementAt(index);
                                   final rowEvents = widget.events
                                       .where(
-                                        (event) => event.startInThisGap(
-                                            time, widget.config.timeGap),
+                                        (event) => event.startInThisGap(time, widget.config.timeGap),
                                       )
                                       .toList();
                                   return Container(
                                     decoration: BoxDecoration(
-                                      color: index % 2 == 0
-                                          ? widget.config.evenRowColor
-                                          : widget.config.oddRowColor,
+                                      color: index % 2 == 0 ? widget.config.evenRowColor : widget.config.oddRowColor,
                                     ),
                                     constraints: BoxConstraints(
                                       minHeight: widget.config.rowHeight,

@@ -15,8 +15,7 @@ class BackgroundIgnorePointer extends SingleChildRenderObjectWidget {
   }
 
   @override
-  void updateRenderObject(
-      BuildContext context, BackgroundIgnoreRenderBox renderObject) {
+  void updateRenderObject(BuildContext context, BackgroundIgnoreRenderBox renderObject) {
     renderObject.ignored = ignored;
   }
 }

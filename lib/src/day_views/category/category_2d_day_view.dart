@@ -6,8 +6,7 @@ import 'package:two_dimensional_scrollables/two_dimensional_scrollables.dart';
 import '../../../calendar_day_view.dart';
 import '../../models/typedef.dart';
 
-class Category2DDayView<T extends Object> extends StatefulWidget
-    implements CalendarDayView<T> {
+class Category2DDayView<T extends Object> extends StatefulWidget implements CalendarDayView<T> {
   const Category2DDayView({
     super.key,
     required this.config,
@@ -44,16 +43,12 @@ class Category2DDayView<T extends Object> extends StatefulWidget
   State<Category2DDayView<T>> createState() => _Category2DDayViewState<T>();
 }
 
-class _Category2DDayViewState<T extends Object>
-    extends State<Category2DDayView<T>> {
+class _Category2DDayViewState<T extends Object> extends State<Category2DDayView<T>> {
   @override
   Widget build(BuildContext context) {
-    final rowLength =
-        MediaQuery.sizeOf(context).width - widget.config.timeColumnWidth;
+    final rowLength = MediaQuery.sizeOf(context).width - widget.config.timeColumnWidth;
 
-    final tileWidth = widget.config.allowHorizontalScroll
-        ? rowLength / widget.config.columnsPerPage
-        : rowLength / widget.categories.length;
+    final tileWidth = widget.config.allowHorizontalScroll ? rowLength / widget.config.columnsPerPage : rowLength / widget.categories.length;
 
     return TableView.builder(
       columnCount: widget.categories.length + 1,
@@ -73,14 +68,12 @@ class _Category2DDayViewState<T extends Object>
           foregroundDecoration: SpanDecoration(
             border: SpanBorder(
               trailing: const BorderSide(color: Colors.grey, width: 1),
-              leading:
-                  index != 0 //only draw border on the left of the first column
-                      ? BorderSide.none
-                      : const BorderSide(color: Colors.grey, width: 1),
+              leading: index != 0 //only draw border on the left of the first column
+                  ? BorderSide.none
+                  : const BorderSide(color: Colors.grey, width: 1),
             ),
           ),
-          extent: FixedTableSpanExtent(
-              index == 0 ? widget.config.timeColumnWidth : tileWidth),
+          extent: FixedTableSpanExtent(index == 0 ? widget.config.timeColumnWidth : tileWidth),
         );
       },
       rowBuilder: (rowIndex) {
@@ -88,10 +81,9 @@ class _Category2DDayViewState<T extends Object>
           foregroundDecoration: SpanDecoration(
             border: SpanBorder(
               trailing: const BorderSide(color: Colors.grey, width: 1),
-              leading:
-                  rowIndex != 0 //only draw border on the top of the first row
-                      ? BorderSide.none
-                      : const BorderSide(color: Colors.grey, width: 1),
+              leading: rowIndex != 0 //only draw border on the top of the first row
+                  ? BorderSide.none
+                  : const BorderSide(color: Colors.grey, width: 1),
             ),
           ),
           extent: FixedTableSpanExtent(widget.config.rowHeight),
@@ -123,20 +115,10 @@ class _Category2DDayViewState<T extends Object>
 
         // building category title
         if (rowIndex == 0 && columnIndex > 0) {
-          final category = widget.categories[columnIndex - 1];
-          return TableViewCell(
-            child: Center(
-              child: Text(
-                category.name,
-                style: const TextStyle(fontWeight: FontWeight.bold),
-              ),
-            ),
-          );
+          return buildCategoryTitle(context, widget.categories[columnIndex - 1]);
         }
 
         if (columnIndex == 0) {
-          debugPrint("rowIndex: in column 0: $rowIndex");
-
           final time = widget.config.timeList[rowIndex - 1];
           final timeLabel = Padding(
             padding: const EdgeInsets.all(5),
@@ -144,9 +126,7 @@ class _Category2DDayViewState<T extends Object>
                 FittedBox(
                   fit: BoxFit.fitWidth,
                   child: Text(
-                    widget.config.time12
-                        ? time.hourDisplay12
-                        : time.hourDisplay24,
+                    widget.config.time12 ? time.hourDisplay12 : time.hourDisplay24,
                     style: widget.config.timeTextStyle,
                     maxLines: 1,
                   ),
@@ -163,11 +143,10 @@ class _Category2DDayViewState<T extends Object>
 
         final category = widget.categories.elementAt(columnIndex - 1);
 
-        final cellEvent =
-            rowEvents.firstWhereOrNull((e) => e.categoryId == category.id);
+        final cellEvent = rowEvents.firstWhereOrNull((e) => e.categoryId == category.id);
 
         return switch (cellEvent) {
-          var event? => TableViewCell(
+          final event? => TableViewCell(
               child: Container(
                 constraints: BoxConstraints(
                   minWidth: tileWidth,
@@ -189,9 +168,7 @@ class _Category2DDayViewState<T extends Object>
           _ => TableViewCell(
               child: GestureDetector(
                 behavior: HitTestBehavior.translucent,
-                onTap: widget.onTileTap == null
-                    ? null
-                    : () => widget.onTileTap!(category, time),
+                onTap: widget.onTileTap == null ? null : () => widget.onTileTap!(category, time),
                 child: SizedBox(
                   width: tileWidth,
                   height: widget.config.rowHeight,
@@ -202,4 +179,15 @@ class _Category2DDayViewState<T extends Object>
       },
     );
   }
+}
+
+TableViewCell buildCategoryTitle(BuildContext context, EventCategory category) {
+  return TableViewCell(
+    child: Center(
+      child: Text(
+        category.name,
+        style: const TextStyle(fontWeight: FontWeight.bold),
+      ),
+    ),
+  );
 }

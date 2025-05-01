@@ -30,8 +30,7 @@ class OverflowFixedWidthEventsWidget<T extends Object> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final widgets = overflowEvents.expand((oEvents) {
-      final maxHeight =
-          (heightUnit * oEvents.start.minuteUntil(oEvents.end).abs());
+      final maxHeight = (heightUnit * oEvents.start.minuteUntil(oEvents.end).abs());
       final width = eventColumnWidth / oEvents.events.length;
 
       return oEvents.events.asMap().entries.map((entry) {
@@ -39,9 +38,7 @@ class OverflowFixedWidthEventsWidget<T extends Object> extends StatelessWidget {
         final event = entry.value;
         final topGap = event.minutesFrom(oEvents.start) * heightUnit;
 
-        final tileHeight = (cropBottomEvents && event.end!.isAfter(timeEnd))
-            ? (maxHeight - topGap)
-            : (event.durationInMins * heightUnit);
+        final tileHeight = (cropBottomEvents && event.end!.isAfter(timeEnd)) ? (maxHeight - topGap) : (event.durationInMins * heightUnit);
 
         final tileConstraints = BoxConstraints(
           maxHeight: tileHeight,

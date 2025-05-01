@@ -37,11 +37,7 @@ class DayEvent<T extends Object> {
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
 
-    return other is DayEvent<T> &&
-        other.value == value &&
-        other.start == start &&
-        other.end == end &&
-        other.name == name;
+    return other is DayEvent<T> && other.value == value && other.start == start && other.end == end && other.name == name;
   }
 
   @override
@@ -63,21 +59,16 @@ extension DayEventExtension on DayEvent {
   // check if the event is in the gap
   // either start in this gap or it's happening in this gap
   bool isInThisGap(DateTime timePoint, int gap) {
-    final dif = timePoint
-        .copyWith(second: 00)
-        .difference(start.copyWith(second: 00))
-        .inMinutes;
+    final dif = timePoint.copyWith(second: 00).difference(start.copyWith(second: 00)).inMinutes;
     return dif >= 0 && dif <= gap;
   }
 
   // only if the start time is in the gap
   bool startInThisGap(DateTime timePoint, int gap) {
-    return (start.isAfter(timePoint) || start.isAtSameMomentAs(timePoint)) &&
-        start.isBefore(timePoint.add(Duration(minutes: gap)));
+    return (start.isAfter(timePoint) || start.isAtSameMomentAs(timePoint)) && start.isBefore(timePoint.add(Duration(minutes: gap)));
   }
 
-  bool startAt(DateTime timePoint) =>
-      start.hour == timePoint.hour && timePoint.minute == start.minute;
+  bool startAt(DateTime timePoint) => start.hour == timePoint.hour && timePoint.minute == start.minute;
   bool startAtHour(DateTime timePoint) => start.hour == timePoint.hour;
 
   // compare start time
