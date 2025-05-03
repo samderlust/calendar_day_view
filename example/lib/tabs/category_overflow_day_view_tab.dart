@@ -16,6 +16,34 @@ class CategoryOverflowDayViewTab extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+
+    return Category2DOverflowDayView(
+      config: CategoryDavViewConfig(
+        currentDate: DateTime.now(),
+        time12: true,
+        allowHorizontalScroll: true,
+        columnsPerPage: 2,
+        endOfDay: const TimeOfDay(hour: 23, minute: 59),
+      ),
+      categories: categories,
+      events: events,
+      eventBuilder: (constraints, category, _, event) => GestureDetector(
+        onTap: () => print(event),
+        child: Container(
+          constraints: constraints,
+          width: constraints.maxWidth,
+          height: constraints.maxHeight,
+          decoration: BoxDecoration(color: colorScheme.secondaryContainer),
+          child: Center(
+            child: Text(
+              event.value.toString(),
+              textAlign: TextAlign.center,
+              overflow: TextOverflow.fade,
+            ),
+          ),
+        ),
+      ),
+    );
     return CalendarDayView.categoryOverflow(
       config: CategoryDavViewConfig(
         columnsPerPage: 2,
@@ -47,8 +75,7 @@ class CategoryOverflowDayViewTab extends HookWidget {
           ),
         );
       },
-      backgroundTimeTileBuilder:
-          (context, constraints, rowTime, category, isOddRow) {
+      backgroundTimeTileBuilder: (context, constraints, rowTime, category, isOddRow) {
         return switch (rowTime) {
           var t when t.isBefore(DateTime.now()) => GestureDetector(
               behavior: HitTestBehavior.translucent,
@@ -56,15 +83,12 @@ class CategoryOverflowDayViewTab extends HookWidget {
                 ScaffoldMessenger.of(context).clearSnackBars();
                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                   backgroundColor: Colors.red,
-                  content:
-                      Text("This slot is Unavailable $rowTime -- $category"),
+                  content: Text("This slot is Unavailable $rowTime -- $category"),
                 ));
               },
               child: Container(
                 constraints: constraints,
-                color: categories.indexOf(category) % 2 == 0
-                    ? Colors.black54
-                    : Colors.black87,
+                color: categories.indexOf(category) % 2 == 0 ? Colors.black54 : Colors.black87,
               ),
             ),
           _ => const SizedBox.shrink(),

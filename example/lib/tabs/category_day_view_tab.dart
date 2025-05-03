@@ -18,41 +18,65 @@ class CategoryDayViewTab extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-
-    return Container(
-      padding: const EdgeInsets.only(
-          // top: 100,
-          // left: 50,
-          // right: 50,
-          // bottom: 50,
-          ),
-      child: Category2DDayView(
-        config: CategoryDavViewConfig(
-          currentDate: DateTime.now(),
-          time12: true,
-          allowHorizontalScroll: true,
-          columnsPerPage: 2,
-          endOfDay: const TimeOfDay(hour: 23, minute: 59),
-        ),
-        categories: categories,
-        events: events,
-        eventBuilder: (constraints, category, _, event) => GestureDetector(
-          onTap: () => print(event),
-          child: Container(
-            constraints: constraints,
-            width: constraints.maxWidth,
-            height: constraints.maxHeight,
-            decoration: BoxDecoration(
-              color: colorScheme.secondaryContainer,
-              border: Border.all(color: colorScheme.tertiary, width: 2),
-              borderRadius: const BorderRadius.all(Radius.circular(10)),
+    final controller = useMemoized(
+        () => CategoryDayViewController(
+              context: context,
+              categories: categories,
+              events: events,
+              config: CategoryDavViewConfig(currentDate: DateTime.now(), time12: true),
             ),
-            child: Center(
-              child: Text(
-                event.value.toString(),
-                textAlign: TextAlign.center,
-                overflow: TextOverflow.fade,
-              ),
+        []);
+    useEffect(() {
+      controller.setEvents(events);
+      return null;
+    }, [events]);
+
+    return CategoryDayView2<String>(
+      controller: controller,
+      onTileTap: (category, time) {
+        debugPrint(category.toString());
+        debugPrint(time.toString());
+      },
+      eventBuilder: (constraints, category, _, event) => GestureDetector(
+        onTap: () => print(event),
+        child: Container(
+          constraints: constraints,
+          width: constraints.maxWidth,
+          height: constraints.maxHeight,
+          decoration: BoxDecoration(color: colorScheme.secondaryContainer),
+          child: Center(
+            child: Text(
+              event.value.toString(),
+              textAlign: TextAlign.center,
+              overflow: TextOverflow.fade,
+            ),
+          ),
+        ),
+      ),
+    );
+
+    return Category2DDayView(
+      config: CategoryDavViewConfig(
+        currentDate: DateTime.now(),
+        time12: true,
+        allowHorizontalScroll: true,
+        columnsPerPage: 2,
+        endOfDay: const TimeOfDay(hour: 23, minute: 59),
+      ),
+      categories: categories,
+      events: events,
+      eventBuilder: (constraints, category, _, event) => GestureDetector(
+        onTap: () => print(event),
+        child: Container(
+          constraints: constraints,
+          width: constraints.maxWidth,
+          height: constraints.maxHeight,
+          decoration: BoxDecoration(color: colorScheme.secondaryContainer),
+          child: Center(
+            child: Text(
+              event.value.toString(),
+              textAlign: TextAlign.center,
+              overflow: TextOverflow.fade,
             ),
           ),
         ),
