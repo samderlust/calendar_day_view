@@ -106,9 +106,6 @@ final class CategoryDavViewConfig extends DavViewConfig {
   /// dividers that run horizontally in the day view
   final Divider? horizontalDivider;
 
-  /// time label text style
-  final TextStyle? timeTextStyle;
-
   const CategoryDavViewConfig({
     this.headerDecoration,
     this.logo,
@@ -116,7 +113,6 @@ final class CategoryDavViewConfig extends DavViewConfig {
     this.oddRowColor,
     this.verticalDivider,
     this.horizontalDivider,
-    this.timeTextStyle,
     this.allowHorizontalScroll = false,
     this.columnsPerPage = 3,
     required super.currentDate,
@@ -128,15 +124,13 @@ final class CategoryDavViewConfig extends DavViewConfig {
     super.showCurrentTimeLine,
     super.timeColumnWidth,
     super.timeLabelBuilder,
+    super.timeTextStyle,
   });
 }
 
 final class OverFlowDayViewConfig extends DavViewConfig {
   /// color of time point label
   final Color? timeTextColor;
-
-  /// style of time point label
-  final TextStyle? timeTextStyle;
 
   /// allow render an events row as a ListView
   final bool renderRowAsListView;
@@ -168,8 +162,8 @@ final class OverFlowDayViewConfig extends DavViewConfig {
     super.physics,
     super.controller,
     this.timeTextColor,
-    this.timeTextStyle,
     super.dividerColor,
+    super.timeTextStyle,
     super.timeLabelBuilder,
     this.renderRowAsListView = false,
     this.showMoreOnRowButton = false,

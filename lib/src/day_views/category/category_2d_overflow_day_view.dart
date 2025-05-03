@@ -9,7 +9,7 @@ import '../../models/typedef.dart';
 class Category2DOverflowDayView<T extends Object> extends StatelessWidget implements CalendarDayView<T> {
   const Category2DOverflowDayView({
     super.key,
-    required this.controller,
+    this.controller,
     required this.eventBuilder,
     this.onTileTap,
     required this.events,
@@ -17,7 +17,7 @@ class Category2DOverflowDayView<T extends Object> extends StatelessWidget implem
     required this.categories,
   });
 
-  final CategoryDayViewController controller;
+  final CategoryDayViewController? controller;
   final CategoryDayViewEventBuilder<T> eventBuilder;
   final CategoryDayViewTileTap? onTileTap;
   final List<CategorizedDayEvent<T>> events;
@@ -29,7 +29,7 @@ class Category2DOverflowDayView<T extends Object> extends StatelessWidget implem
     final eventPartLength = MediaQuery.sizeOf(context).width - config.timeColumnWidth;
     final columnWidth = config.allowHorizontalScroll ? eventPartLength / config.columnsPerPage : eventPartLength / categories.length;
 
-    controller.calbliate(
+    controller?.calbliate(
       columnWidth,
       config.columnsPerPage,
     );
@@ -42,12 +42,12 @@ class Category2DOverflowDayView<T extends Object> extends StatelessWidget implem
       verticalDetails: ScrollableDetails(
         direction: AxisDirection.down,
         physics: const ClampingScrollPhysics(),
-        controller: controller.verticalScrollController,
+        controller: controller?.verticalScrollController,
       ),
       horizontalDetails: ScrollableDetails(
         direction: AxisDirection.right,
         physics: const ClampingScrollPhysics(),
-        controller: controller.horizontalScrollController,
+        controller: controller?.horizontalScrollController,
       ),
       columnBuilder: (int index) {
         return TableSpan(
