@@ -46,19 +46,13 @@ class InRowDayViewTab extends HookWidget {
                           child: GestureDetector(
                             onTap: () => print(event.value),
                             child: Container(
-                              margin: const EdgeInsets.symmetric(
-                                  horizontal: 3, vertical: 2),
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 5),
+                              margin: const EdgeInsets.symmetric(horizontal: 3, vertical: 2),
+                              padding: const EdgeInsets.symmetric(horizontal: 5),
                               height: constraints.maxHeight,
                               decoration: BoxDecoration(
-                                color: itemIndex % 2 == 0
-                                    ? colorScheme.tertiaryContainer
-                                    : colorScheme.secondaryContainer,
-                                border: Border.all(
-                                    color: colorScheme.tertiary, width: 2),
-                                borderRadius:
-                                    const BorderRadius.all(Radius.circular(10)),
+                                color: itemIndex % 2 == 0 ? colorScheme.tertiaryContainer : colorScheme.secondaryContainer,
+                                border: Border.all(color: colorScheme.tertiary, width: 2),
+                                borderRadius: const BorderRadius.all(Radius.circular(10)),
                               ),
                               child: Center(
                                 child: Text(
@@ -67,8 +61,7 @@ class InRowDayViewTab extends HookWidget {
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                     color: colorScheme.onSecondaryContainer,
-                                    fontSize:
-                                        constraints.maxWidth < 100 ? 10 : 15,
+                                    fontSize: constraints.maxWidth < 100 ? 10 : 15,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),

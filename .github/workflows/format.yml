@@ -19,8 +19,14 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
+      - name: Show git status before formatting
+        run: git status
+
       - name: Format code
-        run: dart format --line-length 200 lib/ test/ example/
+        run: |
+          dart format --line-length 200 lib/ test/ example/
+          git status
+          git diff
 
       - name: Check for changes
         run: |

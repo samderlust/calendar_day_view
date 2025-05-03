@@ -230,3 +230,4 @@ List<CategorizedDayEvent<String>> genEvents(int categoryLength) => faker.randomG
       categoryLength * 5,
       min: 10,
     );
+Formatted 1 file (0 changed) in 0.15 seconds.
