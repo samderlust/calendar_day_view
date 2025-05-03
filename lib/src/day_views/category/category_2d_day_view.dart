@@ -1,3 +1,4 @@
+import 'package:calendar_day_view/src/day_views/category/category_day_view_controller.dart';
 import 'package:calendar_day_view/src/extensions/date_time_extension.dart';
 import 'package:calendar_day_view/src/extensions/list_extensions.dart';
 import 'package:flutter/material.dart';
@@ -5,122 +6,6 @@ import 'package:two_dimensional_scrollables/two_dimensional_scrollables.dart';
 
 import '../../../calendar_day_view.dart';
 import '../../models/typedef.dart';
-
-class Category2DDayView<T extends Object> extends StatefulWidget implements CalendarDayView<T> {
-  const Category2DDayView({
-    super.key,
-    required this.config,
-    required this.categories,
-    required this.events,
-    required this.eventBuilder,
-    this.onTileTap,
-    this.controlBarBuilder,
-  });
-
-  final CategoryDavViewConfig config;
-
-  /// List of category
-  final List<EventCategory> categories;
-
-  /// List of events
-  final List<CategorizedDayEvent<T>> events;
-
-  /// event builder
-  final CategoryDayViewEventBuilder<T> eventBuilder;
-
-  /// call when you tap on an empty tile
-  ///
-  /// provide [EventCategory] and [DateTime]  of that tile
-  final CategoryDayViewTileTap? onTileTap;
-
-  /// To build the controller bar on the top of the day view
-  ///
-  /// `goToPreviousTab` to animate to previous tabs
-  /// `goToNextTab` to animate to next tabs
-  final CategoryDayViewControlBarBuilder? controlBarBuilder;
-
-  @override
-  State<Category2DDayView<T>> createState() => _Category2DDayViewState<T>();
-}
-
-class _Category2DDayViewState<T extends Object> extends State<Category2DDayView<T>> {
-  @override
-  Widget build(BuildContext context) {
-    final rowLength = MediaQuery.sizeOf(context).width - widget.config.timeColumnWidth;
-
-    final tileWidth = widget.config.allowHorizontalScroll ? rowLength / widget.config.columnsPerPage : rowLength / widget.categories.length;
-
-    return TableView.builder(
-      columnCount: widget.categories.length + 1,
-      rowCount: widget.config.timeList.length + 1,
-      pinnedColumnCount: 1,
-      pinnedRowCount: 1,
-      verticalDetails: const ScrollableDetails(
-        direction: AxisDirection.down,
-        physics: ClampingScrollPhysics(),
-      ),
-      horizontalDetails: const ScrollableDetails(
-        direction: AxisDirection.right,
-        physics: ClampingScrollPhysics(),
-      ),
-      columnBuilder: (int index) {
-        return TableSpan(
-          foregroundDecoration: SpanDecoration(
-            border: SpanBorder(
-              trailing: const BorderSide(color: Colors.grey, width: 1),
-              leading: index != 0 //only draw border on the left of the first column
-                  ? BorderSide.none
-                  : const BorderSide(color: Colors.grey, width: 1),
-            ),
-          ),
-          extent: FixedTableSpanExtent(index == 0 ? widget.config.timeColumnWidth : tileWidth),
-        );
-      },
-      rowBuilder: (rowIndex) {
-        return TableSpan(
-          foregroundDecoration: SpanDecoration(
-            border: SpanBorder(
-              trailing: const BorderSide(color: Colors.grey, width: 1),
-              leading: rowIndex != 0 //only draw border on the top of the first row
-                  ? BorderSide.none
-                  : const BorderSide(color: Colors.grey, width: 1),
-            ),
-          ),
-          extent: FixedTableSpanExtent(widget.config.rowHeight),
-        );
-      },
-      cellBuilder: (BuildContext context, TableVicinity vicinity) {
-        final rowIndex = vicinity.yIndex;
-        final columnIndex = vicinity.xIndex;
-
-        if (rowIndex == 0 && columnIndex == 0) {
-          return _buildLogo(context, widget.config);
-        }
-
-        // building category title
-        if (rowIndex == 0 && columnIndex > 0) {
-          return _buildCategoryTitle(context, widget.categories[columnIndex - 1]);
-        }
-
-        if (columnIndex == 0) {
-          return _buildTimeLabelColumn(context, widget.config, rowIndex);
-        }
-
-        return _buildEventCell(
-          context: context,
-          config: widget.config,
-          rowIndex: rowIndex,
-          columnIndex: columnIndex,
-          tileWidth: tileWidth,
-          events: widget.events,
-          categories: widget.categories,
-          eventBuilder: widget.eventBuilder,
-          onTileTap: widget.onTileTap,
-        );
-      },
-    );
-  }
-}
 
 TableViewCell _buildTimeLabelColumn(BuildContext context, CategoryDavViewConfig config, int rowIndex) {
   final time = config.timeList[rowIndex - 1];
@@ -207,47 +92,6 @@ TableViewCell _buildEventCell<T extends Object>({
   };
 }
 
-class CategoryDayViewController {
-  CategoryDayViewController({
-    ScrollController? horizontalScrollController,
-    ScrollController? verticalScrollController,
-  })  : _horizontalScrollController = horizontalScrollController ?? ScrollController(),
-        _verticalScrollController = verticalScrollController ?? ScrollController();
-
-  final ScrollController _horizontalScrollController;
-  final ScrollController _verticalScrollController;
-
-  double _tabLength = 0;
-  double _columnWidth = 0;
-
-  void dispose() {
-    _horizontalScrollController.dispose();
-    _verticalScrollController.dispose();
-  }
-
-  void calbliate(double columnLength, int columnsPerPage) {
-    _columnWidth = columnLength;
-    _tabLength = columnLength * columnsPerPage;
-  }
-
-  void goToPreviousTab() {
-    final currentTabLength = _tabLength;
-    final newIndex = _horizontalScrollController.offset - currentTabLength;
-    _horizontalScrollController.animateTo(newIndex, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
-  }
-
-  void goToNextTab() {
-    final currentTabLength = _tabLength;
-    final newIndex = _horizontalScrollController.offset + currentTabLength;
-    _horizontalScrollController.animateTo(newIndex, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
-  }
-
-  void goToColumn(int index) {
-    final newIndex = index * _columnWidth;
-    _horizontalScrollController.animateTo(newIndex, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
-  }
-}
-
 class CategoryDayView2<T extends Object> extends StatelessWidget implements CalendarDayView<T> {
   const CategoryDayView2({
     super.key,
@@ -284,12 +128,12 @@ class CategoryDayView2<T extends Object> extends StatelessWidget implements Cale
       verticalDetails: ScrollableDetails(
         direction: AxisDirection.down,
         physics: const ClampingScrollPhysics(),
-        controller: controller._verticalScrollController,
+        controller: controller.verticalScrollController,
       ),
       horizontalDetails: ScrollableDetails(
         direction: AxisDirection.right,
         physics: const ClampingScrollPhysics(),
-        controller: controller._horizontalScrollController,
+        controller: controller.horizontalScrollController,
       ),
       columnBuilder: (int index) {
         return TableSpan(

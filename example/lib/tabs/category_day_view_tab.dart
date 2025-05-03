@@ -1,4 +1,5 @@
 import 'package:calendar_day_view/calendar_day_view.dart';
+import 'package:calendar_day_view/src/day_views/category/category_day_view_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 
@@ -46,11 +47,7 @@ class CategoryDayViewTab extends HookWidget {
                 height: constraints.maxHeight,
                 decoration: BoxDecoration(color: colorScheme.secondaryContainer),
                 child: Center(
-                  child: Text(
-                    event.value.toString(),
-                    textAlign: TextAlign.center,
-                    overflow: TextOverflow.fade,
-                  ),
+                  child: Text(event.value.toString(), textAlign: TextAlign.center, overflow: TextOverflow.fade),
                 ),
               ),
             ),
@@ -62,14 +59,14 @@ class CategoryDayViewTab extends HookWidget {
               onPressed: () {
                 controller.goToPreviousTab();
               },
-              label: const Text("Previous"),
+              label: const Text("Previous Tab"),
               icon: const Icon(Icons.arrow_left),
             ),
             TextButton.icon(
               onPressed: () {
                 controller.goToNextTab();
               },
-              label: const Text("Next"),
+              label: const Text("Next Tab"),
               icon: const Icon(Icons.arrow_right),
             ),
           ],
@@ -86,34 +83,6 @@ class CategoryDayViewTab extends HookWidget {
           ],
         )
       ],
-    );
-
-    return Category2DDayView(
-      config: CategoryDavViewConfig(
-        currentDate: DateTime.now(),
-        time12: true,
-        allowHorizontalScroll: true,
-        columnsPerPage: 2,
-        endOfDay: const TimeOfDay(hour: 23, minute: 59),
-      ),
-      categories: categories,
-      events: events,
-      eventBuilder: (constraints, category, _, event) => GestureDetector(
-        onTap: () => print(event),
-        child: Container(
-          constraints: constraints,
-          width: constraints.maxWidth,
-          height: constraints.maxHeight,
-          decoration: BoxDecoration(color: colorScheme.secondaryContainer),
-          child: Center(
-            child: Text(
-              event.value.toString(),
-              textAlign: TextAlign.center,
-              overflow: TextOverflow.fade,
-            ),
-          ),
-        ),
-      ),
     );
 
     return CalendarDayView.category(

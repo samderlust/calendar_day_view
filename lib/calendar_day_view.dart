@@ -12,6 +12,7 @@ export 'src/day_views/calendar_day_view_base.dart';
 export 'src/day_views/category/category_2d_day_view.dart';
 export 'src/day_views/category/category_2d_overflow_day_view.dart';
 export 'src/day_views/category/category_calendar_day_view.dart';
+export 'src/day_views/category/category_day_view_controller.dart';
 export 'src/day_views/day_view_config.dart';
 export 'src/day_views/overflow/overflow_calendar_day_view.dart';
 export 'src/models/categorized_day_event.dart';

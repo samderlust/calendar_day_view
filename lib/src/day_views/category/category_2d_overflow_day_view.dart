@@ -1,90 +1,78 @@
-import 'package:calendar_day_view/src/extensions/date_time_extension.dart';
-import 'package:calendar_day_view/src/extensions/list_extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:two_dimensional_scrollables/two_dimensional_scrollables.dart';
 
 import '../../../calendar_day_view.dart';
+import '../../extensions/date_time_extension.dart';
+import '../../extensions/list_extensions.dart';
 import '../../models/typedef.dart';
 
-class Category2DOverflowDayView<T extends Object> extends StatefulWidget implements CalendarDayView<T> {
+class Category2DOverflowDayView<T extends Object> extends StatelessWidget implements CalendarDayView<T> {
   const Category2DOverflowDayView({
     super.key,
-    required this.config,
-    required this.categories,
-    required this.events,
+    required this.controller,
     required this.eventBuilder,
     this.onTileTap,
-    this.controlBarBuilder,
+    required this.events,
+    required this.config,
+    required this.categories,
   });
 
+  final CategoryDayViewController controller;
+  final CategoryDayViewEventBuilder<T> eventBuilder;
+  final CategoryDayViewTileTap? onTileTap;
+  final List<CategorizedDayEvent<T>> events;
   final CategoryDavViewConfig config;
-
-  /// List of category
   final List<EventCategory> categories;
 
-  /// List of events
-  final List<CategorizedDayEvent<T>> events;
-
-  /// event builder
-  final CategoryDayViewEventBuilder<T> eventBuilder;
-
-  /// call when you tap on an empty tile
-  ///
-  /// provide [EventCategory] and [DateTime]  of that tile
-  final CategoryDayViewTileTap? onTileTap;
-
-  /// To build the controller bar on the top of the day view
-  ///
-  /// `goToPreviousTab` to animate to previous tabs
-  /// `goToNextTab` to animate to next tabs
-  final CategoryDayViewControlBarBuilder? controlBarBuilder;
-
-  @override
-  State<Category2DOverflowDayView<T>> createState() => _Category2DOverflowDayViewState<T>();
-}
-
-class _Category2DOverflowDayViewState<T extends Object> extends State<Category2DOverflowDayView<T>> {
   @override
   Widget build(BuildContext context) {
-    final rowLength = MediaQuery.sizeOf(context).width - widget.config.timeColumnWidth;
+    final eventPartLength = MediaQuery.sizeOf(context).width - config.timeColumnWidth;
+    final columnWidth = config.allowHorizontalScroll ? eventPartLength / config.columnsPerPage : eventPartLength / categories.length;
 
-    final tileWidth = widget.config.allowHorizontalScroll ? rowLength / widget.config.columnsPerPage : rowLength / widget.categories.length;
+    controller.calbliate(
+      columnWidth,
+      config.columnsPerPage,
+    );
 
     return TableView.builder(
-      columnCount: widget.categories.length + 1,
-      rowCount: widget.config.timeList.length + 1,
+      columnCount: categories.length + 1,
+      rowCount: config.timeList.length + 1,
       pinnedColumnCount: 1,
       pinnedRowCount: 1,
-      verticalDetails: const ScrollableDetails(
+      verticalDetails: ScrollableDetails(
         direction: AxisDirection.down,
-        physics: ClampingScrollPhysics(),
+        physics: const ClampingScrollPhysics(),
+        controller: controller.verticalScrollController,
       ),
-      horizontalDetails: const ScrollableDetails(
+      horizontalDetails: ScrollableDetails(
         direction: AxisDirection.right,
-        physics: ClampingScrollPhysics(),
+        physics: const ClampingScrollPhysics(),
+        controller: controller.horizontalScrollController,
       ),
       columnBuilder: (int index) {
         return TableSpan(
-          foregroundDecoration: SpanDecoration(
+          backgroundDecoration: SpanDecoration(
             border: SpanBorder(
               trailing: const BorderSide(color: Colors.grey, width: 1),
-              //only draw border on the left of the first column
-              leading: index != 0 ? BorderSide.none : const BorderSide(color: Colors.grey, width: 1),
+              leading: index != 0 //only draw border on the left of the first column
+                  ? BorderSide.none
+                  : const BorderSide(color: Colors.grey, width: 1),
             ),
           ),
-          extent: FixedTableSpanExtent(index == 0 ? widget.config.timeColumnWidth : tileWidth),
+          extent: FixedTableSpanExtent(index == 0 ? config.timeColumnWidth : columnWidth),
         );
       },
       rowBuilder: (rowIndex) {
         return TableSpan(
-          foregroundDecoration: SpanDecoration(
+          backgroundDecoration: SpanDecoration(
             border: SpanBorder(
               trailing: const BorderSide(color: Colors.grey, width: 1),
-              //only draw border on the top of the first row
-              leading: rowIndex != 0 ? BorderSide.none : const BorderSide(color: Colors.grey, width: 1),
+              leading: rowIndex != 0 //only draw border on the top of the first row
+                  ? BorderSide.none
+                  : const BorderSide(color: Colors.grey, width: 1),
             ),
           ),
-          extent: FixedTableSpanExtent(widget.config.rowHeight),
+          extent: FixedTableSpanExtent(config.rowHeight),
         );
       },
       cellBuilder: (BuildContext context, TableVicinity vicinity) {
@@ -92,28 +80,28 @@ class _Category2DOverflowDayViewState<T extends Object> extends State<Category2D
         final columnIndex = vicinity.xIndex;
 
         if (rowIndex == 0 && columnIndex == 0) {
-          return _buildLogo(context, widget.config);
+          return _buildLogo(context, config);
         }
 
         // building category title
         if (rowIndex == 0 && columnIndex > 0) {
-          return _buildCategoryTitle(context, widget.categories[columnIndex - 1]);
+          return _buildCategoryTitle(context, categories[columnIndex - 1]);
         }
 
         if (columnIndex == 0) {
-          return _buildTimeLabelColumn(context, widget.config, rowIndex);
+          return _buildTimeLabelColumn(context, config, rowIndex);
         }
 
-        return _buildEventCell(
+        return _buildEventCell<T>(
           context: context,
-          config: widget.config,
+          config: config,
           rowIndex: rowIndex,
           columnIndex: columnIndex,
-          tileWidth: tileWidth,
-          events: widget.events,
-          categories: widget.categories,
-          eventBuilder: widget.eventBuilder,
-          onTileTap: widget.onTileTap,
+          tileWidth: columnWidth,
+          events: events,
+          categories: categories,
+          eventBuilder: eventBuilder,
+          onTileTap: onTileTap,
         );
       },
     );
@@ -177,19 +165,29 @@ TableViewCell _buildEventCell<T extends Object>({
 
   return switch (cellEvent) {
     final event? => TableViewCell(
-        child: Container(
-          constraints: BoxConstraints(
-            minWidth: tileWidth,
-            maxWidth: tileWidth,
-            minHeight: config.rowHeight,
-            maxHeight: config.rowHeight,
-          ),
-          child: eventBuilder(
-            BoxConstraints(maxWidth: tileWidth, maxHeight: config.rowHeight),
-            category,
-            time,
-            event,
-          ),
+        child: Builder(
+          builder: (context) {
+            final constraints = BoxConstraints(
+              maxHeight: event.durationInMins * config.heightPerMin,
+              maxWidth: tileWidth,
+            );
+
+            final top = event.start.minute * config.heightPerMin;
+
+            return Stack(
+              clipBehavior: Clip.none,
+              children: [
+                Positioned(
+                  top: top,
+                  left: 0,
+                  child: Container(
+                    constraints: constraints,
+                    child: eventBuilder(constraints, category, time, event),
+                  ),
+                ),
+              ],
+            );
+          },
         ),
       ),
     _ => TableViewCell(
