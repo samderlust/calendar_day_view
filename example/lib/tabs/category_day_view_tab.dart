@@ -18,41 +18,74 @@ class CategoryDayViewTab extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final controller = useMemoized(
-        () => CategoryDayViewController(
-              context: context,
-              categories: categories,
-              events: events,
-              config: CategoryDavViewConfig(currentDate: DateTime.now(), time12: true),
-            ),
-        []);
-    useEffect(() {
-      controller.setEvents(events);
-      return null;
-    }, [events]);
 
-    return CategoryDayView2<String>(
-      controller: controller,
-      onTileTap: (category, time) {
-        debugPrint(category.toString());
-        debugPrint(time.toString());
-      },
-      eventBuilder: (constraints, category, _, event) => GestureDetector(
-        onTap: () => print(event),
-        child: Container(
-          constraints: constraints,
-          width: constraints.maxWidth,
-          height: constraints.maxHeight,
-          decoration: BoxDecoration(color: colorScheme.secondaryContainer),
-          child: Center(
-            child: Text(
-              event.value.toString(),
-              textAlign: TextAlign.center,
-              overflow: TextOverflow.fade,
+    final controller = useMemoized(() => CategoryDayViewController(), []);
+
+    return Column(
+      children: [
+        Expanded(
+          child: CategoryDayView2(
+            controller: controller,
+            events: events,
+            config: CategoryDavViewConfig(
+              currentDate: DateTime.now(),
+              time12: true,
+              columnsPerPage: 2,
+              allowHorizontalScroll: true,
+            ),
+            categories: categories,
+            onTileTap: (category, time) {
+              debugPrint(category.toString());
+              debugPrint(time.toString());
+            },
+            eventBuilder: (constraints, category, _, event) => GestureDetector(
+              onTap: () => print(event),
+              child: Container(
+                constraints: constraints,
+                width: constraints.maxWidth,
+                height: constraints.maxHeight,
+                decoration: BoxDecoration(color: colorScheme.secondaryContainer),
+                child: Center(
+                  child: Text(
+                    event.value.toString(),
+                    textAlign: TextAlign.center,
+                    overflow: TextOverflow.fade,
+                  ),
+                ),
+              ),
             ),
           ),
         ),
-      ),
+        Row(
+          children: [
+            TextButton.icon(
+              onPressed: () {
+                controller.goToPreviousTab();
+              },
+              label: const Text("Previous"),
+              icon: const Icon(Icons.arrow_left),
+            ),
+            TextButton.icon(
+              onPressed: () {
+                controller.goToNextTab();
+              },
+              label: const Text("Next"),
+              icon: const Icon(Icons.arrow_right),
+            ),
+          ],
+        ),
+        Row(
+          children: [
+            for (var i = 0; i < categories.length; i++)
+              OutlinedButton(
+                onPressed: () {
+                  controller.goToColumn(i);
+                },
+                child: Text(categories[i].name),
+              ),
+          ],
+        )
+      ],
     );
 
     return Category2DDayView(

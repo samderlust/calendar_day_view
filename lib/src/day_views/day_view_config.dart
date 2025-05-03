@@ -92,7 +92,7 @@ final class CategoryDavViewConfig extends DavViewConfig {
   final bool allowHorizontalScroll;
 
   /// number of columns per page, only affect when [allowHorizontalScroll] = true
-  final double columnsPerPage;
+  final int columnsPerPage;
 
   /// background color of the even-indexed row
   final Color? evenRowColor;

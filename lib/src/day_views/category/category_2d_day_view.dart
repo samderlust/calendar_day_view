@@ -207,62 +207,43 @@ TableViewCell _buildEventCell<T extends Object>({
   };
 }
 
-class CategoryDayViewController<T extends Object> {
+class CategoryDayViewController {
   CategoryDayViewController({
-    required this.categories,
-    required this.events,
-    required this.config,
-    required this.context,
     ScrollController? horizontalScrollController,
     ScrollController? verticalScrollController,
   })  : _horizontalScrollController = horizontalScrollController ?? ScrollController(),
-        _verticalScrollController = verticalScrollController ?? ScrollController() {
-    _init();
-  }
+        _verticalScrollController = verticalScrollController ?? ScrollController();
 
-  final List<EventCategory> categories;
-  List<CategorizedDayEvent<T>> events = [];
-  final CategoryDavViewConfig config;
-  final BuildContext context;
   final ScrollController _horizontalScrollController;
   final ScrollController _verticalScrollController;
 
-  double rowLength = 0;
-  double columnWidth = 0;
-  bool _isInitialized = false;
-
-  setEvents(List<CategorizedDayEvent<T>> events) {
-    this.events = events;
-  }
+  double _tabLength = 0;
+  double _columnWidth = 0;
 
   void dispose() {
     _horizontalScrollController.dispose();
     _verticalScrollController.dispose();
   }
 
-  void _init() {
-    if (_isInitialized) return;
-
-    rowLength = MediaQuery.sizeOf(context).width - config.timeColumnWidth;
-
-    columnWidth = config.allowHorizontalScroll ? rowLength / config.columnsPerPage : rowLength / categories.length;
-    _isInitialized = true;
+  void calbliate(double columnLength, int columnsPerPage) {
+    _columnWidth = columnLength;
+    _tabLength = columnLength * columnsPerPage;
   }
 
   void goToPreviousTab() {
-    final currentTabLength = config.columnsPerPage * columnWidth;
+    final currentTabLength = _tabLength;
     final newIndex = _horizontalScrollController.offset - currentTabLength;
     _horizontalScrollController.animateTo(newIndex, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
   }
 
   void goToNextTab() {
-    final currentTabLength = config.columnsPerPage * columnWidth;
+    final currentTabLength = _tabLength;
     final newIndex = _horizontalScrollController.offset + currentTabLength;
     _horizontalScrollController.animateTo(newIndex, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
   }
 
-  void goToTab(int index) {
-    final newIndex = index * config.timeColumnWidth;
+  void goToColumn(int index) {
+    final newIndex = index * _columnWidth;
     _horizontalScrollController.animateTo(newIndex, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
   }
 }
@@ -273,16 +254,27 @@ class CategoryDayView2<T extends Object> extends StatelessWidget implements Cale
     required this.controller,
     required this.eventBuilder,
     required this.onTileTap,
+    required this.events,
+    required this.config,
+    required this.categories,
   });
 
-  final CategoryDayViewController<T> controller;
+  final CategoryDayViewController controller;
   final CategoryDayViewEventBuilder<T> eventBuilder;
   final CategoryDayViewTileTap? onTileTap;
+  final List<CategorizedDayEvent<T>> events;
+  final CategoryDavViewConfig config;
+  final List<EventCategory> categories;
 
   @override
   Widget build(BuildContext context) {
-    final config = controller.config;
-    final categories = controller.categories;
+    final eventPartLength = MediaQuery.sizeOf(context).width - config.timeColumnWidth;
+    final columnWidth = config.allowHorizontalScroll ? eventPartLength / config.columnsPerPage : eventPartLength / categories.length;
+
+    controller.calbliate(
+      columnWidth,
+      config.columnsPerPage,
+    );
 
     return TableView.builder(
       columnCount: categories.length + 1,
@@ -291,12 +283,12 @@ class CategoryDayView2<T extends Object> extends StatelessWidget implements Cale
       pinnedRowCount: 1,
       verticalDetails: ScrollableDetails(
         direction: AxisDirection.down,
-        physics: ClampingScrollPhysics(),
+        physics: const ClampingScrollPhysics(),
         controller: controller._verticalScrollController,
       ),
       horizontalDetails: ScrollableDetails(
         direction: AxisDirection.right,
-        physics: ClampingScrollPhysics(),
+        physics: const ClampingScrollPhysics(),
         controller: controller._horizontalScrollController,
       ),
       columnBuilder: (int index) {
@@ -309,7 +301,7 @@ class CategoryDayView2<T extends Object> extends StatelessWidget implements Cale
                   : const BorderSide(color: Colors.grey, width: 1),
             ),
           ),
-          extent: FixedTableSpanExtent(index == 0 ? config.timeColumnWidth : controller.columnWidth),
+          extent: FixedTableSpanExtent(index == 0 ? config.timeColumnWidth : columnWidth),
         );
       },
       rowBuilder: (rowIndex) {
@@ -347,9 +339,9 @@ class CategoryDayView2<T extends Object> extends StatelessWidget implements Cale
           config: config,
           rowIndex: rowIndex,
           columnIndex: columnIndex,
-          tileWidth: controller.columnWidth,
-          events: controller.events,
-          categories: controller.categories,
+          tileWidth: columnWidth,
+          events: events,
+          categories: categories,
           eventBuilder: eventBuilder,
           onTileTap: onTileTap,
         );
