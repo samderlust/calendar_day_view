@@ -12,16 +12,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: dart-lang/setup-dart@v1
+      - uses: subosito/flutter-action@v2
         with:
-          sdk: stable
+          flutter-version: "stable"
 
       - name: Install dependencies
-        run: dart pub get
+        run: flutter pub get
 
       - name: Format code
-        run: dart format --line-length 200 lib/ test/ example/
+        run: flutter format --line-length 200 lib/ test/ example/
 
       - name: Check for changes
         run: |
-          git diff --exit-code || (echo "::error::Code formatting issues found. Run 'dart format --line-length 200 lib/ test/ example/' to fix." && exit 1)
+          git diff --exit-code || (echo "::error::Code formatting issues found. Run 'flutter format --line-length 200 lib/ test/ example/' to fix." && exit 1)
