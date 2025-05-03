@@ -1,6 +1,6 @@
-import '../extensions/date_time_extension.dart';
 import 'package:flutter/material.dart';
 
+import '../extensions/date_time_extension.dart';
 import '../models/typedef.dart';
 import '../utils/date_time_utils.dart';
 
@@ -65,6 +65,8 @@ abstract class DavViewConfig {
   });
 
   double get rowHeight => heightPerMin * timeGap;
+
+  /// number of time rows to display
   List<DateTime> get timeList => getTimeList(
         currentDate.copyTimeAndMinClean(startOfDay),
         currentDate.copyTimeAndMinClean(endOfDay),
@@ -90,7 +92,7 @@ final class CategoryDavViewConfig extends DavViewConfig {
   final bool allowHorizontalScroll;
 
   /// number of columns per page, only affect when [allowHorizontalScroll] = true
-  final double columnsPerPage;
+  final int columnsPerPage;
 
   /// background color of the even-indexed row
   final Color? evenRowColor;
@@ -104,9 +106,6 @@ final class CategoryDavViewConfig extends DavViewConfig {
   /// dividers that run horizontally in the day view
   final Divider? horizontalDivider;
 
-  /// time label text style
-  final TextStyle? timeTextStyle;
-
   const CategoryDavViewConfig({
     this.headerDecoration,
     this.logo,
@@ -114,7 +113,6 @@ final class CategoryDavViewConfig extends DavViewConfig {
     this.oddRowColor,
     this.verticalDivider,
     this.horizontalDivider,
-    this.timeTextStyle,
     this.allowHorizontalScroll = false,
     this.columnsPerPage = 3,
     required super.currentDate,
@@ -126,15 +124,13 @@ final class CategoryDavViewConfig extends DavViewConfig {
     super.showCurrentTimeLine,
     super.timeColumnWidth,
     super.timeLabelBuilder,
+    super.timeTextStyle,
   });
 }
 
 final class OverFlowDayViewConfig extends DavViewConfig {
   /// color of time point label
   final Color? timeTextColor;
-
-  /// style of time point label
-  final TextStyle? timeTextStyle;
 
   /// allow render an events row as a ListView
   final bool renderRowAsListView;
@@ -166,8 +162,8 @@ final class OverFlowDayViewConfig extends DavViewConfig {
     super.physics,
     super.controller,
     this.timeTextColor,
-    this.timeTextStyle,
     super.dividerColor,
+    super.timeTextStyle,
     super.timeLabelBuilder,
     this.renderRowAsListView = false,
     this.showMoreOnRowButton = false,

@@ -19,7 +19,7 @@ void main() {
 
     testWidgets('renders OverflowDayView correctly', (tester) async {
       await tester.pumpWidget(MaterialApp(
-        home: CalendarDayView<String>.overflow(
+        home: CalendarDayViewFactory.overflow(
           config: OverFlowDayViewConfig(
             currentDate: DateTime(2024, 1, 1),
             timeGap: 60,
@@ -45,7 +45,7 @@ void main() {
 
     testWidgets('handles overlapping events', (tester) async {
       await tester.pumpWidget(MaterialApp(
-        home: CalendarDayView<String>.overflow(
+        home: CalendarDayViewFactory.overflow(
           config: OverFlowDayViewConfig(
             currentDate: DateTime(2024, 1, 1),
             timeGap: 60,

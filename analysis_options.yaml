@@ -5,7 +5,6 @@ include: package:flutter_lints/flutter.yaml
 
 linter:
   rules:
-    - lines_longer_than_80_chars
     - prefer_single_quotes
     - avoid_print
     - avoid_empty_else

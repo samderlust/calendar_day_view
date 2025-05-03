@@ -1,4 +1,3 @@
-import '../day_view_config.dart';
 import 'package:flutter/material.dart';
 
 import '../../../calendar_day_view.dart';
@@ -12,8 +11,7 @@ import 'widgets/time_row_background.dart';
 ///
 /// where day view is divided into multiple category with fixed time slot.
 /// events can be display overflowed into different time slot but within the same category column
-class CategoryOverflowCalendarDayView<T extends Object> extends StatefulWidget
-    implements CalendarDayView<T> {
+class CategoryOverflowCalendarDayView<T extends Object> extends StatefulWidget implements CalendarDayView<T> {
   const CategoryOverflowCalendarDayView({
     Key? key,
     required this.categories,
@@ -50,12 +48,10 @@ class CategoryOverflowCalendarDayView<T extends Object> extends StatefulWidget
   /// `goToNextTab` to animate to next tabs
   final CategoryDayViewControlBarBuilder? controlBarBuilder;
   @override
-  State<CategoryOverflowCalendarDayView<T>> createState() =>
-      _CategoryOverflowCalendarDayViewState<T>();
+  State<CategoryOverflowCalendarDayView<T>> createState() => _CategoryOverflowCalendarDayViewState<T>();
 }
 
-class _CategoryOverflowCalendarDayViewState<T extends Object>
-    extends State<CategoryOverflowCalendarDayView<T>> {
+class _CategoryOverflowCalendarDayViewState<T extends Object> extends State<CategoryOverflowCalendarDayView<T>> {
   late ScrollController controller;
   @override
   void initState() {
@@ -68,20 +64,14 @@ class _CategoryOverflowCalendarDayViewState<T extends Object>
     return SafeArea(
       child: LayoutBuilder(
         builder: (context, constraints) {
-          final rowLength =
-              constraints.maxWidth - widget.config.timeColumnWidth;
+          final rowLength = constraints.maxWidth - widget.config.timeColumnWidth;
 
-          final tileWidth = widget.config.allowHorizontalScroll
-              ? rowLength / widget.config.columnsPerPage
-              : rowLength / widget.categories.length;
+          final tileWidth = widget.config.allowHorizontalScroll ? rowLength / widget.config.columnsPerPage : rowLength / widget.categories.length;
 
-          final totalWidth = widget.config.allowHorizontalScroll
-              ? tileWidth * widget.categories.length
-              : rowLength;
+          final totalWidth = widget.config.allowHorizontalScroll ? tileWidth * widget.categories.length : rowLength;
 
           return ScrollConfiguration(
-            behavior:
-                ScrollConfiguration.of(context).copyWith(scrollbars: false),
+            behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
             child: Column(
               children: [
                 (widget.controlBarBuilder != null)
@@ -97,10 +87,7 @@ class _CategoryOverflowCalendarDayViewState<T extends Object>
                             onPressed: () => goBack(rowLength, totalWidth),
                             icon: const Icon(Icons.arrow_left),
                           ),
-                          Text(widget.config.currentDate
-                              .toString()
-                              .split(":")
-                              .first),
+                          Text(widget.config.currentDate.toString().split(":").first),
                           IconButton.filledTonal(
                             onPressed: () => goNext(rowLength, totalWidth),
                             icon: const Icon(Icons.arrow_right),
@@ -131,19 +118,16 @@ class _CategoryOverflowCalendarDayViewState<T extends Object>
                                   children: [
                                     Column(
                                       children: [
-                                        widget.config.horizontalDivider ??
-                                            const Divider(height: 0),
+                                        widget.config.horizontalDivider ?? const Divider(height: 0),
                                         CategoryTitleRow(
                                           tileWidth: tileWidth,
                                           categories: widget.categories,
                                           config: widget.config,
                                         ),
-                                        widget.config.horizontalDivider ??
-                                            const Divider(height: 0),
+                                        widget.config.horizontalDivider ?? const Divider(height: 0),
                                         _DayViewBody(
                                           tileWidth: tileWidth,
-                                          rowBuilder:
-                                              widget.backgroundTimeTileBuilder,
+                                          rowBuilder: widget.backgroundTimeTileBuilder,
                                           events: widget.events,
                                           categories: widget.categories,
                                           eventBuilder: widget.eventBuilder,
@@ -190,8 +174,7 @@ class _CategoryOverflowCalendarDayViewState<T extends Object>
 class VerticalClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
-    Path path = Path()
-      ..addRect(Rect.fromLTRB(0, 0, size.width, size.height + 200));
+    Path path = Path()..addRect(Rect.fromLTRB(0, 0, size.width, size.height + 200));
     path.close();
     return path;
   }
@@ -235,8 +218,7 @@ class _DayViewBody<T extends Object> extends StatelessWidget {
           // rowBuilder: rowBuilder,
         ),
         ListView.separated(
-          separatorBuilder: (context, index) =>
-              config.horizontalDivider ?? const Divider(height: 0),
+          separatorBuilder: (context, index) => config.horizontalDivider ?? const Divider(height: 0),
           clipBehavior: Clip.none,
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
@@ -251,9 +233,7 @@ class _DayViewBody<T extends Object> extends StatelessWidget {
                     (c) => [
                       GestureDetector(
                         behavior: HitTestBehavior.opaque,
-                        onTap: (onTileTap == null)
-                            ? null
-                            : () => onTileTap!(c, time),
+                        onTap: (onTileTap == null) ? null : () => onTileTap!(c, time),
                         child: SizedBox(
                           height: config.rowHeight,
                           width: tileWidth,
@@ -281,12 +261,10 @@ class _DayViewBody<T extends Object> extends StatelessWidget {
         for (var event in events)
           Builder(
             builder: (context) {
-              final category =
-                  categories.firstWhereOrNull((c) => c.id == event.categoryId);
+              final category = categories.firstWhereOrNull((c) => c.id == event.categoryId);
               if (category == null) return const SizedBox.shrink();
 
-              final cateIndex =
-                  categories.indexWhere((c) => c.id == event.categoryId);
+              final cateIndex = categories.indexWhere((c) => c.id == event.categoryId);
               if (cateIndex == -1) return const SizedBox.shrink();
 
               final constraints = BoxConstraints(
@@ -295,8 +273,7 @@ class _DayViewBody<T extends Object> extends StatelessWidget {
               );
 
               return Positioned(
-                top: event.minutesFrom(config.timeList.first) *
-                    config.heightPerMin,
+                top: event.minutesFrom(config.timeList.first) * config.heightPerMin,
                 left: cateIndex * tileWidth,
                 child: eventBuilder(
                   constraints,

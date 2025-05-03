@@ -30,7 +30,7 @@ class OverflowDayViewTab extends HookWidget {
     return Column(
       children: [
         Expanded(
-          child: CalendarDayView.overflow(
+          child: CalendarDayViewFactory.overflow(
             config: OverFlowDayViewConfig(
               dividerColor: Colors.black,
               currentDate: DateTime.now(),
@@ -67,14 +67,10 @@ class OverflowDayViewTab extends HookWidget {
                     margin: const EdgeInsets.only(right: 3, left: 3),
                     padding: const EdgeInsets.symmetric(horizontal: 5),
                     key: ValueKey(event.hashCode),
-                    width: !renderAsList.value
-                        ? (constraints.minWidth) - 6
-                        : size.width / 4 - 6,
+                    width: !renderAsList.value ? (constraints.minWidth) - 6 : size.width / 4 - 6,
                     height: constraints.maxHeight,
                     decoration: BoxDecoration(
-                      color: itemIndex % 2 == 0
-                          ? colorScheme.tertiaryContainer
-                          : colorScheme.secondaryContainer,
+                      color: itemIndex % 2 == 0 ? colorScheme.tertiaryContainer : colorScheme.secondaryContainer,
                       border: Border.all(color: colorScheme.tertiary, width: 2),
                       borderRadius: const BorderRadius.all(Radius.circular(10)),
                     ),
@@ -98,33 +94,16 @@ class OverflowDayViewTab extends HookWidget {
         Row(
           children: [
             Row(
-              children: [
-                const Text("Render List Row"),
-                Radio(
-                    groupValue: renderAsList.value,
-                    value: true,
-                    onChanged: (v) => renderAsList.value = v!)
-              ],
+              children: [const Text("Render List Row"), Radio(groupValue: renderAsList.value, value: true, onChanged: (v) => renderAsList.value = v!)],
             ),
             const SizedBox(width: 20),
             Row(
-              children: [
-                const Text("Render Fix Row"),
-                Radio(
-                    groupValue: renderAsList.value,
-                    value: false,
-                    onChanged: (v) => renderAsList.value = v!)
-              ],
+              children: [const Text("Render Fix Row"), Radio(groupValue: renderAsList.value, value: false, onChanged: (v) => renderAsList.value = v!)],
             ),
           ],
         ),
         Row(
-          children: [
-            const Text("Crop Bottom Events"),
-            Checkbox(
-                value: cropBottomEvents.value,
-                onChanged: (v) => cropBottomEvents.value = v!)
-          ],
+          children: [const Text("Crop Bottom Events"), Checkbox(value: cropBottomEvents.value, onChanged: (v) => cropBottomEvents.value = v!)],
         ),
         TimeGapSelection(
           timeGap: timeGap.value,

@@ -1,18 +1,14 @@
-import 'package:calendar_day_view/src/day_views/category/category_overflow_calendar_day_view.old';
 import 'package:flutter/material.dart';
 
 import '../../calendar_day_view.dart';
 import '../models/typedef.dart';
 
-/// Abstract base class for all calendar day view implementations
-abstract class CalendarDayView<T extends Object> extends Widget {
-  const CalendarDayView({super.key});
-
+/// Factory class for creating different types of calendar day views
+class CalendarDayViewFactory {
   /// Create [OverFlowCalendarDayView]
   ///
   /// where event widget can be display overflowed to other time row
-
-  factory CalendarDayView.overflow({
+  static CalendarDayView<T> overflow<T extends Object>({
     required List<DayEvent<T>> events,
     DayViewItemBuilder<T>? overflowItemBuilder,
     OnTimeTap? onTimeTap,
@@ -29,28 +25,29 @@ abstract class CalendarDayView<T extends Object> extends Widget {
   ///
   /// where day view is divided into multiple category with fixed time slot.
   /// event will be showed within the correspond event tile only.
-  // factory CalendarDayView.category({
-  //   required CategoryDavViewConfig config,
-  //   required List<CategorizedDayEvent<T>> events,
-  //   required List<EventCategory> categories,
-  //   required CategoryDayViewEventBuilder<T> eventBuilder,
-  //   CategoryDayViewTileTap? onTileTap,
-  //   CategoryDayViewControlBarBuilder? controlBarBuilder,
-  // }) =>
-  //     CategoryCalendarDayView(
-  //       config: config,
-  //       events: events,
-  //       categories: categories,
-  //       eventBuilder: eventBuilder,
-  //       onTileTap: onTileTap,
-  //       controlBarBuilder: controlBarBuilder,
-  //     );
+  static CalendarDayView<T> category<T extends Object>({
+    required CategoryDavViewConfig config,
+    required List<CategorizedDayEvent<T>> events,
+    required List<EventCategory> categories,
+    required CategoryDayViewEventBuilder<T> eventBuilder,
+    CategoryDayViewController? controller,
+    CategoryDayViewTileTap? onTileTap,
+    CategoryDayViewControlBarBuilder? controlBarBuilder,
+  }) =>
+      CategoryDayView(
+        config: config,
+        events: events,
+        categories: categories,
+        eventBuilder: eventBuilder,
+        onTileTap: onTileTap,
+        controller: controller,
+      );
 
   /// Create [CategoryOverflowCalendarDayView]
   ///
   /// where day view is divided into multiple category with fixed time slot.
   /// event can be display overflowed into different time slot but within the same category column
-  factory CalendarDayView.categoryOverflow({
+  static CalendarDayView<T> categoryOverflow<T extends Object>({
     required List<CategorizedDayEvent<T>> events,
     required List<EventCategory> categories,
     required CategoryDayViewEventBuilder<T> eventBuilder,
@@ -59,20 +56,19 @@ abstract class CalendarDayView<T extends Object> extends Widget {
     CategoryBackgroundTimeTileBuilder? backgroundTimeTileBuilder,
     required CategoryDavViewConfig config,
   }) =>
-      CategoryOverflowCalendarDayView(
+      Category2DOverflowDayView(
+        controller: CategoryDayViewController(),
         config: config,
         events: events,
         categories: categories,
         eventBuilder: eventBuilder,
         onTileTap: onTileTap,
-        controlBarBuilder: controlBarBuilder,
-        backgroundTimeTileBuilder: backgroundTimeTileBuilder,
       );
 
   /// Create [InRowCalendarDayView]
   ///
   /// Show all events that are happened in the same time gap window in a single row
-  factory CalendarDayView.inRow({
+  static CalendarDayView<T> inRow<T extends Object>({
     required List<DayEvent<T>> events,
     DayViewItemBuilder<T>? itemBuilder,
     DayViewTimeRowBuilder<T>? timeRowBuilder,
@@ -91,7 +87,7 @@ abstract class CalendarDayView<T extends Object> extends Widget {
   ///
   /// this day view doesn't display with a fixed time gap
   /// it listed and sorted by the time that the events start
-  factory CalendarDayView.eventOnly({
+  static CalendarDayView<T> eventOnly<T extends Object>({
     required List<DayEvent<T>> events,
     required EventDayViewItemBuilder<T> eventDayViewItemBuilder,
     IndexedWidgetBuilder? itemSeparatorBuilder,

@@ -23,8 +23,7 @@ extension DateTimeExtension on DateTime {
   }
 
   bool inTheGap(DateTime timePoint, int gap) {
-    return hour == timePoint.hour &&
-        (minute >= timePoint.minute && minute < (timePoint.minute + gap));
+    return hour == timePoint.hour && (minute >= timePoint.minute && minute < (timePoint.minute + gap));
   }
 
   DateTime copyTimeAndMinClean(TimeOfDay tod) => copyWith(
@@ -36,10 +35,7 @@ extension DateTimeExtension on DateTime {
       );
 
   DateTime cleanSec() => copyWith(second: 00, millisecond: 0, microsecond: 0);
-  DateTime hourOnly() =>
-      copyWith(minute: 00, second: 00, millisecond: 0, microsecond: 0);
-  String get hourDisplay24 =>
-      "${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, "0")}";
-  String get hourDisplay12 =>
-      "${(hour % 12 == 0 ? 12 : hour % 12).toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')} ${hour >= 12 ? 'PM' : 'AM'}";
+  DateTime hourOnly() => copyWith(minute: 00, second: 00, millisecond: 0, microsecond: 0);
+  String get hourDisplay24 => "${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, "0")}";
+  String get hourDisplay12 => "${(hour % 12 == 0 ? 12 : hour % 12).toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')} ${hour >= 12 ? 'PM' : 'AM'}";
 }

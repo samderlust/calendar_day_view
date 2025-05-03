@@ -14,8 +14,7 @@ class DayViewProvider extends InheritedWidget {
     return true;
   }
 
-  static DayViewProvider of(BuildContext context) =>
-      context.dependOnInheritedWidgetOfExactType<DayViewProvider>()!;
+  static DayViewProvider of(BuildContext context) => context.dependOnInheritedWidgetOfExactType<DayViewProvider>()!;
 }
 
 class DayViewState {
