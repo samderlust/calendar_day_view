@@ -25,8 +25,8 @@ class CategoryOverflowDayViewTab extends HookWidget {
             config: CategoryDavViewConfig(
               currentDate: DateTime.now(),
               time12: true,
-              allowHorizontalScroll: true,
-              columnsPerPage: 2,
+              // allowHorizontalScroll: true,
+              // columnsPerPage: 2,
               endOfDay: const TimeOfDay(hour: 23, minute: 59),
             ),
             categories: categories,

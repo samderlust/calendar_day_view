@@ -34,7 +34,7 @@ class CalendarDayViewFactory {
     CategoryDayViewTileTap? onTileTap,
     CategoryDayViewControlBarBuilder? controlBarBuilder,
   }) =>
-      CategoryDayView2(
+      CategoryDayView(
         config: config,
         events: events,
         categories: categories,

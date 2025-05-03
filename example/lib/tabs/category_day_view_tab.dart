@@ -22,7 +22,7 @@ class CategoryDayViewTab extends HookWidget {
     return Column(
       children: [
         Expanded(
-          child: CategoryDayView2(
+          child: CategoryDayView(
             controller: controller,
             events: events,
             config: CategoryDavViewConfig(

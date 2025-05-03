@@ -6,8 +6,8 @@ import '../../extensions/date_time_extension.dart';
 import '../../extensions/list_extensions.dart';
 import '../../models/typedef.dart';
 
-class CategoryDayView2<T extends Object> extends StatelessWidget implements CalendarDayView<T> {
-  const CategoryDayView2({
+class CategoryDayView<T extends Object> extends StatelessWidget implements CalendarDayView<T> {
+  const CategoryDayView({
     super.key,
     this.controller,
     required this.eventBuilder,
