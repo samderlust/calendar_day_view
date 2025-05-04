@@ -193,7 +193,7 @@ TableViewCell _buildEventCell<T extends Object>({
     _ => TableViewCell(
         child: GestureDetector(
           behavior: HitTestBehavior.translucent,
-          onTap: onTileTap == null ? null : () => onTileTap!(category, time),
+          onTap: onTileTap == null ? null : () => onTileTap(category, time),
           child: SizedBox(
             width: tileWidth,
             height: config.rowHeight,
