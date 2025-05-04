@@ -25,9 +25,7 @@ jobs:
       - name: Format code
         run: |
           dart format --line-length 200 lib/ test/ example/
-          git status
-          git diff
 
       - name: Check for changes
         run: |
-          git diff --exit-code || (echo "::error::Code formatting issues found. Run 'dart format --line-length 200 lib/ test/ example/' to fix." && exit 1)
+          git diff --exit-code -- . ':!example/pubspec.lock' || (echo "::error::Code formatting issues found. Run 'dart format --line-length 200 lib/ test/ example/' to fix." && exit 1)
