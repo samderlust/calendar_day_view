@@ -2,6 +2,7 @@
 
 - refactor category day view to use 2D table package
 - refactor overflow day view
+- overflow day view now round the time to nearest 5 minutes when user tap on the time row
 
 ## 4.0.2
 

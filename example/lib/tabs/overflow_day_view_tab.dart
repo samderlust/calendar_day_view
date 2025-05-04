@@ -61,12 +61,23 @@ class OverflowDayViewTab extends HookWidget {
             overflowItemBuilder: (context, constraints, itemIndex, event) {
               return HookBuilder(builder: (context) {
                 return GestureDetector(
-                  behavior: HitTestBehavior.opaque,
+                  // behavior: HitTestBehavior.opaque,
                   key: ValueKey(event.hashCode),
                   onTap: () {
-                    print(event.value);
-                    print(event.start);
-                    print(event.end);
+                    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(event.value),
+                            Text("start:${timeFormat.format(event.start)}"),
+                            Text("end:${timeFormat.format(event.end!)}"),
+                          ],
+                        ),
+                      ),
+                    );
                   },
                   child: Container(
                     margin: const EdgeInsets.only(right: 3, left: 3),
@@ -177,7 +188,7 @@ Future<DayEvent<String>?> showAddEventDialog(BuildContext context, DateTime t) a
             ),
             const SizedBox(height: 10),
             Text(
-              t.toString(),
+              timeFormat.format(t),
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),
           ],

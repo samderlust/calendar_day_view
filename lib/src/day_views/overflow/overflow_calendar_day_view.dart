@@ -123,7 +123,7 @@ class _OverFlowCalendarDayViewState<T extends Object> extends State<OverFlowCale
                 },
               ),
               BackgroundIgnorePointer(
-                ignored: widget.onTimeTap != null,
+                ignored: widget.onTimeTap == null,
                 child: widget.config.renderRowAsListView
                     ? OverFlowListViewRowView(
                         overflowEvents: _overflowEvents,
@@ -177,21 +177,6 @@ class OverflowTimeRowWidget extends StatelessWidget {
   final OnTimeTap? onTimeTap;
   final TimeLabelBuilder? timeLabelBuilder;
 
-  DateTime _roundToNearest5Minutes(DateTime time, double tapPosition, double rowHeight) {
-    // Calculate the minute based on tap position
-    final minuteFraction = (tapPosition / rowHeight) * 60;
-    // Round to nearest 5 minutes
-    final roundedMinute = (minuteFraction / 5).round() * 5;
-    // Create new DateTime with rounded minute
-    return DateTime(
-      time.year,
-      time.month,
-      time.day,
-      time.hour,
-      roundedMinute,
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -200,8 +185,15 @@ class OverflowTimeRowWidget extends StatelessWidget {
       onTapDown: onTimeTap == null
           ? null
           : (details) {
-              final localPosition = details.localPosition;
-              final roundedTime = _roundToNearest5Minutes(time, localPosition.dy, config.rowHeight);
+              final localYPosition = details.localPosition.dy;
+              final rowHeight = config.rowHeight;
+              final timeGap = config.timeGap;
+
+              final minuteFraction = (localYPosition / rowHeight) * timeGap;
+              final roundedMinute = (minuteFraction / 5).round() * 5;
+              final currentMinute = time.minute;
+              final roundedTime = time.copyWith(minute: currentMinute + roundedMinute);
+
               onTimeTap!(roundedTime);
             },
       child: SizedBox(

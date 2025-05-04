@@ -106,6 +106,11 @@ final class CategoryDavViewConfig extends DavViewConfig {
   /// dividers that run horizontally in the day view
   final Divider? horizontalDivider;
 
+  /// if true, the category view will be frozen when scrolling
+  ///
+  /// default to true
+  final bool freezeCategoryView;
+
   const CategoryDavViewConfig({
     this.headerDecoration,
     this.logo,
@@ -115,6 +120,7 @@ final class CategoryDavViewConfig extends DavViewConfig {
     this.horizontalDivider,
     this.allowHorizontalScroll = false,
     this.columnsPerPage = 3,
+    this.freezeCategoryView = true,
     required super.currentDate,
     super.startOfDay,
     super.endOfDay,
