@@ -1,3 +1,8 @@
+## 5.0.0-dev
+
+- refactor category day view to use 2D table package
+- refactor overflow day view
+
 ## 4.0.2
 
 - added TimeLabelBuilder to DayViewConfig which allow users to customize how time label display.

@@ -21,7 +21,7 @@ class CategoryOverflowDayViewTab extends HookWidget {
     return Column(
       children: [
         Expanded(
-          child: CalendarDayViewFactory.categoryOverflow(
+          child: CalendarDayView.categoryOverflow(
             config: CategoryDavViewConfig(
               currentDate: DateTime.now(),
               time12: true,

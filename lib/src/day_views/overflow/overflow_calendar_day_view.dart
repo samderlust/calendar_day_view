@@ -9,6 +9,7 @@ import '../../models/typedef.dart';
 import '../../utils/events_utils.dart';
 import '../../widgets/background_ignore_pointer.dart';
 import '../../widgets/current_time_line_widget.dart';
+
 import 'widgets/overflow_fixed_width_events_widget.dart';
 import 'widgets/overflow_list_view_row.dart';
 
@@ -176,12 +177,33 @@ class OverflowTimeRowWidget extends StatelessWidget {
   final OnTimeTap? onTimeTap;
   final TimeLabelBuilder? timeLabelBuilder;
 
+  DateTime _roundToNearest5Minutes(DateTime time, double tapPosition, double rowHeight) {
+    // Calculate the minute based on tap position
+    final minuteFraction = (tapPosition / rowHeight) * 60;
+    // Round to nearest 5 minutes
+    final roundedMinute = (minuteFraction / 5).round() * 5;
+    // Create new DateTime with rounded minute
+    return DateTime(
+      time.year,
+      time.month,
+      time.day,
+      time.hour,
+      roundedMinute,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       key: ValueKey(time.toString()),
       behavior: HitTestBehavior.opaque,
-      onTap: onTimeTap == null ? null : () => onTimeTap!(time),
+      onTapDown: onTimeTap == null
+          ? null
+          : (details) {
+              final localPosition = details.localPosition;
+              final roundedTime = _roundToNearest5Minutes(time, localPosition.dy, config.rowHeight);
+              onTimeTap!(roundedTime);
+            },
       child: SizedBox(
         height: config.rowHeight,
         width: viewWidth,

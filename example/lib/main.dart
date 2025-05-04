@@ -12,7 +12,7 @@ import 'package:intl/intl.dart';
 
 import 'tabs/category_day_view_tab.dart';
 
-final timeFormat = DateFormat('ha');
+final timeFormat = DateFormat('HH:mm');
 
 final rd = Random();
 void main() {
@@ -65,16 +65,9 @@ class CalendarDayViewExample extends HookWidget {
     final bodyItems = [
       OverflowDayViewTab(
         events: dayEvents.value,
-        onTimeTap: (time) => dayEvents.value = [
-          ...dayEvents.value,
-          DayEvent(
-            value: faker.conference.name(),
-            start: time,
-            end: time.add(
-              Duration(minutes: faker.randomGenerator.element([20, 140])),
-            ),
-          )
-        ],
+        onAddEvent: (event) {
+          dayEvents.value = [...dayEvents.value, event];
+        },
       ),
       CategoryOverflowDayViewTab(
         events: categoryEvents.value,

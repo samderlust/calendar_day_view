@@ -1,9 +1,9 @@
 import 'dart:collection';
 
 import 'package:calendar_day_view/calendar_day_view.dart';
+import 'package:faker/faker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:intl/intl.dart';
 
 import '../main.dart';
 
@@ -14,9 +14,11 @@ class OverflowDayViewTab extends HookWidget {
     Key? key,
     required this.events,
     this.onTimeTap,
+    this.onAddEvent,
   }) : super(key: key);
   final List<DayEvent<String>> events;
   final Function(DateTime)? onTimeTap;
+  final Function(DayEvent<String>)? onAddEvent;
   @override
   Widget build(BuildContext context) {
     final timeGap = useState<int>(60);
@@ -30,7 +32,7 @@ class OverflowDayViewTab extends HookWidget {
     return Column(
       children: [
         Expanded(
-          child: CalendarDayViewFactory.overflow(
+          child: CalendarDayView.overflow(
             config: OverFlowDayViewConfig(
               dividerColor: Colors.black,
               currentDate: DateTime.now(),
@@ -48,9 +50,12 @@ class OverflowDayViewTab extends HookWidget {
                 style: const TextStyle(fontWeight: FontWeight.bold),
               ),
             ),
-            onTimeTap: (t) {
-              print(t);
-              onTimeTap?.call(t);
+            onTimeTap: (t) async {
+              print("onTimeTap: $t");
+              final newEvent = await showAddEventDialog(context, t);
+              if (newEvent != null) {
+                onAddEvent?.call(newEvent);
+              }
             },
             events: UnmodifiableListView(events),
             overflowItemBuilder: (context, constraints, itemIndex, event) {
@@ -71,18 +76,15 @@ class OverflowDayViewTab extends HookWidget {
                     height: constraints.maxHeight,
                     decoration: BoxDecoration(
                       color: itemIndex % 2 == 0 ? colorScheme.tertiaryContainer : colorScheme.secondaryContainer,
-                      border: Border.all(color: colorScheme.tertiary, width: 2),
-                      borderRadius: const BorderRadius.all(Radius.circular(10)),
+                      border: Border.all(color: colorScheme.tertiary, width: .4),
+                      borderRadius: const BorderRadius.all(Radius.circular(5)),
                     ),
                     child: Center(
                       child: Text(
                         event.value,
                         textAlign: TextAlign.center,
                         overflow: TextOverflow.fade,
-                        style: TextStyle(
-                          color: colorScheme.onSecondaryContainer,
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: TextStyle(color: colorScheme.onSecondaryContainer),
                       ),
                     ),
                   ),
@@ -155,4 +157,51 @@ class TimeGapSelection extends StatelessWidget {
       ],
     );
   }
+}
+
+Future<DayEvent<String>?> showAddEventDialog(BuildContext context, DateTime t) async {
+  return await showDialog<DayEvent<String>>(
+    context: context,
+    builder: (context) {
+      final newText = faker.conference.name();
+
+      return AlertDialog(
+        title: const Text("Add Event"),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              newText,
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 10),
+            Text(
+              t.toString(),
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              final newEvent = DayEvent(
+                value: newText,
+                start: t,
+                end: t.add(
+                  Duration(minutes: faker.randomGenerator.element([20, 140])),
+                ),
+              );
+              Navigator.pop(context, newEvent);
+            },
+            child: const Text("Add"),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, null),
+            child: const Text("Cancel"),
+          )
+        ],
+      );
+    },
+  );
 }
