@@ -23,7 +23,7 @@ abstract class CalendarDayView<T extends Object> extends Widget {
         config: config,
       );
 
-  /// Create [CategoryCalendarDayView]
+  /// Create [CategoryDayView]
   ///
   /// where day view is divided into multiple category with fixed time slot.
   /// event will be showed within the correspond event tile only.
@@ -45,7 +45,7 @@ abstract class CalendarDayView<T extends Object> extends Widget {
         controller: controller,
       );
 
-  /// Create [CategoryOverflowCalendarDayView]
+  /// Create [CategoryOverflowDayView]
   ///
   /// where day view is divided into multiple category with fixed time slot.
   /// event can be display overflowed into different time slot but within the same category column
@@ -58,7 +58,7 @@ abstract class CalendarDayView<T extends Object> extends Widget {
     CategoryBackgroundTimeTileBuilder? backgroundTimeTileBuilder,
     required CategoryDavViewConfig config,
   }) =>
-      Category2DOverflowDayView(
+      CategoryOverflowDayView(
         controller: CategoryDayViewController(),
         config: config,
         events: events,

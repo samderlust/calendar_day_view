@@ -77,7 +77,7 @@ abstract class DavViewConfig {
   DateTime get timeEnd => currentDate.copyTimeAndMinClean(endOfDay);
 }
 
-/// Configuration for [CategoryCalendarDayView] and [CategoryOverflowCalendarDayView]
+/// Configuration for [CategoryDayView] and [CategoryOverflowDayView]
 final class CategoryDavViewConfig extends DavViewConfig {
   /// build category header
   // final CategoryDayViewHeaderTileBuilder? headerTileBuilder;

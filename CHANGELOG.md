@@ -1,10 +1,18 @@
 ## 5.0.0-dev
 
-- refactor category day view to use 2D table package
+- refactor category day view to use `two_dimensional_scrollables` for better performance and clearer code
 - add `freezeCategoryTitleRow` to CategoryDavViewConfig. If true, the category titile row will be frozen when scrolling
-- add Category Day View Controller to control the category day view
+- add `CategoryDayViewController` to control the category day view
+  - add `goToPreviousTab` to go to the previous tab
+  - add `goToNextTab` to go to the next tab
+  - add `calbliate` to calculate the width of the column and the length of the tab
 - refactor overflow day view
 - overflow day view now round the time to nearest 5 minutes when user tap on the time row
+  - `OverFlowCalendarDayView.onTimeTap` will return hour and minute closest to the tapped time
+  - this help creating event works better when user tap on the time row
+- CategoryDayView change to static factory method. So initial code will be like this:
+  - < v5 -> `CategoryDayView<String>.category`
+  - > = v5 -> `CategoryDayView.category<String>`
 
 ## 4.0.2
 

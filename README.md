@@ -1,160 +1,181 @@
-[!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/samderlust)
+# Calendar Day View
 
-## `BREAKING CHANGES` in version 4. please prefer to Changelogs
+[![pub package](https://img.shields.io/pub/v/calendar_day_view.svg)](https://pub.dev/packages/calendar_day_view)
+[![style: very good analysis](https://img.shields.io/badge/style-very_good_analysis-B22C89.svg)](https://pub.dev/packages/very_good_analysis)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Buy Me A Coffee](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/samderlust)
 
-### Example here: https://samderlust.github.io/calendardayview
+A powerful and customizable Flutter library for displaying calendar events in day view format. Perfect for applications requiring detailed daily event visualization.
 
-# Calendar Day View - A fully customizable Calendar day view library
+## 🚨 Breaking Changes
 
-This package is dedicated to calendar day view. While there are many calendar package out there. It seems that not many of them support Day view well. This package clearly is not a calendar replacement but rather a complement to make calendar in app better.
-This package aims to give user most customization they want.
+Version 5.0.0 introduces significant changes. Please refer to the [Changelog](CHANGELOG.md) for detailed migration instructions.
 
-## Features
+## 📱 Live Demo
 
-- `Category Overflow Day View`: where day view is divided into multiple category with fixed time slot. Events can be display overflowed into different time slot but within the same category column
-- `Category Day View`: showing event on a day with multiple categories
-- `Over flow Day View`: like normal calendar where event is displayed expanded on multiple time row to indicate its duration
-- `In Row Day View`: show all events that start in the same time gap in a row
-- `Event Day View`: show all events in day
-- Option to change start of day and end of day in day view
-- Option to change time gap(duration that a single row represent) in day view.
-- Option to show current time on day view as a line
-- Allow user to tap on day view (ex: to create event at that specific time)
-- **BREAKING** `CategoryDavViewConfig`, `OverFlowDayViewConfig`, `EventDayViewConfig`, `InRowDayViewConfig` are introduced to centralize config parameter of Day views
+Check out the live demo at: [https://samderlust.github.io/calendardayview](https://samderlust.github.io/calendardayview)
 
-## Installing and import the library:
+## ✨ Features
 
-Like any other package, add the library to your pubspec.yaml dependencies:
+### View Types
 
-```
+- **Category Overflow Day View**: Display events across multiple time slots within categorized columns
+- **Category Day View**: Organize events by categories (e.g., meeting rooms, resources)
+- **Overflow Day View**: Traditional calendar view with events spanning multiple time slots
+- **In Row Day View**: Group events starting in the same time window
+- **Event Day View**: Simple chronological list of daily events
+
+### Customization Options
+
+- ⏰ Customizable day start and end times
+- ⏱️ Adjustable time slot duration
+- 🕒 Current time indicator
+- 👆 Interactive time slot tapping
+- 🎨 Fully customizable event widgets
+- 📱 Responsive design support
+
+## 📦 Installation
+
+Add the package to your `pubspec.yaml`:
+
+```yaml
 dependencies:
-    calendar_day_view: <latest_version>
+  calendar_day_view: <latest_version>
 ```
 
-Then import it wherever you want to use it:
+Then import it in your Dart code:
 
-```
+```dart
 import 'package:calendar_day_view/calendar_day_view.dart';
 ```
 
-## Usage
+## 🚀 Usage
 
-look at example folder for all use cases
+### Category Day View
 
-## Category Day View
+Perfect for displaying events across multiple categories (e.g., meeting rooms, resources).
 
-- For showing event on a day with multiple categories (ex: multiple meeting rooms, playground,...).
-- Category can be add on the fly.
-
-  <img src="https://raw.githubusercontent.com/samderlust/images/main/cagetorydayview.png" alt="Category Day View" style="width:800px;"/>
-
-  ```
-   CalendarDayView.category(
-        config: CategoryDavViewConfig(
-          time12: true,
-          allowHorizontalScroll: true,
-          columnsPerPage: 2,
-          currentDate: DateTime.now(),
-          timeGap: 60,
-          heightPerMin: 1,
-          evenRowColor: Colors.white,
-          oddRowColor: Colors.grey[200],
-          headerDecoration: BoxDecoration(
-            color: Colors.lightBlueAccent.withOpacity(.5),
-          ),
-          logo: const Padding(
-            padding: EdgeInsets.all(8.0),
-            child: CircleAvatar(child: Text("C")),
-          ),
-        ),
-        categories: categories,
-        events: events,
-        onTileTap: (category, time) {},
-        controlBarBuilder: (goToPreviousTab, goToNextTab) =>  <<Widget>> ,
-        eventBuilder: (constraints, category, _, event) => <<Widget>>;
-  ```
-
-## Overflow Day View
-
-- For viewing event and duration as event will be shown on multiple time point rows depends on its own duration. For this to work all [DayEvent] must have non-null `end` time.
-
-<img src="https://raw.githubusercontent.com/samderlust/images/main/overfloatdayview.png" alt="Overflow Day View" style="width:800px;"/>
-
-| Overflow normal                                                                                                            | Overflow with ListView                                                                                                      |
-| -------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
-| <img src="https://raw.githubusercontent.com/samderlust/images/main/of1.png" alt="Overflow Day View" style="width:300px;"/> | <img src="https://raw.githubusercontent.com/samderlust/images/main/ofl2.png" alt="Overflow Day View" style="width:300px;"/> |
-| `renderRowAsListView: false`                                                                                               | `renderRowAsListView: true`                                                                                                 |
-
+```dart
+CalendarDayView.category(
+  config: CategoryDavViewConfig(
+    time12: true,
+    allowHorizontalScroll: true,
+    columnsPerPage: 2,
+    currentDate: DateTime.now(),
+    timeGap: 60,
+    heightPerMin: 1,
+    evenRowColor: Colors.white,
+    oddRowColor: Colors.grey[200],
+    headerDecoration: BoxDecoration(
+      color: Colors.lightBlueAccent.withOpacity(.5),
+    ),
+    logo: const Padding(
+      padding: EdgeInsets.all(8.0),
+      child: CircleAvatar(child: Text("C")),
+    ),
+  ),
+  categories: categories,
+  events: events,
+  onTileTap: (category, time) {
+    // Handle time slot tap
+  },
+  controlBarBuilder: (goToPreviousTab, goToNextTab) => YourControlBar(),
+  eventBuilder: (constraints, category, _, event) => YourEventWidget(),
+);
 ```
+
+### Overflow Day View
+
+Display events with duration visualization across multiple time slots.
+
+```dart
 CalendarDayView.overflow(
-            config: OverFlowDayViewConfig(
-              currentDate: DateTime.now(),
-              timeGap: timeGap.value,
-              heightPerMin: 2,
-              endOfDay: const TimeOfDay(hour: 20, minute: 0),
-              startOfDay: const TimeOfDay(hour: 4, minute: 0),
-              renderRowAsListView: true,
-              time12: true,
-            ),
-            onTimeTap: (t) {
-              print(t);
-              onTimeTap?.call(t);
-            },
-            events: UnmodifiableListView(events),
-            overflowItemBuilder: (context, constraints, itemIndex, event)  {
-              return <<ItemWidget>>
-            },
-          )
+  config: OverFlowDayViewConfig(
+    currentDate: DateTime.now(),
+    timeGap: 60,
+    heightPerMin: 2,
+    endOfDay: const TimeOfDay(hour: 20, minute: 0),
+    startOfDay: const TimeOfDay(hour: 4, minute: 0),
+    renderRowAsListView: true,
+    time12: true,
+  ),
+  onTimeTap: (time) => handleTimeTap(time),
+  events: UnmodifiableListView(events),
+  overflowItemBuilder: (context, constraints, itemIndex, event) => YourEventWidget(),
+);
 ```
 
-## Event Only Day View
+### Event Only Day View
 
-- For Viewing events only and their start times
+Simple chronological list of events.
 
-<img src="https://raw.githubusercontent.com/samderlust/images/main/eventdayview.png" alt="event only day view" style="width:600px;"/>
-
-```
- CalendarDayView.eventOnly(
-      config: EventDayViewConfig(
-        showHourly: true,
-        currentDate: DateTime.now(),
-      ),
-      events: events,
-      eventDayViewItemBuilder: (context, index, event) (context, event) {
-        return Container(
-          color: getRandomColor(),
-          height: 50,
-          child: Text(event.value),
-        );
-      },
-    );
+```dart
+CalendarDayView.eventOnly(
+  config: EventDayViewConfig(
+    showHourly: true,
+    currentDate: DateTime.now(),
+  ),
+  events: events,
+  eventDayViewItemBuilder: (context, event) => YourEventWidget(),
+);
 ```
 
-## In Row Day View
+### In Row Day View
 
-- For viewing events that start in a same time window (15min, 30mins,...)
+Group events starting in the same time window.
 
-<img src="https://raw.githubusercontent.com/samderlust/images/main/inrowdayview.png" alt="In Row Day View" style="width:600px;"/>
-
-```
-CalendarDayView<String>.inRow(
-            config: InRowDayViewConfig(
-              heightPerMin: 1,
-              showCurrentTimeLine: true,
-              dividerColor: Colors.black,
-              timeGap: timeGap.value,
-              showWithEventOnly: withEventOnly.value,
-              currentDate: DateTime.now(),
-              startOfDay: TimeOfDay(hour: 3, minute: 00),
-              endOfDay: TimeOfDay(hour: 22, minute: 00),
-            ),
-            events: UnmodifiableListView(events),
-            itemBuilder: (context, constraints, event) => Flexible(
-              child:<<ITEM WIDGET>>
-            ),
-          ),
+```dart
+CalendarDayView.inRow(
+  config: InRowDayViewConfig(
+    heightPerMin: 1,
+    showCurrentTimeLine: true,
+    dividerColor: Colors.black,
+    timeGap: 60,
+    showWithEventOnly: true,
+    currentDate: DateTime.now(),
+    startOfDay: TimeOfDay(hour: 3, minute: 00),
+    endOfDay: TimeOfDay(hour: 22, minute: 00),
+  ),
+  events: UnmodifiableListView(events),
+  itemBuilder: (context, constraints, event) => YourEventWidget(),
+);
 ```
 
-## Appreciate Your Feedbacks and Contributes
+## 📸 Screenshots
 
-If you find anything need to be improve or want to request a feature. Please go ahead and create an issue in the [Github](https://github.com/samderlust/calendar_day_view) repo
+### Category Day View
+
+![Category Day View](https://raw.githubusercontent.com/samderlust/images/main/cagetorydayview.png)
+
+### Overflow Day View
+
+| Normal                                                                               | ListView                                                                                |
+| ------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------- |
+| ![Overflow Normal](https://raw.githubusercontent.com/samderlust/images/main/of1.png) | ![Overflow ListView](https://raw.githubusercontent.com/samderlust/images/main/ofl2.png) |
+
+### Event Only Day View
+
+![Event Only Day View](https://raw.githubusercontent.com/samderlust/images/main/eventdayview.png)
+
+### In Row Day View
+
+![In Row Day View](https://raw.githubusercontent.com/samderlust/images/main/inrowdayview.png)
+
+## 🤝 Contributing
+
+We welcome contributions! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change.
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## 📝 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- Thanks to all contributors who have helped improve this package
+- Special thanks to the Flutter team for creating such an amazing framework
