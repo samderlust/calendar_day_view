@@ -9,6 +9,7 @@ import '../../models/typedef.dart';
 import '../../utils/events_utils.dart';
 import '../../widgets/background_ignore_pointer.dart';
 import '../../widgets/current_time_line_widget.dart';
+
 import 'widgets/overflow_fixed_width_events_widget.dart';
 import 'widgets/overflow_list_view_row.dart';
 
@@ -122,7 +123,7 @@ class _OverFlowCalendarDayViewState<T extends Object> extends State<OverFlowCale
                 },
               ),
               BackgroundIgnorePointer(
-                ignored: widget.onTimeTap != null,
+                ignored: widget.onTimeTap == null,
                 child: widget.config.renderRowAsListView
                     ? OverFlowListViewRowView(
                         overflowEvents: _overflowEvents,
@@ -181,7 +182,20 @@ class OverflowTimeRowWidget extends StatelessWidget {
     return GestureDetector(
       key: ValueKey(time.toString()),
       behavior: HitTestBehavior.opaque,
-      onTap: onTimeTap == null ? null : () => onTimeTap!(time),
+      onTapDown: onTimeTap == null
+          ? null
+          : (details) {
+              final localYPosition = details.localPosition.dy;
+              final rowHeight = config.rowHeight;
+              final timeGap = config.timeGap;
+
+              final minuteFraction = (localYPosition / rowHeight) * timeGap;
+              final roundedMinute = (minuteFraction / 5).round() * 5;
+              final currentMinute = time.minute;
+              final roundedTime = time.copyWith(minute: currentMinute + roundedMinute);
+
+              onTimeTap!(roundedTime);
+            },
       child: SizedBox(
         height: config.rowHeight,
         width: viewWidth,

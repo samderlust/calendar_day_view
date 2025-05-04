@@ -19,7 +19,7 @@ class InRowDayViewTab extends HookWidget {
     return Column(
       children: [
         Expanded(
-          child: CalendarDayView<String>.inRow(
+          child: CalendarDayView.inRow<String>(
             config: InRowDayViewConfig(
               heightPerMin: 1,
               showCurrentTimeLine: true,

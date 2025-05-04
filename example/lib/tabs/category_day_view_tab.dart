@@ -20,6 +20,7 @@ class CategoryDayViewTab extends HookWidget {
     final controller = useMemoized(() => CategoryDayViewController(), []);
 
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Expanded(
           child: CategoryDayView(
@@ -68,7 +69,7 @@ class CategoryDayViewTab extends HookWidget {
             ),
           ],
         ),
-        Row(
+        Wrap(
           children: [
             for (var i = 0; i < categories.length; i++)
               OutlinedButton(
