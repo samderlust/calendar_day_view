@@ -1,6 +1,8 @@
 ## 5.0.0-dev
 
 - refactor category day view to use 2D table package
+- add `freezeCategoryTitleRow` to CategoryDavViewConfig. If true, the category titile row will be frozen when scrolling
+- add Category Day View Controller to control the category day view
 - refactor overflow day view
 - overflow day view now round the time to nearest 5 minutes when user tap on the time row
 

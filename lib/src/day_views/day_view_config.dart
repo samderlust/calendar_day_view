@@ -109,7 +109,7 @@ final class CategoryDavViewConfig extends DavViewConfig {
   /// if true, the category view will be frozen when scrolling
   ///
   /// default to true
-  final bool freezeCategoryView;
+  final bool freezeCategoryTitleRow;
 
   const CategoryDavViewConfig({
     this.headerDecoration,
@@ -120,7 +120,7 @@ final class CategoryDavViewConfig extends DavViewConfig {
     this.horizontalDivider,
     this.allowHorizontalScroll = false,
     this.columnsPerPage = 3,
-    this.freezeCategoryView = true,
+    this.freezeCategoryTitleRow = true,
     required super.currentDate,
     super.startOfDay,
     super.endOfDay,

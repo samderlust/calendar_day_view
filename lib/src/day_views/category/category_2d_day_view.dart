@@ -38,7 +38,7 @@ class CategoryDayView<T extends Object> extends StatelessWidget implements Calen
       columnCount: categories.length + 1,
       rowCount: config.timeList.length + 1,
       pinnedColumnCount: 1,
-      pinnedRowCount: config.freezeCategoryView ? 1 : 0,
+      pinnedRowCount: config.freezeCategoryTitleRow ? 1 : 0,
       verticalDetails: ScrollableDetails(
         direction: AxisDirection.down,
         physics: const ClampingScrollPhysics(),

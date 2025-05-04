@@ -19,6 +19,7 @@ class CategoryOverflowDayViewTab extends HookWidget {
     final controller = useMemoized(() => CategoryDayViewController(), []);
 
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Expanded(
           child: CalendarDayView.categoryOverflow(
@@ -73,7 +74,7 @@ class CategoryOverflowDayViewTab extends HookWidget {
             ),
           ],
         ),
-        Row(
+        Wrap(
           children: [
             for (var i = 0; i < categories.length; i++)
               OutlinedButton(
