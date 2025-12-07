@@ -28,6 +28,8 @@ class CategoryDayViewController {
     verticalScrollController.dispose();
   }
 
+  @visibleForTesting
+
   /// calculate the width of the column and the length of the tab
   void calibrate(double columnLength, int columnsPerPage) {
     _columnWidth = columnLength;

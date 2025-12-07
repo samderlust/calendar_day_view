@@ -22,7 +22,7 @@ class CategoryOverflowDayViewTab extends HookWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Expanded(
-          child: CalendarDayView.categoryOverflow(
+          child: CalendarDayView.categoryOverflow<String>(
             controller: controller,
             config: CategoryDavViewConfig(
               currentDate: DateTime.now(),

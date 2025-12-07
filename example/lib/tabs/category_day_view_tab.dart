@@ -23,7 +23,7 @@ class CategoryDayViewTab extends HookWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Expanded(
-          child: CategoryDayView(
+          child: CategoryDayView<String>(
             controller: controller,
             events: events,
             config: CategoryDavViewConfig(
