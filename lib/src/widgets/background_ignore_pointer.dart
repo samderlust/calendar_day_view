@@ -55,10 +55,10 @@ class BackgroundIgnoreRenderBox extends RenderProxyBox {
 
 class StopBackgroundIgnorePointer extends StatelessWidget {
   const StopBackgroundIgnorePointer({
-    Key? key,
+    super.key,
     required this.child,
     required this.ignored,
-  }) : super(key: key);
+  });
 
   final Widget child;
   final bool ignored;

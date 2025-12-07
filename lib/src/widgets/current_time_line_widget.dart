@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 
 class CurrentTimeLineWidget extends StatelessWidget {
   const CurrentTimeLineWidget({
-    Key? key,
+    super.key,
     required this.top,
     required this.width,
     this.color,
-  }) : super(key: key);
+  });
 
   final double top;
   final double width;
