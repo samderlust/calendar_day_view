@@ -29,8 +29,8 @@ class CategoryDayViewTab extends HookWidget {
             config: CategoryDavViewConfig(
               currentDate: DateTime.now(),
               time12: true,
-              columnsPerPage: 2,
-              allowHorizontalScroll: true,
+              columnsPerPage: 3,
+              // allowHorizontalScroll: true,
             ),
             categories: categories,
             onTileTap: (category, time) {

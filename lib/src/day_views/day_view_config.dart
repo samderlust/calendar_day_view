@@ -111,6 +111,8 @@ final class CategoryDavViewConfig extends DavViewConfig {
   /// default to true
   final bool freezeCategoryTitleRow;
 
+  final TextStyle? categoryTitleTextStyle;
+
   const CategoryDavViewConfig({
     this.headerDecoration,
     this.logo,
@@ -130,7 +132,7 @@ final class CategoryDavViewConfig extends DavViewConfig {
     super.showCurrentTimeLine,
     super.timeColumnWidth,
     super.timeLabelBuilder,
-    super.timeTextStyle,
+    this.categoryTitleTextStyle,
   });
 }
 

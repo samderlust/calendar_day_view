@@ -29,7 +29,7 @@ class CategoryDayViewController {
   }
 
   /// calculate the width of the column and the length of the tab
-  void calbliate(double columnLength, int columnsPerPage) {
+  void calibrate(double columnLength, int columnsPerPage) {
     _columnWidth = columnLength;
     _tabLength = columnLength * columnsPerPage;
   }

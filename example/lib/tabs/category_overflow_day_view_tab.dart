@@ -23,11 +23,12 @@ class CategoryOverflowDayViewTab extends HookWidget {
       children: [
         Expanded(
           child: CalendarDayView.categoryOverflow(
+            controller: controller,
             config: CategoryDavViewConfig(
               currentDate: DateTime.now(),
               time12: true,
-              // allowHorizontalScroll: true,
-              // columnsPerPage: 2,
+              allowHorizontalScroll: true,
+              columnsPerPage: 2,
               endOfDay: const TimeOfDay(hour: 23, minute: 59),
             ),
             categories: categories,

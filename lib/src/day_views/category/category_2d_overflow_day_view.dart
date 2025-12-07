@@ -29,7 +29,7 @@ class CategoryOverflowDayView<T extends Object> extends StatelessWidget implemen
     final eventPartLength = MediaQuery.sizeOf(context).width - config.timeColumnWidth;
     final columnWidth = config.allowHorizontalScroll ? eventPartLength / config.columnsPerPage : eventPartLength / categories.length;
 
-    controller?.calbliate(
+    controller?.calibrate(
       columnWidth,
       config.columnsPerPage,
     );
@@ -85,7 +85,7 @@ class CategoryOverflowDayView<T extends Object> extends StatelessWidget implemen
 
         // building category title
         if (rowIndex == 0 && columnIndex > 0) {
-          return _buildCategoryTitle(context, categories[columnIndex - 1]);
+          return _buildCategoryTitle(context, categories[columnIndex - 1], config);
         }
 
         if (columnIndex == 0) {
@@ -132,12 +132,12 @@ TableViewCell _buildLogo(BuildContext context, CategoryDavViewConfig config) {
   );
 }
 
-TableViewCell _buildCategoryTitle(BuildContext context, EventCategory category) {
+TableViewCell _buildCategoryTitle(BuildContext context, EventCategory category, CategoryDavViewConfig config) {
   return TableViewCell(
     child: Center(
       child: Text(
         category.name,
-        style: const TextStyle(fontWeight: FontWeight.bold),
+        style: config.categoryTitleTextStyle ?? const TextStyle(fontWeight: FontWeight.bold),
       ),
     ),
   );

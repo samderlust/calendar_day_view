@@ -29,7 +29,7 @@ class CategoryDayView<T extends Object> extends StatelessWidget implements Calen
     final eventPartLength = MediaQuery.sizeOf(context).width - config.timeColumnWidth;
     final columnWidth = config.allowHorizontalScroll ? eventPartLength / config.columnsPerPage : eventPartLength / config.columnsPerPage;
 
-    controller?.calbliate(
+    controller?.calibrate(
       columnWidth,
       config.columnsPerPage,
     );

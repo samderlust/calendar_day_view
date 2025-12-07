@@ -50,6 +50,7 @@ abstract class CalendarDayView<T extends Object> extends Widget {
   /// where day view is divided into multiple category with fixed time slot.
   /// event can be display overflowed into different time slot but within the same category column
   static CalendarDayView<T> categoryOverflow<T extends Object>({
+    CategoryDayViewController? controller,
     required List<CategorizedDayEvent<T>> events,
     required List<EventCategory> categories,
     required CategoryDayViewEventBuilder<T> eventBuilder,
@@ -59,7 +60,7 @@ abstract class CalendarDayView<T extends Object> extends Widget {
     required CategoryDavViewConfig config,
   }) =>
       CategoryOverflowDayView(
-        controller: CategoryDayViewController(),
+        controller: controller,
         config: config,
         events: events,
         categories: categories,
