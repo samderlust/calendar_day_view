@@ -1,6 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
+/// A widget that can ignore pointer events for background widgets.
+///
+/// This is useful when you want to have widgets in the background that should not
+/// receive pointer events, while still allowing widgets in the foreground to
+/// receive pointer events.
+///
+/// The [ignored] parameter determines whether pointer events should be ignored.
+/// When true (default), pointer events will be ignored. When false, pointer events
+/// will be handled normally.
+///
+/// Example:
+/// ```dart
+/// BackgroundIgnorePointer(
+///   ignored: true,
+///   child: BackgroundWidget(),
+/// )
+/// ```
+
 class BackgroundIgnorePointer extends SingleChildRenderObjectWidget {
   const BackgroundIgnorePointer({
     Key? key,
@@ -15,8 +33,7 @@ class BackgroundIgnorePointer extends SingleChildRenderObjectWidget {
   }
 
   @override
-  void updateRenderObject(
-      BuildContext context, BackgroundIgnoreRenderBox renderObject) {
+  void updateRenderObject(BuildContext context, BackgroundIgnoreRenderBox renderObject) {
     renderObject.ignored = ignored;
   }
 }
@@ -38,10 +55,10 @@ class BackgroundIgnoreRenderBox extends RenderProxyBox {
 
 class StopBackgroundIgnorePointer extends StatelessWidget {
   const StopBackgroundIgnorePointer({
-    Key? key,
+    super.key,
     required this.child,
     required this.ignored,
-  }) : super(key: key);
+  });
 
   final Widget child;
   final bool ignored;

@@ -12,7 +12,7 @@ import 'package:intl/intl.dart';
 
 import 'tabs/category_day_view_tab.dart';
 
-final timeFormat = DateFormat('ha');
+final timeFormat = DateFormat('HH:mm');
 
 final rd = Random();
 void main() {
@@ -27,8 +27,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
-      theme:
-          ThemeData(colorScheme: ColorScheme.fromSeed(seedColor: Colors.white)),
+      theme: ThemeData(colorScheme: ColorScheme.fromSeed(seedColor: Colors.white)),
       home: const CalendarDayViewExample(),
     );
   }
@@ -42,8 +41,7 @@ class CalendarDayViewExample extends HookWidget {
     final dayEvents = useState<List<DayEvent<String>>>(fakeEvents()
         .map(
           (e) => e.copyWith(
-            end: e.start.add(Duration(
-                minutes: faker.randomGenerator.element([20, 30, 90, 60]))),
+            end: e.start.add(Duration(minutes: faker.randomGenerator.element([20, 30, 90, 60]))),
           ),
         )
         .toList());
@@ -54,15 +52,12 @@ class CalendarDayViewExample extends HookWidget {
       EventCategory(id: "3", name: "cate 3"),
       EventCategory(id: "4", name: "cate 4"),
     ]);
-    final categoryEvents = useState<List<CategorizedDayEvent<String>>>(
-        genEvents(categories.value.length));
+    final categoryEvents = useState<List<CategorizedDayEvent<String>>>(genEvents(categories.value.length));
 
     void addCategory() {
       categories.value = [
         ...categories.value,
-        EventCategory(
-            id: "${categories.value.length + 1}",
-            name: "cate ${categories.value.length + 1}"),
+        EventCategory(id: "${categories.value.length + 1}", name: "cate ${categories.value.length + 1}"),
       ];
       categoryEvents.value = genEvents(categories.value.length);
     }
@@ -70,41 +65,22 @@ class CalendarDayViewExample extends HookWidget {
     final bodyItems = [
       OverflowDayViewTab(
         events: dayEvents.value,
-        onTimeTap: (time) => dayEvents.value = [
-          ...dayEvents.value,
-          DayEvent(
-            value: faker.conference.name(),
-            start: time,
-            end: time.add(
-              Duration(minutes: faker.randomGenerator.element([20, 140])),
-            ),
-          )
-        ],
+        onAddEvent: (event) {
+          dayEvents.value = [...dayEvents.value, event];
+        },
       ),
       CategoryOverflowDayViewTab(
         events: categoryEvents.value,
         categories: categories.value,
         addEventOnClick: (cate, time) {
-          categoryEvents.value = [
-            ...categoryEvents.value,
-            CategorizedDayEvent(
-                categoryId: cate.id,
-                value: faker.conference.name(),
-                start: time)
-          ];
+          categoryEvents.value = [...categoryEvents.value, CategorizedDayEvent(categoryId: cate.id, value: faker.conference.name(), start: time)];
         },
       ),
       CategoryDayViewTab(
         events: categoryEvents.value,
         categories: categories.value,
         addEventOnClick: (cate, time) {
-          categoryEvents.value = [
-            ...categoryEvents.value,
-            CategorizedDayEvent(
-                categoryId: cate.id,
-                value: faker.conference.name(),
-                start: time)
-          ];
+          categoryEvents.value = [...categoryEvents.value, CategorizedDayEvent(categoryId: cate.id, value: faker.conference.name(), start: time)];
         },
       ),
       InRowDayViewTab(
@@ -119,8 +95,8 @@ class CalendarDayViewExample extends HookWidget {
       length: 4,
       child: SafeArea(
         child: Scaffold(
-          extendBodyBehindAppBar: true,
-          backgroundColor: Theme.of(context).colorScheme.background,
+          // extendBodyBehindAppBar: true,
+          backgroundColor: Theme.of(context).colorScheme.surface,
           bottomNavigationBar: BottomNavigationBar(
             showUnselectedLabels: true,
             showSelectedLabels: true,
@@ -128,17 +104,11 @@ class CalendarDayViewExample extends HookWidget {
             unselectedItemColor: Colors.black,
             selectedItemColor: Colors.blue,
             items: const [
-              BottomNavigationBarItem(
-                  icon: Icon(Icons.calendar_month), label: "Overflow"),
-              BottomNavigationBarItem(
-                  icon: Icon(Icons.calendar_view_day),
-                  label: "Category Overflow"),
-              BottomNavigationBarItem(
-                  icon: Icon(Icons.calendar_view_day), label: "Category"),
-              BottomNavigationBarItem(
-                  icon: Icon(Icons.calendar_today_outlined), label: "In Row"),
-              BottomNavigationBarItem(
-                  icon: Icon(Icons.calendar_view_month), label: "Events"),
+              BottomNavigationBarItem(icon: Icon(Icons.calendar_month), label: "Overflow"),
+              BottomNavigationBarItem(icon: Icon(Icons.calendar_view_day), label: "Category Overflow"),
+              BottomNavigationBarItem(icon: Icon(Icons.calendar_view_day), label: "Category"),
+              BottomNavigationBarItem(icon: Icon(Icons.calendar_today_outlined), label: "In Row"),
+              BottomNavigationBarItem(icon: Icon(Icons.calendar_view_month), label: "Events"),
             ],
             onTap: (value) => currentIndex.value = value,
             currentIndex: currentIndex.value,
@@ -151,7 +121,7 @@ class CalendarDayViewExample extends HookWidget {
               }} events",
               style: const TextStyle(color: Colors.teal, fontSize: 30),
             ),
-            toolbarHeight: 100,
+            // toolbarHeight: 100,
             centerTitle: false,
             actions: [
               Row(
@@ -160,10 +130,8 @@ class CalendarDayViewExample extends HookWidget {
                     var i when (i == 1 || i == 2) => Row(
                         children: [
                           TextButton.icon(
-                            style: TextButton.styleFrom(
-                                backgroundColor: Colors.white),
-                            onPressed: () => categoryEvents.value =
-                                genEvents(categories.value.length),
+                            style: TextButton.styleFrom(backgroundColor: Colors.white),
+                            onPressed: () => categoryEvents.value = genEvents(categories.value.length),
                             icon: const Icon(Icons.refresh),
                             label: const Text("events"),
                           ),
@@ -179,8 +147,7 @@ class CalendarDayViewExample extends HookWidget {
                         ],
                       ),
                     _ => TextButton.icon(
-                        style:
-                            TextButton.styleFrom(backgroundColor: Colors.white),
+                        style: TextButton.styleFrom(backgroundColor: Colors.white),
                         onPressed: () => dayEvents.value = fakeEvents(),
                         icon: const Icon(Icons.refresh),
                         label: const Text("events"),
@@ -231,8 +198,7 @@ List<DayEvent<String>> fakeEvents() => faker.randomGenerator.amount((i) {
       );
     }, 30, min: 10);
 
-List<CategorizedDayEvent<String>> genEvents(int categoryLength) =>
-    faker.randomGenerator.amount(
+List<CategorizedDayEvent<String>> genEvents(int categoryLength) => faker.randomGenerator.amount(
       (i) {
         final hour = faker.randomGenerator.integer(17, min: 7);
         final start = DateTime.now().copyWith(
@@ -241,9 +207,7 @@ List<CategorizedDayEvent<String>> genEvents(int categoryLength) =>
           second: 0,
         );
         return CategorizedDayEvent(
-            categoryId: faker.randomGenerator
-                .integer(categoryLength + 1, min: 1)
-                .toString(),
+            categoryId: faker.randomGenerator.integer(categoryLength + 1, min: 1).toString(),
             value: faker.conference.name(),
             start: start,
             end: start.add(

@@ -8,8 +8,7 @@ import '../models/typedef.dart';
 ///
 /// this day view doesn't display with a fixed time gap
 /// it listed and sorted by the time that the events start
-class EventCalendarDayView<T extends Object> extends StatefulWidget
-    implements CalendarDayView<T> {
+class EventCalendarDayView<T extends Object> extends StatefulWidget implements CalendarDayView<T> {
   const EventCalendarDayView({
     Key? key,
     required this.events,
@@ -33,8 +32,7 @@ class EventCalendarDayView<T extends Object> extends StatefulWidget
   State<EventCalendarDayView> createState() => _EventCalendarDayViewState<T>();
 }
 
-class _EventCalendarDayViewState<T extends Object>
-    extends State<EventCalendarDayView<T>> {
+class _EventCalendarDayViewState<T extends Object> extends State<EventCalendarDayView<T>> {
   List<DateTime> _timesInDay = [];
 
   @override
@@ -45,10 +43,7 @@ class _EventCalendarDayViewState<T extends Object>
 
   List<DateTime> getTimeList() {
     Set<DateTime> list = {};
-    list.addAll(widget.events
-        .map((e) =>
-            widget.config.showHourly ? e.start.hourOnly() : e.start.cleanSec())
-        .toList()
+    list.addAll(widget.events.map((e) => widget.config.showHourly ? e.start.hourOnly() : e.start.cleanSec()).toList()
       ..sort(
         (a, b) {
           int hourComparison = a.hour.compareTo(b.hour);
@@ -83,14 +78,11 @@ class _EventCalendarDayViewState<T extends Object>
             itemBuilder: (context, index) {
               final time = _timesInDay.elementAt(index);
               final events = widget.events.where(
-                (event) => widget.config.showHourly
-                    ? event.startAtHour(time)
-                    : event.startAt(time),
+                (event) => widget.config.showHourly ? event.startAtHour(time) : event.startAt(time),
               );
 
               return Padding(
-                padding: widget.config.timeSlotPadding ??
-                    const EdgeInsets.symmetric(vertical: 5),
+                padding: widget.config.timeSlotPadding ?? const EdgeInsets.symmetric(vertical: 5),
                 child: Stack(
                   clipBehavior: Clip.none,
                   children: [
@@ -116,9 +108,7 @@ class _EventCalendarDayViewState<T extends Object>
                                 FittedBox(
                                   fit: BoxFit.scaleDown,
                                   child: Text(
-                                    widget.config.time12
-                                        ? time.hourDisplay12
-                                        : time.hourDisplay24,
+                                    widget.config.time12 ? time.hourDisplay12 : time.hourDisplay24,
                                     style: widget.config.timeTextStyle,
                                     maxLines: 1,
                                   ),
@@ -127,14 +117,12 @@ class _EventCalendarDayViewState<T extends Object>
                         ),
                         Expanded(
                           child: Padding(
-                            padding: widget.config.rowPadding ??
-                                const EdgeInsets.all(0),
+                            padding: widget.config.rowPadding ?? const EdgeInsets.all(0),
                             child: ListView.separated(
                               physics: const NeverScrollableScrollPhysics(),
                               shrinkWrap: true,
                               itemCount: events.length,
-                              separatorBuilder: widget.itemSeparatorBuilder ??
-                                  (context, index) => const SizedBox(height: 5),
+                              separatorBuilder: widget.itemSeparatorBuilder ?? (context, index) => const SizedBox(height: 5),
                               itemBuilder: (context, index) {
                                 return widget.eventDayViewItemBuilder(
                                   context,

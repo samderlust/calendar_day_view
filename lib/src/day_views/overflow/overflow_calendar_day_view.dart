@@ -9,11 +9,11 @@ import '../../models/typedef.dart';
 import '../../utils/events_utils.dart';
 import '../../widgets/background_ignore_pointer.dart';
 import '../../widgets/current_time_line_widget.dart';
+
 import 'widgets/overflow_fixed_width_events_widget.dart';
 import 'widgets/overflow_list_view_row.dart';
 
-class OverFlowCalendarDayView<T extends Object> extends StatefulWidget
-    implements CalendarDayView<T> {
+class OverFlowCalendarDayView<T extends Object> extends StatefulWidget implements CalendarDayView<T> {
   const OverFlowCalendarDayView({
     Key? key,
     required this.events,
@@ -43,12 +43,10 @@ class OverFlowCalendarDayView<T extends Object> extends StatefulWidget
   final OnTimeTap? onTimeTap;
 
   @override
-  State<OverFlowCalendarDayView> createState() =>
-      _OverFlowCalendarDayViewState<T>();
+  State<OverFlowCalendarDayView> createState() => _OverFlowCalendarDayViewState<T>();
 }
 
-class _OverFlowCalendarDayViewState<T extends Object>
-    extends State<OverFlowCalendarDayView<T>> {
+class _OverFlowCalendarDayViewState<T extends Object> extends State<OverFlowCalendarDayView<T>> {
   List<OverflowEventsRow<T>> _overflowEvents = [];
 
   DateTime _currentTime = DateTime.now();
@@ -125,7 +123,7 @@ class _OverFlowCalendarDayViewState<T extends Object>
                 },
               ),
               BackgroundIgnorePointer(
-                ignored: widget.onTimeTap != null,
+                ignored: widget.onTimeTap == null,
                 child: widget.config.renderRowAsListView
                     ? OverFlowListViewRowView(
                         overflowEvents: _overflowEvents,
@@ -149,14 +147,9 @@ class _OverFlowCalendarDayViewState<T extends Object>
                         timeEnd: widget.config.timeEnd,
                       ),
               ),
-              if (widget.config.showCurrentTimeLine &&
-                  _currentTime.isAfter(widget.config.timeStart) &&
-                  _currentTime.isBefore(widget.config.timeEnd))
+              if (widget.config.showCurrentTimeLine && _currentTime.isAfter(widget.config.timeStart) && _currentTime.isBefore(widget.config.timeEnd))
                 CurrentTimeLineWidget(
-                  top: _currentTime
-                          .minuteFrom(widget.config.timeStart)
-                          .toDouble() *
-                      widget.config.heightPerMin,
+                  top: _currentTime.minuteFrom(widget.config.timeStart).toDouble() * widget.config.heightPerMin,
                   width: viewWidth,
                   color: widget.config.currentTimeLineColor,
                 ),
@@ -189,7 +182,20 @@ class OverflowTimeRowWidget extends StatelessWidget {
     return GestureDetector(
       key: ValueKey(time.toString()),
       behavior: HitTestBehavior.opaque,
-      onTap: onTimeTap == null ? null : () => onTimeTap!(time),
+      onTapDown: onTimeTap == null
+          ? null
+          : (details) {
+              final localYPosition = details.localPosition.dy;
+              final rowHeight = config.rowHeight;
+              final timeGap = config.timeGap;
+
+              final minuteFraction = (localYPosition / rowHeight) * timeGap;
+              final roundedMinute = (minuteFraction / 5).round() * 5;
+              final currentMinute = time.minute;
+              final roundedTime = time.copyWith(minute: currentMinute + roundedMinute);
+
+              onTimeTap!(roundedTime);
+            },
       child: SizedBox(
         height: config.rowHeight,
         width: viewWidth,
@@ -206,16 +212,17 @@ class OverflowTimeRowWidget extends StatelessWidget {
               child: SizedBox(
                 height: 40,
                 width: config.timeColumnWidth,
-                child: timeLabelBuilder?.call(context, time) ??
-                    FittedBox(
-                      fit: BoxFit.scaleDown,
-                      child: Text(
-                        config.time12 ? time.hourDisplay12 : time.hourDisplay24,
-                        style: config.timeTextStyle ??
-                            TextStyle(color: config.timeTextColor),
-                        maxLines: 1,
+                child: Center(
+                  child: timeLabelBuilder?.call(context, time) ??
+                      FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Text(
+                          config.time12 ? time.hourDisplay12 : time.hourDisplay24,
+                          style: config.timeTextStyle ?? TextStyle(color: config.timeTextColor),
+                          maxLines: 1,
+                        ),
                       ),
-                    ),
+                ),
               ),
             ),
           ],

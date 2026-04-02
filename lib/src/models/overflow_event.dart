@@ -25,17 +25,13 @@ class OverflowEventsRow<T extends Object> {
   }
 
   @override
-  String toString() =>
-      'OverflowEventsRow(events: $events, start: $start, end: $end)';
+  String toString() => 'OverflowEventsRow(events: $events, start: $start, end: $end)';
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
 
-    return other is OverflowEventsRow<T> &&
-        listEquals(other.events, events) &&
-        other.start == start &&
-        other.end == end;
+    return other is OverflowEventsRow<T> && listEquals(other.events, events) && other.start == start && other.end == end;
   }
 
   @override

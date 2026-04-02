@@ -1,9 +1,9 @@
 import 'dart:collection';
 
 import 'package:calendar_day_view/calendar_day_view.dart';
+import 'package:faker/faker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:intl/intl.dart';
 
 import '../main.dart';
 
@@ -14,9 +14,11 @@ class OverflowDayViewTab extends HookWidget {
     Key? key,
     required this.events,
     this.onTimeTap,
+    this.onAddEvent,
   }) : super(key: key);
   final List<DayEvent<String>> events;
   final Function(DateTime)? onTimeTap;
+  final Function(DayEvent<String>)? onAddEvent;
   @override
   Widget build(BuildContext context) {
     final timeGap = useState<int>(60);
@@ -48,45 +50,52 @@ class OverflowDayViewTab extends HookWidget {
                 style: const TextStyle(fontWeight: FontWeight.bold),
               ),
             ),
-            onTimeTap: (t) {
-              print(t);
-              onTimeTap?.call(t);
+            onTimeTap: (t) async {
+              print("onTimeTap: $t");
+              final newEvent = await showAddEventDialog(context, t);
+              if (newEvent != null) {
+                onAddEvent?.call(newEvent);
+              }
             },
             events: UnmodifiableListView(events),
             overflowItemBuilder: (context, constraints, itemIndex, event) {
               return HookBuilder(builder: (context) {
                 return GestureDetector(
-                  behavior: HitTestBehavior.opaque,
+                  // behavior: HitTestBehavior.opaque,
                   key: ValueKey(event.hashCode),
                   onTap: () {
-                    print(event.value);
-                    print(event.start);
-                    print(event.end);
+                    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(event.value),
+                            Text("start:${timeFormat.format(event.start)}"),
+                            Text("end:${timeFormat.format(event.end!)}"),
+                          ],
+                        ),
+                      ),
+                    );
                   },
                   child: Container(
                     margin: const EdgeInsets.only(right: 3, left: 3),
                     padding: const EdgeInsets.symmetric(horizontal: 5),
                     key: ValueKey(event.hashCode),
-                    width: !renderAsList.value
-                        ? (constraints.minWidth) - 6
-                        : size.width / 4 - 6,
+                    width: !renderAsList.value ? (constraints.minWidth) - 6 : size.width / 4 - 6,
                     height: constraints.maxHeight,
                     decoration: BoxDecoration(
-                      color: itemIndex % 2 == 0
-                          ? colorScheme.tertiaryContainer
-                          : colorScheme.secondaryContainer,
-                      border: Border.all(color: colorScheme.tertiary, width: 2),
-                      borderRadius: const BorderRadius.all(Radius.circular(10)),
+                      color: itemIndex % 2 == 0 ? colorScheme.tertiaryContainer : colorScheme.secondaryContainer,
+                      border: Border.all(color: colorScheme.tertiary, width: .4),
+                      borderRadius: const BorderRadius.all(Radius.circular(5)),
                     ),
                     child: Center(
                       child: Text(
                         event.value,
                         textAlign: TextAlign.center,
                         overflow: TextOverflow.fade,
-                        style: TextStyle(
-                          color: colorScheme.onSecondaryContainer,
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: TextStyle(color: colorScheme.onSecondaryContainer),
                       ),
                     ),
                   ),
@@ -98,33 +107,16 @@ class OverflowDayViewTab extends HookWidget {
         Row(
           children: [
             Row(
-              children: [
-                const Text("Render List Row"),
-                Radio(
-                    groupValue: renderAsList.value,
-                    value: true,
-                    onChanged: (v) => renderAsList.value = v!)
-              ],
+              children: [const Text("Render List Row"), Radio(groupValue: renderAsList.value, value: true, onChanged: (v) => renderAsList.value = v!)],
             ),
             const SizedBox(width: 20),
             Row(
-              children: [
-                const Text("Render Fix Row"),
-                Radio(
-                    groupValue: renderAsList.value,
-                    value: false,
-                    onChanged: (v) => renderAsList.value = v!)
-              ],
+              children: [const Text("Render Fix Row"), Radio(groupValue: renderAsList.value, value: false, onChanged: (v) => renderAsList.value = v!)],
             ),
           ],
         ),
         Row(
-          children: [
-            const Text("Crop Bottom Events"),
-            Checkbox(
-                value: cropBottomEvents.value,
-                onChanged: (v) => cropBottomEvents.value = v!)
-          ],
+          children: [const Text("Crop Bottom Events"), Checkbox(value: cropBottomEvents.value, onChanged: (v) => cropBottomEvents.value = v!)],
         ),
         TimeGapSelection(
           timeGap: timeGap.value,
@@ -176,4 +168,51 @@ class TimeGapSelection extends StatelessWidget {
       ],
     );
   }
+}
+
+Future<DayEvent<String>?> showAddEventDialog(BuildContext context, DateTime t) async {
+  return await showDialog<DayEvent<String>>(
+    context: context,
+    builder: (context) {
+      final newText = faker.conference.name();
+
+      return AlertDialog(
+        title: const Text("Add Event"),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              newText,
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 10),
+            Text(
+              timeFormat.format(t),
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              final newEvent = DayEvent(
+                value: newText,
+                start: t,
+                end: t.add(
+                  Duration(minutes: faker.randomGenerator.element([20, 140])),
+                ),
+              );
+              Navigator.pop(context, newEvent);
+            },
+            child: const Text("Add"),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, null),
+            child: const Text("Cancel"),
+          )
+        ],
+      );
+    },
+  );
 }

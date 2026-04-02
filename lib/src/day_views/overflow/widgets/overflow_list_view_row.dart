@@ -90,8 +90,7 @@ class OverflowListViewRow<T extends Object> extends StatefulWidget {
   State<OverflowListViewRow<T>> createState() => _OverflowListViewRowState<T>();
 }
 
-class _OverflowListViewRowState<T extends Object>
-    extends State<OverflowListViewRow<T>> {
+class _OverflowListViewRowState<T extends Object> extends State<OverflowListViewRow<T>> {
   late ScrollController _scrollCtrl;
   bool _atEndOfList = true;
 
@@ -118,8 +117,7 @@ class _OverflowListViewRowState<T extends Object>
     });
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      if (_scrollCtrl.hasClients &&
-          _scrollCtrl.position.pixels >= _scrollCtrl.position.maxScrollExtent) {
+      if (_scrollCtrl.hasClients && _scrollCtrl.position.pixels >= _scrollCtrl.position.maxScrollExtent) {
         setState(() {
           _atEndOfList = true;
         });
@@ -135,8 +133,7 @@ class _OverflowListViewRowState<T extends Object>
 
   @override
   Widget build(BuildContext context) {
-    final maxHeight = (widget.heightUnit *
-        widget.oEvents.start.minuteUntil(widget.oEvents.end).abs());
+    final maxHeight = (widget.heightUnit * widget.oEvents.start.minuteUntil(widget.oEvents.end).abs());
 
     return Container(
       width: widget.eventColumnWith,
@@ -154,18 +151,12 @@ class _OverflowListViewRowState<T extends Object>
             itemCount: widget.oEvents.events.length,
             itemBuilder: (context, index) {
               final event = widget.oEvents.events.elementAt(index);
-              final width =
-                  widget.eventColumnWith / widget.oEvents.events.length;
-              final topGap = event.start.minuteFrom(widget.oEvents.start) *
-                  widget.heightUnit;
+              final width = widget.eventColumnWith / widget.oEvents.events.length;
+              final topGap = event.start.minuteFrom(widget.oEvents.start) * widget.heightUnit;
 
-              final tilePossibleHeight =
-                  (event.durationInMins * widget.heightUnit);
+              final tilePossibleHeight = (event.durationInMins * widget.heightUnit);
 
-              final tileHeight = (maxHeight < (topGap + tilePossibleHeight) &&
-                      widget.cropBottomEvents)
-                  ? (maxHeight - topGap)
-                  : (event.durationInMins * widget.heightUnit);
+              final tileHeight = (maxHeight < (topGap + tilePossibleHeight) && widget.cropBottomEvents) ? (maxHeight - topGap) : (event.durationInMins * widget.heightUnit);
 
               final tileConstraints = BoxConstraints(
                 maxHeight: tileHeight,
@@ -212,9 +203,7 @@ class _OverflowListViewRowState<T extends Object>
                       Container(
                         height: 30,
                         width: 30,
-                        decoration: BoxDecoration(
-                            color: Colors.black38.withOpacity(.8),
-                            shape: BoxShape.circle),
+                        decoration: BoxDecoration(color: Colors.black38.withOpacity(.8), shape: BoxShape.circle),
                         child: const Icon(
                           Icons.arrow_right,
                           color: Colors.white,

@@ -11,8 +11,7 @@ import '../widgets/current_time_line_widget.dart';
 ///
 /// ex: if `timeGap` is 15, the events that have start time from `10:00` to `10:15`
 /// will be displayed in the same row.
-class InRowCalendarDayView<T extends Object> extends StatefulWidget
-    implements CalendarDayView<T> {
+class InRowCalendarDayView<T extends Object> extends StatefulWidget implements CalendarDayView<T> {
   const InRowCalendarDayView({
     Key? key,
     required this.events,
@@ -42,8 +41,7 @@ class InRowCalendarDayView<T extends Object> extends StatefulWidget
   State<InRowCalendarDayView> createState() => _InRowCalendarDayViewState<T>();
 }
 
-class _InRowCalendarDayViewState<T extends Object>
-    extends State<InRowCalendarDayView<T>> {
+class _InRowCalendarDayViewState<T extends Object> extends State<InRowCalendarDayView<T>> {
   DateTime _currentTime = DateTime.now();
   Timer? _timer;
 
@@ -164,9 +162,7 @@ class InRowEventRowWidget<T extends Object> extends StatelessWidget {
                       FittedBox(
                         fit: BoxFit.scaleDown,
                         child: Text(
-                          config.time12
-                              ? time.hourDisplay12
-                              : time.hourDisplay24,
+                          config.time12 ? time.hourDisplay12 : time.hourDisplay24,
                           style: config.timeTextStyle,
                           maxLines: 1,
                         ),
@@ -215,8 +211,7 @@ class InRowEventRowWidget<T extends Object> extends StatelessWidget {
               ),
             ],
           ),
-          if (config.showCurrentTimeLine &&
-              currentTime.inTheGap(time, config.timeGap))
+          if (config.showCurrentTimeLine && currentTime.inTheGap(time, config.timeGap))
             CurrentTimeLineWidget(
               top: (currentTime.minute - time.minute) * config.heightPerMin,
               color: config.currentTimeLineColor,

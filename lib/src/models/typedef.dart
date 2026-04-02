@@ -74,3 +74,6 @@ typedef CategoryDayViewHeaderTileBuilder = Function(
 /// time label builder
 /// allow custom time label
 typedef TimeLabelBuilder = Widget Function(BuildContext context, DateTime time);
+
+/// sort events in a time range for overflow day view
+typedef OverflowEventsSorter = int Function(DayEvent eventA, DayEvent eventB);

@@ -40,8 +40,7 @@ class TimeAndLogoWidget extends StatelessWidget {
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             itemCount: config.timeList.length,
-            separatorBuilder: (context, index) =>
-                config.horizontalDivider ?? const Divider(height: 0),
+            separatorBuilder: (context, index) => config.horizontalDivider ?? const Divider(height: 0),
             itemBuilder: (context, index) {
               final time = config.timeList.elementAt(index);
 
@@ -51,9 +50,7 @@ class TimeAndLogoWidget extends StatelessWidget {
                   children: [
                     Container(
                         decoration: BoxDecoration(
-                          color: index % 2 == 0
-                              ? config.evenRowColor
-                              : config.oddRowColor,
+                          color: index % 2 == 0 ? config.evenRowColor : config.oddRowColor,
                         ),
                         constraints: BoxConstraints(
                           maxHeight: config.rowHeight,
@@ -70,9 +67,7 @@ class TimeAndLogoWidget extends StatelessWidget {
                                 FittedBox(
                                   fit: BoxFit.fitWidth,
                                   child: Text(
-                                    config.time12
-                                        ? time.hourDisplay12
-                                        : time.hourDisplay24,
+                                    config.time12 ? time.hourDisplay12 : time.hourDisplay24,
                                     style: config.timeTextStyle,
                                     maxLines: 1,
                                   ),

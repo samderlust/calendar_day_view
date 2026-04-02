@@ -54,8 +54,7 @@ class OverflowDayViewRow<T extends Object> extends StatelessWidget {
               children: [
                 ...categories
                     .map((category) {
-                      final event = rowEvents
-                          .firstWhereOrNull((e) => e.categoryId == category.id);
+                      final event = rowEvents.firstWhereOrNull((e) => e.categoryId == category.id);
 
                       final eventHeight = switch (event) {
                         var e? => e.durationInMins,
@@ -101,9 +100,7 @@ class OverflowDayViewRow<T extends Object> extends StatelessWidget {
                             ),
                           _ => GestureDetector(
                               behavior: HitTestBehavior.translucent,
-                              onTap: (onTileTap == null)
-                                  ? null
-                                  : () => onTileTap!(category, time),
+                              onTap: (onTileTap == null) ? null : () => onTileTap!(category, time),
                               child: SizedBox(
                                 width: constraints.maxWidth,
                                 height: constraints.maxHeight,
@@ -153,8 +150,7 @@ class DayViewRow<T extends Object> extends StatelessWidget {
         children: [
           ...categories
               .map((category) {
-                final event = rowEvents
-                    .firstWhereOrNull((e) => e.categoryId == category.id);
+                final event = rowEvents.firstWhereOrNull((e) => e.categoryId == category.id);
 
                 final constraints = BoxConstraints(
                   maxHeight: config.rowHeight,
@@ -176,9 +172,7 @@ class DayViewRow<T extends Object> extends StatelessWidget {
                       ),
                     _ => GestureDetector(
                         behavior: HitTestBehavior.translucent,
-                        onTap: (onTileTap == null)
-                            ? null
-                            : () => onTileTap!(category, time),
+                        onTap: (onTileTap == null) ? null : () => onTileTap!(category, time),
                         child: SizedBox(
                           width: constraints.maxWidth,
                           height: constraints.maxHeight,

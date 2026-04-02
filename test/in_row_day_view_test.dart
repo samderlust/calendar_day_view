@@ -19,7 +19,7 @@ void main() {
 
     testWidgets('renders InRowDayView correctly', (tester) async {
       await tester.pumpWidget(MaterialApp(
-        home: CalendarDayView<String>.inRow(
+        home: CalendarDayView.inRow(
           config: InRowDayViewConfig(
             currentDate: DateTime(2024, 1, 1),
             timeGap: 60,
@@ -44,7 +44,7 @@ void main() {
       DayEvent? tappedEvent;
 
       await tester.pumpWidget(MaterialApp(
-        home: CalendarDayView<String>.inRow(
+        home: CalendarDayView.inRow(
           config: InRowDayViewConfig(
             currentDate: DateTime(2024, 1, 1),
             timeGap: 60,
