@@ -17,21 +17,12 @@ class OverFlowCalendarDayView<T extends Object> extends StatefulWidget implement
   const OverFlowCalendarDayView({
     Key? key,
     required this.events,
-    this.heightPerMin = 1.0,
     this.overflowItemBuilder,
     this.onTimeTap,
     required this.config,
-  }) :
-        //  assert(endOfDay.difference(startOfDay).inHours > 0,
-        //     "endOfDay and startOfDay must be at least 1 hour different. The different now is: ${endOfDay.difference(startOfDay).inHours}"),
-        // assert(endOfDay.difference(startOfDay).inHours <= 24,
-        //     "endOfDay and startOfDay must be at max 24 hour different. The different now is: ${endOfDay.difference(startOfDay).inHours}"),
-        super(key: key);
+  }) : super(key: key);
 
   final OverFlowDayViewConfig config;
-
-  /// height in pixel per minute
-  final double heightPerMin;
 
   /// List of events to be display in the day view
   final List<DayEvent<T>> events;
@@ -65,9 +56,11 @@ class _OverFlowCalendarDayViewState<T extends Object> extends State<OverFlowCale
 
     if (widget.config.showCurrentTimeLine) {
       _timer = Timer.periodic(const Duration(minutes: 1), (_) {
-        setState(() {
-          _currentTime = DateTime.now();
-        });
+        if (mounted) {
+          setState(() {
+            _currentTime = DateTime.now();
+          });
+        }
       });
     }
   }

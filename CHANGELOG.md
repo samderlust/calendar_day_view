@@ -1,3 +1,15 @@
+## 5.1.0
+
+- fix `CategorizedDayEvent.operator==` to compare all fields instead of only `categoryId`
+- consolidate `CategoryDayView` and `CategoryOverflowDayView` into shared internal widget to reduce code duplication
+- add `mounted` check in timer callbacks for `OverFlowCalendarDayView` and `InRowCalendarDayView`
+- remove unused internal widgets (`TimeAndLogoWidget`, `TimeRowBackground`, `CategoryTitleRow`, `DayViewRow`, `OverflowDayViewRow`)
+- remove unused `DayViewProvider` and `DayViewState`
+- replace custom `firstWhereOrNull` extension with Dart 3 built-in `.firstOrNull`
+- inline `earlierThan`/`laterThan` extensions with standard `isBefore`/`isAfter`
+- remove commented-out code and unused fields
+- add `categoryTitleTextStyle` support to non-overflow `CategoryDayView`
+
 ## 5.0.0
 
 - refactor category day view to use `two_dimensional_scrollables` for better performance and clearer code

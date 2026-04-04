@@ -14,9 +14,14 @@ class CategorizedDayEvent<T extends Object> extends DayEvent<T> {
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
 
-    return other is CategorizedDayEvent && other.categoryId == categoryId;
+    return other is CategorizedDayEvent &&
+        other.categoryId == categoryId &&
+        other.value == value &&
+        other.start == start &&
+        other.end == end &&
+        other.name == name;
   }
 
   @override
-  int get hashCode => categoryId.hashCode;
+  int get hashCode => categoryId.hashCode ^ super.hashCode;
 }
