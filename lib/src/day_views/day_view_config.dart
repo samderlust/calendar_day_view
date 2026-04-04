@@ -253,3 +253,32 @@ final class InRowDayViewConfig extends EventDayViewConfig {
     this.currentTimeLineColor,
   });
 }
+
+final class MultiColumnDayViewConfig extends DavViewConfig {
+  /// Color of the current time line
+  final Color? currentTimeLineColor;
+
+  /// if true, the bottom events' end time will be cropped by the end time of day view
+  final bool cropBottomEvents;
+
+  const MultiColumnDayViewConfig({
+    required super.currentDate,
+    super.startOfDay,
+    super.endOfDay,
+    super.timeGap,
+    super.time12,
+    super.heightPerMin,
+    super.showCurrentTimeLine,
+    super.timeColumnWidth,
+    super.primary,
+    super.physics,
+    super.controller,
+    super.dividerColor,
+    super.timeTextStyle,
+    super.timeLabelBuilder,
+    super.currentTimeLineBuilder,
+    super.scrollToCurrentTime,
+    this.currentTimeLineColor,
+    this.cropBottomEvents = false,
+  });
+}

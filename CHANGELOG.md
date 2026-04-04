@@ -20,6 +20,7 @@
 - export `typedef.dart` from barrel file so typedefs are accessible via main import
 - clean all analyzer warnings and lint issues
 - improve example app UI: replace deprecated Radio with SegmentedButton, use Switch, remove unnecessary HookBuilder wrappers, replace print with debugPrint
+- add new `CalendarDayView.multiColumn()` — Google Calendar-style layout where overlapping events are placed side-by-side in columns with smart column reuse
 
 ## 5.0.0
 

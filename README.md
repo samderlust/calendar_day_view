@@ -35,6 +35,7 @@ A powerful and customizable Flutter library for displaying calendar events in da
 - **Show all events in category cell** — set `showAllEventsInCell: true` in `CategoryDavViewConfig` to display all events horizontally instead of only the first
 - **Empty tile builder** — use `emptyTileBuilder` in category views to customize empty cells
 - **Null end time safety** — overflow views now default to 30 min duration for events without an end time instead of crashing
+- **Multi-Column Day View** — new Google Calendar-style layout where overlapping events are placed side-by-side in columns with smart column reuse
 
 For full details, see the [Changelog](CHANGELOG.md).
 
@@ -46,6 +47,7 @@ Check out the live demo at: [https://samderlust.github.io/calendardayview](https
 
 ### View Types
 
+- **Multi-Column Day View**: Google Calendar-style layout — overlapping events are placed side-by-side in columns with smart column reuse
 - **Category Overflow Day View**: Display events across multiple time slots within categorized columns
 - **Category Day View**: Organize events by categories (e.g., meeting rooms, resources)
 - **Overflow Day View**: Traditional calendar view with events spanning multiple time slots
@@ -80,6 +82,35 @@ import 'package:calendar_day_view/calendar_day_view.dart';
 ```
 
 ## 🚀 Usage
+
+### Multi-Column Day View
+
+Google Calendar-style layout. Overlapping events are automatically placed side-by-side in columns. Column count is determined by the overlap pattern — solo events get full width.
+
+```dart
+CalendarDayView.multiColumn(
+  config: MultiColumnDayViewConfig(
+    currentDate: DateTime.now(),
+    timeGap: 60,
+    heightPerMin: 2,
+    startOfDay: const TimeOfDay(hour: 7, minute: 0),
+    endOfDay: const TimeOfDay(hour: 20, minute: 0),
+    scrollToCurrentTime: true,
+  ),
+  events: events,
+  onTimeTap: (time) => handleTimeTap(time),
+  itemBuilder: (context, constraints, event, columnIndex, totalColumns) {
+    return Container(
+      margin: const EdgeInsets.all(1),
+      decoration: BoxDecoration(
+        color: Colors.blue.shade100,
+        borderRadius: BorderRadius.circular(4),
+      ),
+      child: Text(event.value),
+    );
+  },
+);
+```
 
 ### Category Day View
 

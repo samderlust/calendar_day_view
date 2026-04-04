@@ -44,6 +44,15 @@ typedef TimeLabelBuilder = Widget Function(BuildContext context, DateTime time);
 /// allow custom current time line widget
 typedef CurrentTimeLineBuilder = Widget Function(double top, double width);
 
+/// builder for multi-column day view events
+typedef MultiColumnItemBuilder<T extends Object> = Widget Function(
+  BuildContext context,
+  BoxConstraints constraints,
+  DayEvent<T> event,
+  int columnIndex,
+  int totalColumns,
+);
+
 /// empty tile builder for category views
 /// allow custom empty cell widget
 typedef CategoryEmptyTileBuilder<T extends Object> = Widget Function(

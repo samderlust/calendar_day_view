@@ -4,6 +4,7 @@ import 'package:calendar_day_view/calendar_day_view.dart';
 import 'package:example/tabs/category_overflow_day_view_tab.dart';
 import 'package:example/tabs/event_day_view_tab.dart';
 import 'package:example/tabs/in_row_day_view_tab.dart';
+import 'package:example/tabs/multi_column_day_view_tab.dart';
 import 'package:example/tabs/overflow_day_view_tab.dart';
 import 'package:faker/faker.dart';
 import 'package:flutter/material.dart';
@@ -87,6 +88,7 @@ class CalendarDayViewExample extends HookWidget {
         events: dayEvents.value,
       ),
       EventDayViewTab(events: dayEvents.value),
+      MultiColumnDayViewTab(events: dayEvents.value),
     ];
 
     final currentIndex = useState<int>(0);
@@ -109,6 +111,7 @@ class CalendarDayViewExample extends HookWidget {
               BottomNavigationBarItem(icon: Icon(Icons.calendar_view_day), label: "Category"),
               BottomNavigationBarItem(icon: Icon(Icons.calendar_today_outlined), label: "In Row"),
               BottomNavigationBarItem(icon: Icon(Icons.calendar_view_month), label: "Events"),
+              BottomNavigationBarItem(icon: Icon(Icons.view_column), label: "Multi Column"),
             ],
             onTap: (value) => currentIndex.value = value,
             currentIndex: currentIndex.value,
@@ -177,6 +180,8 @@ String getTitle(int index) {
       return "In Row Day View";
     case 4:
       return "Events Day View";
+    case 5:
+      return "Multi Column Day View";
 
     default:
       return "Calendar Day View";

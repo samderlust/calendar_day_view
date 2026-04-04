@@ -102,4 +102,21 @@ abstract class CalendarDayView<T extends Object> extends Widget {
         eventDayViewItemBuilder: eventDayViewItemBuilder,
         config: config,
       );
+
+  /// Create [MultiColumnCalendarDayView]
+  ///
+  /// Overlapping events are laid out side-by-side in columns (like Google Calendar).
+  /// The number of columns is automatically determined by the overlap pattern.
+  static CalendarDayView<T> multiColumn<T extends Object>({
+    required List<DayEvent<T>> events,
+    required MultiColumnItemBuilder<T> itemBuilder,
+    OnTimeTap? onTimeTap,
+    required MultiColumnDayViewConfig config,
+  }) =>
+      MultiColumnCalendarDayView<T>(
+        events: events,
+        itemBuilder: itemBuilder,
+        onTimeTap: onTimeTap,
+        config: config,
+      );
 }
