@@ -36,6 +36,7 @@ A powerful and customizable Flutter library for displaying calendar events in da
 - **Empty tile builder** — use `emptyTileBuilder` in category views to customize empty cells
 - **Null end time safety** — overflow views now default to 30 min duration for events without an end time instead of crashing
 - **Multi-Column Day View** — new Google Calendar-style layout where overlapping events are placed side-by-side in columns with smart column reuse
+- **Config consolidation** — `currentTimeLineColor` and `cropBottomEvents` moved to base `DavViewConfig`, available to all views without duplication
 
 For full details, see the [Changelog](CHANGELOG.md).
 

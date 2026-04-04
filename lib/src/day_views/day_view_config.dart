@@ -35,6 +35,9 @@ abstract class DavViewConfig {
   /// To show a line that indicate current hour and minute;
   final bool showCurrentTimeLine;
 
+  /// Color of the current time line
+  final Color? currentTimeLineColor;
+
   /// time slot divider color
   final Color? dividerColor;
 
@@ -53,6 +56,10 @@ abstract class DavViewConfig {
   /// if true, auto scroll to current time on initial render
   final bool scrollToCurrentTime;
 
+  /// if true, the bottom events' end time will be cropped by the end time of day view
+  /// if false, events that have end time after day view end time will show the length that passes through day view end time
+  final bool cropBottomEvents;
+
   const DavViewConfig({
     this.timeColumnWidth = 70,
     this.startOfDay = const TimeOfDay(hour: 7, minute: 0),
@@ -63,6 +70,7 @@ abstract class DavViewConfig {
     this.time12 = true,
     this.heightPerMin = 1,
     this.showCurrentTimeLine = true,
+    this.currentTimeLineColor,
     this.primary,
     this.physics,
     this.controller,
@@ -70,6 +78,7 @@ abstract class DavViewConfig {
     this.timeLabelBuilder,
     this.currentTimeLineBuilder,
     this.scrollToCurrentTime = false,
+    this.cropBottomEvents = false,
   });
 
   double get rowHeight => heightPerMin * timeGap;
@@ -160,13 +169,6 @@ final class OverFlowDayViewConfig extends DavViewConfig {
   /// customized button that indicate there are more events on the row
   final Widget? moreOnRowButton;
 
-  /// if true, the bottom events' end time will be cropped by the end time of day view
-  /// if false, events that have end time after day view end time will have the show the length that pass through day view end time
-  final bool cropBottomEvents;
-
-  /// Color of the current time line
-  final Color? currentTimeLineColor;
-
   const OverFlowDayViewConfig({
     required super.currentDate,
     super.startOfDay,
@@ -185,11 +187,11 @@ final class OverFlowDayViewConfig extends DavViewConfig {
     super.timeLabelBuilder,
     super.currentTimeLineBuilder,
     super.scrollToCurrentTime,
+    super.currentTimeLineColor,
+    super.cropBottomEvents,
     this.renderRowAsListView = false,
     this.showMoreOnRowButton = false,
-    this.cropBottomEvents = false,
     this.moreOnRowButton,
-    this.currentTimeLineColor,
   });
 }
 
@@ -211,6 +213,7 @@ final class EventDayViewConfig extends DavViewConfig {
     super.time12,
     super.heightPerMin,
     super.showCurrentTimeLine,
+    super.currentTimeLineColor,
     super.timeColumnWidth,
     super.primary,
     super.physics,
@@ -229,12 +232,12 @@ final class InRowDayViewConfig extends EventDayViewConfig {
   /// if true, only display row with events. Default to false
   final bool showWithEventOnly;
 
-  final Color? currentTimeLineColor;
   InRowDayViewConfig({
     required super.currentDate,
     super.timeLabelBuilder,
     super.currentTimeLineBuilder,
     super.scrollToCurrentTime,
+    super.currentTimeLineColor,
     super.startOfDay,
     super.endOfDay,
     super.timeGap,
@@ -250,17 +253,10 @@ final class InRowDayViewConfig extends EventDayViewConfig {
     super.timeSlotPadding,
     super.showHourly,
     this.showWithEventOnly = false,
-    this.currentTimeLineColor,
   });
 }
 
 final class MultiColumnDayViewConfig extends DavViewConfig {
-  /// Color of the current time line
-  final Color? currentTimeLineColor;
-
-  /// if true, the bottom events' end time will be cropped by the end time of day view
-  final bool cropBottomEvents;
-
   const MultiColumnDayViewConfig({
     required super.currentDate,
     super.startOfDay,
@@ -278,7 +274,7 @@ final class MultiColumnDayViewConfig extends DavViewConfig {
     super.timeLabelBuilder,
     super.currentTimeLineBuilder,
     super.scrollToCurrentTime,
-    this.currentTimeLineColor,
-    this.cropBottomEvents = false,
+    super.currentTimeLineColor,
+    super.cropBottomEvents,
   });
 }

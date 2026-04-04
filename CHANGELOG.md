@@ -21,6 +21,7 @@
 - clean all analyzer warnings and lint issues
 - improve example app UI: replace deprecated Radio with SegmentedButton, use Switch, remove unnecessary HookBuilder wrappers, replace print with debugPrint
 - add new `CalendarDayView.multiColumn()` — Google Calendar-style layout where overlapping events are placed side-by-side in columns with smart column reuse
+- move `currentTimeLineColor` and `cropBottomEvents` to base `DavViewConfig` — reduces duplication across `OverFlowDayViewConfig`, `InRowDayViewConfig`, and `MultiColumnDayViewConfig`
 
 ## 5.0.0
 
