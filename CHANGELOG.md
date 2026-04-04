@@ -9,6 +9,8 @@
 - inline `earlierThan`/`laterThan` extensions with standard `isBefore`/`isAfter`
 - remove commented-out code and unused fields
 - add `categoryTitleTextStyle` support to non-overflow `CategoryDayView`
+- remove unused typedefs (`CategoryBackgroundTimeRowBuilder`, `CategoryDayViewRowBuilder`, `OverflowEventsSorter`, `CategoryDayViewHeaderTileBuilder`, `CategoryDayViewControlBarBuilder`, `CategoryBackgroundTimeTileBuilder`)
+- remove unused `controlBarBuilder` and `backgroundTimeTileBuilder` params from factory constructors
 
 ## 5.0.0
 

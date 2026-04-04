@@ -79,9 +79,6 @@ abstract class DavViewConfig {
 
 /// Configuration for [CategoryDayView] and [CategoryOverflowDayView]
 final class CategoryDavViewConfig extends DavViewConfig {
-  /// build category header
-  // final CategoryDayViewHeaderTileBuilder? headerTileBuilder;
-
   /// header row decoration
   final BoxDecoration? headerDecoration;
 

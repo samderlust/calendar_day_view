@@ -34,7 +34,6 @@ abstract class CalendarDayView<T extends Object> extends Widget {
     required CategoryDayViewEventBuilder<T> eventBuilder,
     CategoryDayViewController? controller,
     CategoryDayViewTileTap? onTileTap,
-    CategoryDayViewControlBarBuilder? controlBarBuilder,
   }) =>
       CategoryDayView(
         config: config,
@@ -55,8 +54,6 @@ abstract class CalendarDayView<T extends Object> extends Widget {
     required List<EventCategory> categories,
     required CategoryDayViewEventBuilder<T> eventBuilder,
     CategoryDayViewTileTap? onTileTap,
-    CategoryDayViewControlBarBuilder? controlBarBuilder,
-    CategoryBackgroundTimeTileBuilder? backgroundTimeTileBuilder,
     required CategoryDavViewConfig config,
   }) =>
       CategoryOverflowDayView(
