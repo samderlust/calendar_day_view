@@ -47,6 +47,12 @@ abstract class DavViewConfig {
   /// either 12 hour or 24 hour format based on [time12]
   final TimeLabelBuilder? timeLabelBuilder;
 
+  /// allow custom current time line widget
+  final CurrentTimeLineBuilder? currentTimeLineBuilder;
+
+  /// if true, auto scroll to current time on initial render
+  final bool scrollToCurrentTime;
+
   const DavViewConfig({
     this.timeColumnWidth = 70,
     this.startOfDay = const TimeOfDay(hour: 7, minute: 0),
@@ -62,6 +68,8 @@ abstract class DavViewConfig {
     this.controller,
     this.dividerColor,
     this.timeLabelBuilder,
+    this.currentTimeLineBuilder,
+    this.scrollToCurrentTime = false,
   });
 
   double get rowHeight => heightPerMin * timeGap;
@@ -110,6 +118,10 @@ final class CategoryDavViewConfig extends DavViewConfig {
 
   final TextStyle? categoryTitleTextStyle;
 
+  /// if true, show all events in a cell horizontally
+  /// if false, only show the first event in a cell
+  final bool showAllEventsInCell;
+
   const CategoryDavViewConfig({
     this.headerDecoration,
     this.logo,
@@ -120,6 +132,7 @@ final class CategoryDavViewConfig extends DavViewConfig {
     this.allowHorizontalScroll = false,
     this.columnsPerPage = 3,
     this.freezeCategoryTitleRow = true,
+    this.showAllEventsInCell = false,
     required super.currentDate,
     super.startOfDay,
     super.endOfDay,
@@ -170,6 +183,8 @@ final class OverFlowDayViewConfig extends DavViewConfig {
     super.dividerColor,
     super.timeTextStyle,
     super.timeLabelBuilder,
+    super.currentTimeLineBuilder,
+    super.scrollToCurrentTime,
     this.renderRowAsListView = false,
     this.showMoreOnRowButton = false,
     this.cropBottomEvents = false,
@@ -201,6 +216,8 @@ final class EventDayViewConfig extends DavViewConfig {
     super.physics,
     super.dividerColor,
     super.timeLabelBuilder,
+    super.currentTimeLineBuilder,
+    super.scrollToCurrentTime,
     super.controller,
     this.rowPadding,
     this.timeSlotPadding,
@@ -216,6 +233,8 @@ final class InRowDayViewConfig extends EventDayViewConfig {
   InRowDayViewConfig({
     required super.currentDate,
     super.timeLabelBuilder,
+    super.currentTimeLineBuilder,
+    super.scrollToCurrentTime,
     super.startOfDay,
     super.endOfDay,
     super.timeGap,

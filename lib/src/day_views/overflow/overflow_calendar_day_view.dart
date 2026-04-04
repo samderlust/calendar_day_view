@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import '../../../calendar_day_view.dart';
 import '../../extensions/date_time_extension.dart';
 import '../../models/overflow_event.dart';
-import '../../models/typedef.dart';
 import '../../utils/events_utils.dart';
 import '../../widgets/background_ignore_pointer.dart';
 import '../../widgets/current_time_line_widget.dart';
@@ -15,12 +14,12 @@ import 'widgets/overflow_list_view_row.dart';
 
 class OverFlowCalendarDayView<T extends Object> extends StatefulWidget implements CalendarDayView<T> {
   const OverFlowCalendarDayView({
-    Key? key,
+    super.key,
     required this.events,
     this.overflowItemBuilder,
     this.onTimeTap,
     required this.config,
-  }) : super(key: key);
+  });
 
   final OverFlowDayViewConfig config;
 
@@ -42,6 +41,7 @@ class _OverFlowCalendarDayViewState<T extends Object> extends State<OverFlowCale
 
   DateTime _currentTime = DateTime.now();
   Timer? _timer;
+  ScrollController? _autoScrollController;
 
   @override
   void initState() {
@@ -63,6 +63,34 @@ class _OverFlowCalendarDayViewState<T extends Object> extends State<OverFlowCale
         }
       });
     }
+
+    if (widget.config.scrollToCurrentTime && widget.config.controller == null) {
+      _autoScrollController = ScrollController();
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _scrollToCurrentTime();
+      });
+    } else if (widget.config.scrollToCurrentTime && widget.config.controller != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _scrollToCurrentTime();
+      });
+    }
+  }
+
+  void _scrollToCurrentTime() {
+    final now = DateTime.now();
+    if (now.isAfter(widget.config.timeStart) && now.isBefore(widget.config.timeEnd)) {
+      final offset = now.minuteFrom(widget.config.timeStart).toDouble() * widget.config.heightPerMin;
+      // Offset a bit above current time so it's not at the very top
+      final scrollOffset = (offset - 50).clamp(0.0, double.infinity);
+      final ctrl = widget.config.controller ?? _autoScrollController;
+      if (ctrl != null && ctrl.hasClients) {
+        ctrl.animateTo(
+          scrollOffset.clamp(0.0, ctrl.position.maxScrollExtent),
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      }
+    }
   }
 
   @override
@@ -80,6 +108,7 @@ class _OverFlowCalendarDayViewState<T extends Object> extends State<OverFlowCale
   @override
   void dispose() {
     _timer?.cancel();
+    _autoScrollController?.dispose();
     super.dispose();
   }
 
@@ -93,7 +122,7 @@ class _OverFlowCalendarDayViewState<T extends Object> extends State<OverFlowCale
     return SafeArea(
       child: SingleChildScrollView(
         primary: widget.config.primary,
-        controller: widget.config.controller,
+        controller: widget.config.controller ?? _autoScrollController,
         physics: widget.config.physics ?? const ClampingScrollPhysics(),
         padding: const EdgeInsets.only(top: 10, bottom: 10),
         child: SizedBox(
@@ -141,15 +170,23 @@ class _OverFlowCalendarDayViewState<T extends Object> extends State<OverFlowCale
                       ),
               ),
               if (widget.config.showCurrentTimeLine && _currentTime.isAfter(widget.config.timeStart) && _currentTime.isBefore(widget.config.timeEnd))
-                CurrentTimeLineWidget(
-                  top: _currentTime.minuteFrom(widget.config.timeStart).toDouble() * widget.config.heightPerMin,
-                  width: viewWidth,
-                  color: widget.config.currentTimeLineColor,
-                ),
+                _buildCurrentTimeLine(viewWidth),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildCurrentTimeLine(double viewWidth) {
+    final top = _currentTime.minuteFrom(widget.config.timeStart).toDouble() * widget.config.heightPerMin;
+    if (widget.config.currentTimeLineBuilder != null) {
+      return widget.config.currentTimeLineBuilder!(top, viewWidth);
+    }
+    return CurrentTimeLineWidget(
+      top: top,
+      width: viewWidth,
+      color: widget.config.currentTimeLineColor,
     );
   }
 }

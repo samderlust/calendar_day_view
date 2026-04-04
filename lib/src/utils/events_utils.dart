@@ -2,6 +2,9 @@ import '../../calendar_day_view.dart';
 import '../extensions/date_time_extension.dart';
 import '../models/overflow_event.dart';
 
+/// Default duration in minutes for events without an end time
+const _defaultDurationMinutes = 30;
+
 /// From List of DayEvent process them into multiple OverflowEventRow
 ///
 /// where each row contains multiple DayEvent that happen overlap each other
@@ -17,10 +20,13 @@ List<OverflowEventsRow<T>> processOverflowEvents<T extends Object>(
 
   final List<OverflowEventsRow<T>> rows = [];
 
+  DateTime resolveEnd(DayEvent<T> event) =>
+      event.end ?? event.start.add(const Duration(minutes: _defaultDurationMinutes));
+
   var currentRow = OverflowEventsRow<T>(
     events: [sortedEvents.first],
     start: sortedEvents.first.start.cleanSec(),
-    end: sortedEvents.first.end!,
+    end: resolveEnd(sortedEvents.first),
   );
 
   for (var i = 1; i < sortedEvents.length; i++) {
@@ -31,17 +37,19 @@ List<OverflowEventsRow<T>> processOverflowEvents<T extends Object>(
       continue;
     }
 
+    final eventEnd = resolveEnd(event);
+
     if (event.start.isBefore(currentRow.end)) {
       // Event overlaps with current row
       final newEnd = cropBottomEvents
-          ? event.end!.isBefore(endOfDay)
-              ? event.end!
+          ? eventEnd.isBefore(endOfDay)
+              ? eventEnd
               : endOfDay
-          : event.end!;
+          : eventEnd;
 
       currentRow = currentRow.copyWith(
         events: [...currentRow.events, event],
-        end: event.end!.isAfter(currentRow.end) ? newEnd : currentRow.end,
+        end: eventEnd.isAfter(currentRow.end) ? newEnd : currentRow.end,
       );
     } else {
       // Start new row
@@ -49,7 +57,7 @@ List<OverflowEventsRow<T>> processOverflowEvents<T extends Object>(
       currentRow = OverflowEventsRow(
         events: [event],
         start: event.start.cleanSec(),
-        end: event.end!,
+        end: eventEnd,
       );
     }
   }

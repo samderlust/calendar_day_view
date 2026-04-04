@@ -27,8 +27,8 @@ class InRowDayViewTab extends HookWidget {
               timeGap: timeGap.value,
               showWithEventOnly: withEventOnly.value,
               currentDate: DateTime.now(),
-              startOfDay: TimeOfDay(hour: 3, minute: 00),
-              endOfDay: TimeOfDay(hour: 22, minute: 00),
+              startOfDay: const TimeOfDay(hour: 3, minute: 00),
+              endOfDay: const TimeOfDay(hour: 22, minute: 00),
               timeLabelBuilder: (context, time) => Text(
                 timeFormat.format(time),
                 style: const TextStyle(fontWeight: FontWeight.bold),
@@ -36,97 +36,83 @@ class InRowDayViewTab extends HookWidget {
             ),
             events: UnmodifiableListView(events),
             itemBuilder: (context, constraints, itemIndex, event) => Flexible(
-              child: HookBuilder(builder: (context) {
-                return SizedBox(
-                  height: constraints.maxHeight,
-                  child: IntrinsicHeight(
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: GestureDetector(
-                            onTap: () => print(event.value),
-                            child: Container(
-                              margin: const EdgeInsets.symmetric(
-                                  horizontal: 3, vertical: 2),
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 5),
-                              height: constraints.maxHeight,
-                              decoration: BoxDecoration(
-                                color: itemIndex % 2 == 0
-                                    ? colorScheme.tertiaryContainer
-                                    : colorScheme.secondaryContainer,
-                                border: Border.all(
-                                    color: colorScheme.tertiary, width: 2),
-                                borderRadius:
-                                    const BorderRadius.all(Radius.circular(10)),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  event.value,
-                                  overflow: TextOverflow.ellipsis,
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    color: colorScheme.onSecondaryContainer,
-                                    fontSize:
-                                        constraints.maxWidth < 100 ? 10 : 15,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+              child: SizedBox(
+                height: constraints.maxHeight,
+                child: IntrinsicHeight(
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () => debugPrint(event.value),
+                          child: Container(
+                            margin: const EdgeInsets.symmetric(horizontal: 3, vertical: 2),
+                            padding: const EdgeInsets.symmetric(horizontal: 5),
+                            height: constraints.maxHeight,
+                            decoration: BoxDecoration(
+                              color: itemIndex % 2 == 0 ? colorScheme.tertiaryContainer : colorScheme.secondaryContainer,
+                              border: Border.all(color: colorScheme.tertiary, width: 2),
+                              borderRadius: const BorderRadius.all(Radius.circular(10)),
+                            ),
+                            child: Center(
+                              child: Text(
+                                event.value,
+                                overflow: TextOverflow.ellipsis,
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: colorScheme.onSecondaryContainer,
+                                  fontSize: constraints.maxWidth < 100 ? 10 : 15,
+                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
                             ),
                           ),
                         ),
-                        const VerticalDivider(
-                          width: 2,
-                          thickness: 2,
-                          color: Colors.black,
-                        )
-                      ],
-                    ),
+                      ),
+                      const VerticalDivider(
+                        width: 2,
+                        thickness: 2,
+                        color: Colors.black,
+                      )
+                    ],
                   ),
-                );
-              }),
+                ),
+              ),
             ),
           ),
         ),
-        Row(
-          children: [
-            const Text('TimeGap:'),
-            Radio<int>(
-              value: 15,
-              groupValue: timeGap.value,
-              onChanged: (v) => timeGap.value = v!,
-            ),
-            const Text('15m'),
-            Radio<int>(
-              value: 20,
-              groupValue: timeGap.value,
-              onChanged: (v) => timeGap.value = v!,
-            ),
-            const Text('20m'),
-            Radio<int>(
-              value: 30,
-              groupValue: timeGap.value,
-              onChanged: (v) => timeGap.value = v!,
-            ),
-            const Text('30m'),
-            Radio<int>(
-              value: 60,
-              groupValue: timeGap.value,
-              onChanged: (v) => timeGap.value = v!,
-            ),
-            const Text('60m'),
-          ],
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          child: Row(
+            children: [
+              const Text('TimeGap: '),
+              const SizedBox(width: 8),
+              Expanded(
+                child: SegmentedButton<int>(
+                  segments: const [
+                    ButtonSegment(value: 15, label: Text('15m')),
+                    ButtonSegment(value: 20, label: Text('20m')),
+                    ButtonSegment(value: 30, label: Text('30m')),
+                    ButtonSegment(value: 60, label: Text('60m')),
+                  ],
+                  selected: {timeGap.value},
+                  onSelectionChanged: (v) => timeGap.value = v.first,
+                ),
+              ),
+            ],
+          ),
         ),
-        Row(
-          children: [
-            const Text('Row with Event Only: '),
-            Checkbox(
-              value: withEventOnly.value,
-              onChanged: (v) => withEventOnly.value = v!,
-            ),
-          ],
-        )
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          child: Row(
+            children: [
+              const Text('Row with Event Only: '),
+              Switch(
+                value: withEventOnly.value,
+                onChanged: (v) => withEventOnly.value = v,
+              ),
+            ],
+          ),
+        ),
       ],
     );
   }

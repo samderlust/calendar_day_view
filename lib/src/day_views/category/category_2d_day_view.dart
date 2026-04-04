@@ -3,14 +3,14 @@ import 'package:two_dimensional_scrollables/two_dimensional_scrollables.dart';
 
 import '../../../calendar_day_view.dart';
 import '../../extensions/date_time_extension.dart';
-import '../../models/typedef.dart';
 
 class CategoryDayView<T extends Object> extends StatelessWidget implements CalendarDayView<T> {
   const CategoryDayView({
     super.key,
     this.controller,
     required this.eventBuilder,
-    required this.onTileTap,
+    this.onTimeTap,
+    this.emptyTileBuilder,
     required this.events,
     required this.config,
     required this.categories,
@@ -18,7 +18,8 @@ class CategoryDayView<T extends Object> extends StatelessWidget implements Calen
 
   final CategoryDayViewController? controller;
   final CategoryDayViewEventBuilder<T> eventBuilder;
-  final CategoryDayViewTileTap? onTileTap;
+  final CategoryDayViewTileTap? onTimeTap;
+  final CategoryEmptyTileBuilder? emptyTileBuilder;
   final List<CategorizedDayEvent<T>> events;
   final CategoryDavViewConfig config;
   final List<EventCategory> categories;
@@ -31,7 +32,8 @@ class CategoryDayView<T extends Object> extends StatelessWidget implements Calen
       categories: categories,
       events: events,
       eventBuilder: eventBuilder,
-      onTileTap: onTileTap,
+      onTimeTap: onTimeTap,
+      emptyTileBuilder: emptyTileBuilder,
       overflow: false,
     );
   }
@@ -42,7 +44,8 @@ class CategoryOverflowDayView<T extends Object> extends StatelessWidget implemen
     super.key,
     this.controller,
     required this.eventBuilder,
-    this.onTileTap,
+    this.onTimeTap,
+    this.emptyTileBuilder,
     required this.events,
     required this.config,
     required this.categories,
@@ -50,7 +53,8 @@ class CategoryOverflowDayView<T extends Object> extends StatelessWidget implemen
 
   final CategoryDayViewController? controller;
   final CategoryDayViewEventBuilder<T> eventBuilder;
-  final CategoryDayViewTileTap? onTileTap;
+  final CategoryDayViewTileTap? onTimeTap;
+  final CategoryEmptyTileBuilder? emptyTileBuilder;
   final List<CategorizedDayEvent<T>> events;
   final CategoryDavViewConfig config;
   final List<EventCategory> categories;
@@ -63,7 +67,8 @@ class CategoryOverflowDayView<T extends Object> extends StatelessWidget implemen
       categories: categories,
       events: events,
       eventBuilder: eventBuilder,
-      onTileTap: onTileTap,
+      onTimeTap: onTimeTap,
+      emptyTileBuilder: emptyTileBuilder,
       overflow: true,
     );
   }
@@ -77,7 +82,8 @@ class _CategoryTableView<T extends Object> extends StatelessWidget {
     required this.categories,
     required this.events,
     required this.eventBuilder,
-    this.onTileTap,
+    this.onTimeTap,
+    this.emptyTileBuilder,
     required this.overflow,
   });
 
@@ -86,7 +92,8 @@ class _CategoryTableView<T extends Object> extends StatelessWidget {
   final List<EventCategory> categories;
   final List<CategorizedDayEvent<T>> events;
   final CategoryDayViewEventBuilder<T> eventBuilder;
-  final CategoryDayViewTileTap? onTileTap;
+  final CategoryDayViewTileTap? onTimeTap;
+  final CategoryEmptyTileBuilder? emptyTileBuilder;
   final bool overflow;
 
   @override
@@ -224,51 +231,24 @@ class _CategoryTableView<T extends Object> extends StatelessWidget {
     required double tileWidth,
   }) {
     final time = config.timeList.elementAt(rowIndex - 1);
-    final rowEvents = List<CategorizedDayEvent<T>>.from(events.where(
-      (event) => event.startInThisGap(time, config.timeGap),
-    ));
-
     final category = categories.elementAt(columnIndex - 1);
+    final cellEvents = List<CategorizedDayEvent<T>>.from(
+      events.where((event) => event.startInThisGap(time, config.timeGap) && event.categoryId == category.id),
+    );
 
-    final cellEvent = rowEvents.where((e) => e.categoryId == category.id).firstOrNull;
-
-    if (cellEvent == null) {
-      return TableViewCell(
-        child: GestureDetector(
-          behavior: HitTestBehavior.translucent,
-          onTap: onTileTap == null ? null : () => onTileTap!(category, time),
-          child: SizedBox(
-            width: tileWidth,
-            height: config.rowHeight,
-          ),
-        ),
-      );
+    if (cellEvents.isEmpty) {
+      return _buildEmptyCell(context, category, time, tileWidth);
     }
 
     if (overflow) {
-      final constraints = BoxConstraints(
-        maxHeight: cellEvent.durationInMins * config.heightPerMin,
-        maxWidth: tileWidth,
-      );
-      final top = cellEvent.start.minute * config.heightPerMin;
-
-      return TableViewCell(
-        child: Stack(
-          clipBehavior: Clip.none,
-          children: [
-            Positioned(
-              top: top,
-              left: 0,
-              child: Container(
-                constraints: constraints,
-                child: eventBuilder(constraints, category, time, cellEvent),
-              ),
-            ),
-          ],
-        ),
-      );
+      return _buildOverflowEventCell(cellEvents, category, time, tileWidth);
     }
 
+    if (config.showAllEventsInCell && cellEvents.length > 1) {
+      return _buildMultiEventCell(cellEvents, category, time, tileWidth);
+    }
+
+    final cellEvent = cellEvents.first;
     return TableViewCell(
       child: Container(
         constraints: BoxConstraints(
@@ -283,6 +263,72 @@ class _CategoryTableView<T extends Object> extends StatelessWidget {
           time,
           cellEvent,
         ),
+      ),
+    );
+  }
+
+  TableViewCell _buildEmptyCell(BuildContext context, EventCategory category, DateTime time, double tileWidth) {
+    if (emptyTileBuilder != null) {
+      return TableViewCell(
+        child: emptyTileBuilder!(
+          BoxConstraints(maxWidth: tileWidth, maxHeight: config.rowHeight),
+          category,
+          time,
+        ),
+      );
+    }
+    return TableViewCell(
+      child: GestureDetector(
+        behavior: HitTestBehavior.translucent,
+        onTap: onTimeTap == null ? null : () => onTimeTap!(category, time),
+        child: SizedBox(
+          width: tileWidth,
+          height: config.rowHeight,
+        ),
+      ),
+    );
+  }
+
+  TableViewCell _buildOverflowEventCell(List<CategorizedDayEvent<T>> cellEvents, EventCategory category, DateTime time, double tileWidth) {
+    final cellEvent = cellEvents.first;
+    final constraints = BoxConstraints(
+      maxHeight: cellEvent.durationInMins * config.heightPerMin,
+      maxWidth: tileWidth,
+    );
+    final top = cellEvent.start.minute * config.heightPerMin;
+
+    return TableViewCell(
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          Positioned(
+            top: top,
+            left: 0,
+            child: Container(
+              constraints: constraints,
+              child: eventBuilder(constraints, category, time, cellEvent),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  TableViewCell _buildMultiEventCell(List<CategorizedDayEvent<T>> cellEvents, EventCategory category, DateTime time, double tileWidth) {
+    final perEventWidth = tileWidth / cellEvents.length;
+    return TableViewCell(
+      child: Row(
+        children: cellEvents.map((event) {
+          final constraints = BoxConstraints(
+            maxWidth: perEventWidth,
+            maxHeight: config.rowHeight,
+          );
+          return SizedBox(
+            width: perEventWidth,
+            height: config.rowHeight,
+            child: eventBuilder(constraints, category, time, event),
+          );
+        }).toList(),
       ),
     );
   }

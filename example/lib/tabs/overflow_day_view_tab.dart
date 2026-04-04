@@ -7,15 +7,13 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 
 import '../main.dart';
 
-final now = DateTime.now();
-
 class OverflowDayViewTab extends HookWidget {
   const OverflowDayViewTab({
-    Key? key,
+    super.key,
     required this.events,
     this.onTimeTap,
     this.onAddEvent,
-  }) : super(key: key);
+  });
   final List<DayEvent<String>> events;
   final Function(DateTime)? onTimeTap;
   final Function(DayEvent<String>)? onAddEvent;
@@ -23,7 +21,6 @@ class OverflowDayViewTab extends HookWidget {
   Widget build(BuildContext context) {
     final timeGap = useState<int>(60);
     final renderAsList = useState<bool>(true);
-
     final cropBottomEvents = useState<bool>(true);
 
     final size = MediaQuery.sizeOf(context);
@@ -45,13 +42,14 @@ class OverflowDayViewTab extends HookWidget {
               cropBottomEvents: cropBottomEvents.value,
               showMoreOnRowButton: true,
               time12: true,
+              scrollToCurrentTime: true,
               timeLabelBuilder: (context, time) => Text(
                 timeFormat.format(time),
                 style: const TextStyle(fontWeight: FontWeight.bold),
               ),
             ),
             onTimeTap: (t) async {
-              print("onTimeTap: $t");
+              debugPrint('onTimeTap: $t');
               final newEvent = await showAddEventDialog(context, t);
               if (newEvent != null) {
                 onAddEvent?.call(newEvent);
@@ -59,112 +57,100 @@ class OverflowDayViewTab extends HookWidget {
             },
             events: UnmodifiableListView(events),
             overflowItemBuilder: (context, constraints, itemIndex, event) {
-              return HookBuilder(builder: (context) {
-                return GestureDetector(
-                  // behavior: HitTestBehavior.opaque,
-                  key: ValueKey(event.hashCode),
-                  onTap: () {
-                    ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(event.value),
-                            Text("start:${timeFormat.format(event.start)}"),
-                            Text("end:${timeFormat.format(event.end!)}"),
-                          ],
-                        ),
+              return GestureDetector(
+                key: ValueKey(event.hashCode),
+                onTap: () {
+                  ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(event.value),
+                          Text('start:${timeFormat.format(event.start)}'),
+                          Text('end:${timeFormat.format(event.end!)}'),
+                        ],
                       ),
-                    );
-                  },
-                  child: Container(
-                    margin: const EdgeInsets.only(right: 3, left: 3),
-                    padding: const EdgeInsets.symmetric(horizontal: 5),
-                    key: ValueKey(event.hashCode),
-                    width: !renderAsList.value ? (constraints.minWidth) - 6 : size.width / 4 - 6,
-                    height: constraints.maxHeight,
-                    decoration: BoxDecoration(
-                      color: itemIndex % 2 == 0 ? colorScheme.tertiaryContainer : colorScheme.secondaryContainer,
-                      border: Border.all(color: colorScheme.tertiary, width: .4),
-                      borderRadius: const BorderRadius.all(Radius.circular(5)),
                     ),
-                    child: Center(
-                      child: Text(
-                        event.value,
-                        textAlign: TextAlign.center,
-                        overflow: TextOverflow.fade,
-                        style: TextStyle(color: colorScheme.onSecondaryContainer),
-                      ),
+                  );
+                },
+                child: Container(
+                  margin: const EdgeInsets.only(right: 3, left: 3),
+                  padding: const EdgeInsets.symmetric(horizontal: 5),
+                  key: ValueKey(event.hashCode),
+                  width: !renderAsList.value ? (constraints.minWidth) - 6 : size.width / 4 - 6,
+                  height: constraints.maxHeight,
+                  decoration: BoxDecoration(
+                    color: itemIndex % 2 == 0 ? colorScheme.tertiaryContainer : colorScheme.secondaryContainer,
+                    border: Border.all(color: colorScheme.tertiary, width: .4),
+                    borderRadius: const BorderRadius.all(Radius.circular(5)),
+                  ),
+                  child: Center(
+                    child: Text(
+                      event.value,
+                      textAlign: TextAlign.center,
+                      overflow: TextOverflow.fade,
+                      style: TextStyle(color: colorScheme.onSecondaryContainer),
                     ),
                   ),
-                );
-              });
+                ),
+              );
             },
           ),
         ),
-        Row(
-          children: [
-            Row(
-              children: [const Text("Render List Row"), Radio(groupValue: renderAsList.value, value: true, onChanged: (v) => renderAsList.value = v!)],
-            ),
-            const SizedBox(width: 20),
-            Row(
-              children: [const Text("Render Fix Row"), Radio(groupValue: renderAsList.value, value: false, onChanged: (v) => renderAsList.value = v!)],
-            ),
-          ],
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          child: Row(
+            children: [
+              const Text('Render: '),
+              const SizedBox(width: 8),
+              Expanded(
+                child: SegmentedButton<bool>(
+                  segments: const [
+                    ButtonSegment(value: true, label: Text('List Row')),
+                    ButtonSegment(value: false, label: Text('Fixed Row')),
+                  ],
+                  selected: {renderAsList.value},
+                  onSelectionChanged: (v) => renderAsList.value = v.first,
+                ),
+              ),
+            ],
+          ),
         ),
-        Row(
-          children: [const Text("Crop Bottom Events"), Checkbox(value: cropBottomEvents.value, onChanged: (v) => cropBottomEvents.value = v!)],
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          child: Row(
+            children: [
+              const Text('Crop Bottom Events'),
+              Switch(
+                value: cropBottomEvents.value,
+                onChanged: (v) => cropBottomEvents.value = v,
+              ),
+            ],
+          ),
         ),
-        TimeGapSelection(
-          timeGap: timeGap.value,
-          onChanged: (p0) => timeGap.value = p0!,
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          child: Row(
+            children: [
+              const Text('TimeGap: '),
+              const SizedBox(width: 8),
+              Expanded(
+                child: SegmentedButton<int>(
+                  segments: const [
+                    ButtonSegment(value: 15, label: Text('15m')),
+                    ButtonSegment(value: 20, label: Text('20m')),
+                    ButtonSegment(value: 30, label: Text('30m')),
+                    ButtonSegment(value: 60, label: Text('60m')),
+                  ],
+                  selected: {timeGap.value},
+                  onSelectionChanged: (v) => timeGap.value = v.first,
+                ),
+              ),
+            ],
+          ),
         ),
-      ],
-    );
-  }
-}
-
-class TimeGapSelection extends StatelessWidget {
-  const TimeGapSelection({
-    super.key,
-    required this.timeGap,
-    required this.onChanged,
-  });
-
-  final int timeGap;
-  final void Function(int?)? onChanged;
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        const Text('TimeGap:'),
-        Radio<int>(
-          value: 15,
-          groupValue: timeGap,
-          onChanged: onChanged,
-        ),
-        const Text('15m'),
-        Radio<int>(
-          value: 20,
-          groupValue: timeGap,
-          onChanged: onChanged,
-        ),
-        const Text('20m'),
-        Radio<int>(
-          value: 30,
-          groupValue: timeGap,
-          onChanged: onChanged,
-        ),
-        const Text('30m'),
-        Radio<int>(
-          value: 60,
-          groupValue: timeGap,
-          onChanged: onChanged,
-        ),
-        const Text('60m'),
       ],
     );
   }
@@ -177,7 +163,7 @@ Future<DayEvent<String>?> showAddEventDialog(BuildContext context, DateTime t) a
       final newText = faker.conference.name();
 
       return AlertDialog(
-        title: const Text("Add Event"),
+        title: const Text('Add Event'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -205,11 +191,11 @@ Future<DayEvent<String>?> showAddEventDialog(BuildContext context, DateTime t) a
               );
               Navigator.pop(context, newEvent);
             },
-            child: const Text("Add"),
+            child: const Text('Add'),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, null),
-            child: const Text("Cancel"),
+            child: const Text('Cancel'),
           )
         ],
       );

@@ -35,10 +35,10 @@ class CategoryOverflowDayViewTab extends HookWidget {
             events: events,
             eventBuilder: (constraints, category, time, event) => GestureDetector(
               onTap: () {
-                print("constraints:: $constraints");
-                print("time:: $time");
-                print("category:: $category");
-                print("event:: $event");
+                debugPrint("constraints:: $constraints");
+                debugPrint("time:: $time");
+                debugPrint("category:: $category");
+                debugPrint("event:: $event");
               },
               child: Container(
                 constraints: constraints,

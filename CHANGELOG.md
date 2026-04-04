@@ -1,4 +1,4 @@
-## 5.1.0
+## 6.0.0
 
 - fix `CategorizedDayEvent.operator==` to compare all fields instead of only `categoryId`
 - consolidate `CategoryDayView` and `CategoryOverflowDayView` into shared internal widget to reduce code duplication
@@ -11,6 +11,15 @@
 - add `categoryTitleTextStyle` support to non-overflow `CategoryDayView`
 - remove unused typedefs (`CategoryBackgroundTimeRowBuilder`, `CategoryDayViewRowBuilder`, `OverflowEventsSorter`, `CategoryDayViewHeaderTileBuilder`, `CategoryDayViewControlBarBuilder`, `CategoryBackgroundTimeTileBuilder`)
 - remove unused `controlBarBuilder` and `backgroundTimeTileBuilder` params from factory constructors
+- add `scrollToCurrentTime` option to auto-scroll to current time on initial render (overflow and in-row views)
+- add `currentTimeLineBuilder` to allow fully custom current time line widget
+- add `showAllEventsInCell` to `CategoryDavViewConfig` — show all events in a category cell horizontally instead of only the first
+- add `emptyTileBuilder` to category views for customizing empty cells
+- handle null `end` in overflow views gracefully (defaults to 30 min duration instead of crashing)
+- [BREAKING] standardize tap callback naming: `onTileTap` and `onTap` renamed to `onTimeTap` across all views
+- export `typedef.dart` from barrel file so typedefs are accessible via main import
+- clean all analyzer warnings and lint issues
+- improve example app UI: replace deprecated Radio with SegmentedButton, use Switch, remove unnecessary HookBuilder wrappers, replace print with debugPrint
 
 ## 5.0.0
 

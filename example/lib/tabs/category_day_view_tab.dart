@@ -33,12 +33,12 @@ class CategoryDayViewTab extends HookWidget {
               // allowHorizontalScroll: true,
             ),
             categories: categories,
-            onTileTap: (category, time) {
-              debugPrint(category.toString());
-              debugPrint(time.toString());
+            onTimeTap: (category, time) {
+              debugPrint('Category: $category');
+              debugPrint('Time: $time');
             },
             eventBuilder: (constraints, category, _, event) => GestureDetector(
-              onTap: () => print(event),
+              onTap: () => debugPrint('$event'),
               child: Container(
                 constraints: constraints,
                 width: constraints.maxWidth,

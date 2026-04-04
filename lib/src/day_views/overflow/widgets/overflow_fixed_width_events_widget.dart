@@ -38,7 +38,8 @@ class OverflowFixedWidthEventsWidget<T extends Object> extends StatelessWidget {
         final event = entry.value;
         final topGap = event.minutesFrom(oEvents.start) * heightUnit;
 
-        final tileHeight = (cropBottomEvents && event.end!.isAfter(timeEnd)) ? (maxHeight - topGap) : (event.durationInMins * heightUnit);
+        final eventEnd = event.end ?? event.start.add(const Duration(minutes: 30));
+        final tileHeight = (cropBottomEvents && eventEnd.isAfter(timeEnd)) ? (maxHeight - topGap) : (event.durationInMins * heightUnit);
 
         final tileConstraints = BoxConstraints(
           maxHeight: tileHeight,

@@ -2,7 +2,6 @@ import 'package:calendar_day_view/src/extensions/date_time_extension.dart';
 import 'package:flutter/material.dart';
 
 import '../../calendar_day_view.dart';
-import '../models/typedef.dart';
 
 /// Day View that only show time slot with Events
 ///
@@ -10,12 +9,12 @@ import '../models/typedef.dart';
 /// it listed and sorted by the time that the events start
 class EventCalendarDayView<T extends Object> extends StatefulWidget implements CalendarDayView<T> {
   const EventCalendarDayView({
-    Key? key,
+    super.key,
     required this.events,
     required this.eventDayViewItemBuilder,
     this.itemSeparatorBuilder,
     required this.config,
-  }) : super(key: key);
+  });
 
   final EventDayViewConfig config;
 
@@ -42,11 +41,11 @@ class _EventCalendarDayViewState<T extends Object> extends State<EventCalendarDa
   }
 
   List<DateTime> getTimeList() {
-    Set<DateTime> list = {};
+    final Set<DateTime> list = {};
     list.addAll(widget.events.map((e) => widget.config.showHourly ? e.start.hourOnly() : e.start.cleanSec()).toList()
       ..sort(
         (a, b) {
-          int hourComparison = a.hour.compareTo(b.hour);
+          final hourComparison = a.hour.compareTo(b.hour);
           if (hourComparison != 0) {
             return hourComparison;
           } else {

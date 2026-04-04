@@ -40,3 +40,15 @@ typedef CategoryDayViewTileTap<T extends Object> = Function(
 /// allow custom time label
 typedef TimeLabelBuilder = Widget Function(BuildContext context, DateTime time);
 
+/// current time line builder
+/// allow custom current time line widget
+typedef CurrentTimeLineBuilder = Widget Function(double top, double width);
+
+/// empty tile builder for category views
+/// allow custom empty cell widget
+typedef CategoryEmptyTileBuilder<T extends Object> = Widget Function(
+  BoxConstraints constraints,
+  EventCategory category,
+  DateTime time,
+);
+

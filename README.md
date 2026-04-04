@@ -7,9 +7,36 @@
 
 A powerful and customizable Flutter library for displaying calendar events in day view format. Perfect for applications requiring detailed daily event visualization.
 
-## 🚨 Breaking Changes
+## 🚨 Breaking Changes in v6.0.0
 
-Version 5.0.0 introduces significant changes. Please refer to the [Changelog](CHANGELOG.md) for detailed migration instructions.
+### Migration from v5.x
+
+**Renamed tap callbacks** — all tap callbacks are now consistently named `onTimeTap`:
+
+| View | Before (v5) | After (v6) |
+|------|-------------|------------|
+| `CalendarDayView.category()` | `onTileTap` | `onTimeTap` |
+| `CalendarDayView.categoryOverflow()` | `onTileTap` | `onTimeTap` |
+| `CalendarDayView.inRow()` | `onTap` | `onTimeTap` |
+| `CalendarDayView.overflow()` | `onTimeTap` | `onTimeTap` (no change) |
+| `CategoryDayView()` | `onTileTap` | `onTimeTap` |
+| `CategoryOverflowDayView()` | `onTileTap` | `onTimeTap` |
+
+**Removed parameters:**
+- `controlBarBuilder` removed from `CalendarDayView.category()` and `CalendarDayView.categoryOverflow()`
+- `backgroundTimeTileBuilder` removed from `CalendarDayView.categoryOverflow()`
+
+**Typedefs now exported** — all typedefs (e.g., `CategoryDayViewEventBuilder`, `DayViewItemBuilder`) are now accessible via the main `import 'package:calendar_day_view/calendar_day_view.dart'` import. No need to import `src/models/typedef.dart` directly.
+
+### What's New in v6.0.0
+
+- **Auto-scroll to current time** — set `scrollToCurrentTime: true` in config to auto-scroll on load (overflow and in-row views)
+- **Custom current time line** — use `currentTimeLineBuilder` in config to fully customize the current time indicator
+- **Show all events in category cell** — set `showAllEventsInCell: true` in `CategoryDavViewConfig` to display all events horizontally instead of only the first
+- **Empty tile builder** — use `emptyTileBuilder` in category views to customize empty cells
+- **Null end time safety** — overflow views now default to 30 min duration for events without an end time instead of crashing
+
+For full details, see the [Changelog](CHANGELOG.md).
 
 ## 📱 Live Demo
 
@@ -29,10 +56,13 @@ Check out the live demo at: [https://samderlust.github.io/calendardayview](https
 
 - ⏰ Customizable day start and end times
 - ⏱️ Adjustable time slot duration
-- 🕒 Current time indicator
+- 🕒 Current time indicator with custom builder support
 - 👆 Interactive time slot tapping
 - 🎨 Fully customizable event widgets
 - 📱 Responsive design support
+- 🔄 Auto-scroll to current time on load
+- 📋 Show all events or first-only in category cells
+- 🏷️ Custom empty tile builder for category views
 
 ## 📦 Installation
 
@@ -64,22 +94,16 @@ CalendarDayView.category(
     currentDate: DateTime.now(),
     timeGap: 60,
     heightPerMin: 1,
-    evenRowColor: Colors.white,
-    oddRowColor: Colors.grey[200],
-    headerDecoration: BoxDecoration(
-      color: Colors.lightBlueAccent.withOpacity(.5),
-    ),
-    logo: const Padding(
-      padding: EdgeInsets.all(8.0),
-      child: CircleAvatar(child: Text("C")),
-    ),
+    showAllEventsInCell: true, // show all events in cell horizontally
   ),
   categories: categories,
   events: events,
-  onTileTap: (category, time) {
+  onTimeTap: (category, time) {
     // Handle time slot tap
   },
-  controlBarBuilder: (goToPreviousTab, goToNextTab) => YourControlBar(),
+  emptyTileBuilder: (constraints, category, time) {
+    return Center(child: Text('Available'));
+  },
   eventBuilder: (constraints, category, _, event) => YourEventWidget(),
 );
 ```
@@ -98,6 +122,7 @@ CalendarDayView.overflow(
     startOfDay: const TimeOfDay(hour: 4, minute: 0),
     renderRowAsListView: true,
     time12: true,
+    scrollToCurrentTime: true, // auto-scroll to current time
   ),
   onTimeTap: (time) => handleTimeTap(time),
   events: UnmodifiableListView(events),
@@ -133,11 +158,13 @@ CalendarDayView.inRow(
     timeGap: 60,
     showWithEventOnly: true,
     currentDate: DateTime.now(),
-    startOfDay: TimeOfDay(hour: 3, minute: 00),
-    endOfDay: TimeOfDay(hour: 22, minute: 00),
+    startOfDay: const TimeOfDay(hour: 3, minute: 00),
+    endOfDay: const TimeOfDay(hour: 22, minute: 00),
+    scrollToCurrentTime: true, // auto-scroll to current time
   ),
   events: UnmodifiableListView(events),
-  itemBuilder: (context, constraints, event) => YourEventWidget(),
+  onTimeTap: (time) => handleTimeTap(time),
+  itemBuilder: (context, constraints, itemIndex, event) => YourEventWidget(),
 );
 ```
 

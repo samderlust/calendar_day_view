@@ -4,25 +4,22 @@ import 'package:flutter/material.dart';
 
 import '../../calendar_day_view.dart';
 import '../extensions/date_time_extension.dart';
-import '../models/typedef.dart';
 import '../widgets/current_time_line_widget.dart';
 
 /// Show events in a time gap window in a single row
 ///
 /// ex: if `timeGap` is 15, the events that have start time from `10:00` to `10:15`
 /// will be displayed in the same row.
-class InRowCalendarDayView<T extends Object> extends StatefulWidget
-    implements CalendarDayView<T> {
+class InRowCalendarDayView<T extends Object> extends StatefulWidget implements CalendarDayView<T> {
   const InRowCalendarDayView({
-    Key? key,
+    super.key,
     required this.events,
     this.itemBuilder,
     this.timeRowBuilder,
-    this.onTap,
+    this.onTimeTap,
     required this.config,
   })  : assert(timeRowBuilder != null || itemBuilder != null),
-        assert(timeRowBuilder == null || itemBuilder == null),
-        super(key: key);
+        assert(timeRowBuilder == null || itemBuilder == null);
 
   final InRowDayViewConfig config;
 
@@ -36,16 +33,16 @@ class InRowCalendarDayView<T extends Object> extends StatefulWidget
   final DayViewTimeRowBuilder<T>? timeRowBuilder;
 
   /// allow user to tap on Day view
-  final OnTimeTap? onTap;
+  final OnTimeTap? onTimeTap;
 
   @override
   State<InRowCalendarDayView> createState() => _InRowCalendarDayViewState<T>();
 }
 
-class _InRowCalendarDayViewState<T extends Object>
-    extends State<InRowCalendarDayView<T>> {
+class _InRowCalendarDayViewState<T extends Object> extends State<InRowCalendarDayView<T>> {
   DateTime _currentTime = DateTime.now();
   Timer? _timer;
+  ScrollController? _autoScrollController;
 
   @override
   void initState() {
@@ -60,11 +57,39 @@ class _InRowCalendarDayViewState<T extends Object>
         }
       });
     }
+
+    if (widget.config.scrollToCurrentTime && widget.config.controller == null) {
+      _autoScrollController = ScrollController();
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _scrollToCurrentTime();
+      });
+    } else if (widget.config.scrollToCurrentTime && widget.config.controller != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _scrollToCurrentTime();
+      });
+    }
+  }
+
+  void _scrollToCurrentTime() {
+    final now = DateTime.now();
+    if (now.isAfter(widget.config.timeStart) && now.isBefore(widget.config.timeEnd)) {
+      final offset = now.minuteFrom(widget.config.timeStart).toDouble() * widget.config.heightPerMin;
+      final scrollOffset = (offset - 50).clamp(0.0, double.infinity);
+      final ctrl = widget.config.controller ?? _autoScrollController;
+      if (ctrl != null && ctrl.hasClients) {
+        ctrl.animateTo(
+          scrollOffset.clamp(0.0, ctrl.position.maxScrollExtent),
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      }
+    }
   }
 
   @override
   void dispose() {
     _timer?.cancel();
+    _autoScrollController?.dispose();
     super.dispose();
   }
 
@@ -77,7 +102,7 @@ class _InRowCalendarDayViewState<T extends Object>
         child: ListView.builder(
           clipBehavior: Clip.none,
           primary: widget.config.primary,
-          controller: widget.config.controller,
+          controller: widget.config.controller ?? _autoScrollController,
           physics: widget.config.physics ?? const ClampingScrollPhysics(),
           padding: const EdgeInsets.only(top: 20, bottom: 20),
           itemCount: widget.config.timeList.length,
@@ -95,7 +120,7 @@ class _InRowCalendarDayViewState<T extends Object>
               viewWidth: viewWidth,
               time: time,
               rowEvents: rowEvents,
-              onTap: widget.onTap,
+              onTimeTap: widget.onTimeTap,
               itemBuilder: widget.itemBuilder,
               timeRowBuilder: widget.timeRowBuilder,
               config: widget.config,
@@ -114,7 +139,7 @@ class InRowEventRowWidget<T extends Object> extends StatelessWidget {
     required this.viewWidth,
     required this.time,
     required this.rowEvents,
-    required this.onTap,
+    required this.onTimeTap,
     required this.itemBuilder,
     required this.timeRowBuilder,
     required this.config,
@@ -126,7 +151,7 @@ class InRowEventRowWidget<T extends Object> extends StatelessWidget {
   final Iterable<DayEvent<T>> rowEvents;
 
   final DateTime currentTime;
-  final void Function(DateTime)? onTap;
+  final void Function(DateTime)? onTimeTap;
   final DayViewItemBuilder<T>? itemBuilder;
   final DayViewTimeRowBuilder<T>? timeRowBuilder;
   final InRowDayViewConfig config;
@@ -161,9 +186,7 @@ class InRowEventRowWidget<T extends Object> extends StatelessWidget {
                       FittedBox(
                         fit: BoxFit.scaleDown,
                         child: Text(
-                          config.time12
-                              ? time.hourDisplay12
-                              : time.hourDisplay24,
+                          config.time12 ? time.hourDisplay12 : time.hourDisplay24,
                           style: config.timeTextStyle,
                           maxLines: 1,
                         ),
@@ -172,7 +195,7 @@ class InRowEventRowWidget<T extends Object> extends StatelessWidget {
               ),
               Expanded(
                 child: GestureDetector(
-                  onTap: onTap == null ? null : () => onTap!(time),
+                  onTap: onTimeTap == null ? null : () => onTimeTap!(time),
                   child: LayoutBuilder(
                     builder: (context, constrains) {
                       final tileConstraints = BoxConstraints(
@@ -212,15 +235,21 @@ class InRowEventRowWidget<T extends Object> extends StatelessWidget {
               ),
             ],
           ),
-          if (config.showCurrentTimeLine &&
-              currentTime.inTheGap(time, config.timeGap))
-            CurrentTimeLineWidget(
-              top: (currentTime.minute - time.minute) * config.heightPerMin,
-              color: config.currentTimeLineColor,
-              width: viewWidth,
-            ),
+          if (config.showCurrentTimeLine && currentTime.inTheGap(time, config.timeGap)) _buildCurrentTimeLine(),
         ],
       ),
+    );
+  }
+
+  Widget _buildCurrentTimeLine() {
+    final top = (currentTime.minute - time.minute) * config.heightPerMin;
+    if (config.currentTimeLineBuilder != null) {
+      return config.currentTimeLineBuilder!(top, viewWidth);
+    }
+    return CurrentTimeLineWidget(
+      top: top,
+      color: config.currentTimeLineColor,
+      width: viewWidth,
     );
   }
 }

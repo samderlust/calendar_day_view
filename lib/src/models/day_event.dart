@@ -11,7 +11,7 @@ class DayEvent<T extends Object> {
     this.name,
   }) : assert(
           end == null || end.isAfter(start),
-          "End can not be before start| start: $start |end: $end ",
+          'End can not be before start| start: $start |end: $end ',
         );
 
   DayEvent<T> copyWith({

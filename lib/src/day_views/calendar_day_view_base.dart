@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../../calendar_day_view.dart';
-import '../models/typedef.dart';
 
 /// Abstract base class for all calendar day view implementations
 abstract class CalendarDayView<T extends Object> extends Widget {
@@ -33,14 +32,16 @@ abstract class CalendarDayView<T extends Object> extends Widget {
     required List<EventCategory> categories,
     required CategoryDayViewEventBuilder<T> eventBuilder,
     CategoryDayViewController? controller,
-    CategoryDayViewTileTap? onTileTap,
+    CategoryDayViewTileTap? onTimeTap,
+    CategoryEmptyTileBuilder? emptyTileBuilder,
   }) =>
       CategoryDayView(
         config: config,
         events: events,
         categories: categories,
         eventBuilder: eventBuilder,
-        onTileTap: onTileTap,
+        onTimeTap: onTimeTap,
+        emptyTileBuilder: emptyTileBuilder,
         controller: controller,
       );
 
@@ -53,7 +54,8 @@ abstract class CalendarDayView<T extends Object> extends Widget {
     required List<CategorizedDayEvent<T>> events,
     required List<EventCategory> categories,
     required CategoryDayViewEventBuilder<T> eventBuilder,
-    CategoryDayViewTileTap? onTileTap,
+    CategoryDayViewTileTap? onTimeTap,
+    CategoryEmptyTileBuilder? emptyTileBuilder,
     required CategoryDavViewConfig config,
   }) =>
       CategoryOverflowDayView(
@@ -62,7 +64,8 @@ abstract class CalendarDayView<T extends Object> extends Widget {
         events: events,
         categories: categories,
         eventBuilder: eventBuilder,
-        onTileTap: onTileTap,
+        onTimeTap: onTimeTap,
+        emptyTileBuilder: emptyTileBuilder,
       );
 
   /// Create [InRowCalendarDayView]
@@ -72,14 +75,14 @@ abstract class CalendarDayView<T extends Object> extends Widget {
     required List<DayEvent<T>> events,
     DayViewItemBuilder<T>? itemBuilder,
     DayViewTimeRowBuilder<T>? timeRowBuilder,
-    OnTimeTap? onTap,
+    OnTimeTap? onTimeTap,
     required InRowDayViewConfig config,
   }) =>
       InRowCalendarDayView(
         events: events,
         itemBuilder: itemBuilder,
         timeRowBuilder: timeRowBuilder,
-        onTap: onTap,
+        onTimeTap: onTimeTap,
         config: config,
       );
 

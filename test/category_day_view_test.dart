@@ -1,5 +1,4 @@
 import 'package:calendar_day_view/calendar_day_view.dart';
-import 'package:calendar_day_view/src/models/typedef.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -67,7 +66,7 @@ void main() {
               events: events,
               eventBuilder: eventBuilder,
               controller: controller,
-              onTileTap: (_, __) {},
+              onTimeTap: (_, __) {},
             ),
           ),
         ),
@@ -93,7 +92,7 @@ void main() {
               events: events,
               eventBuilder: eventBuilder,
               controller: controller,
-              onTileTap: (_, __) {},
+              onTimeTap: (_, __) {},
             ),
           ),
         ),
@@ -115,7 +114,7 @@ void main() {
               events: [],
               eventBuilder: eventBuilder,
               controller: controller,
-              onTileTap: (_, __) {},
+              onTimeTap: (_, __) {},
             ),
           ),
         ),
@@ -141,7 +140,7 @@ void main() {
               events: events,
               eventBuilder: eventBuilder,
               controller: controller,
-              onTileTap: (category, time) {
+              onTimeTap: (category, time) {
                 tileTapped = true;
                 tappedCategory = category;
                 tappedTime = time;
