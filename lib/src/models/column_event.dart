@@ -1,15 +1,29 @@
 import 'day_event.dart';
 
-/// Represents a [DayEvent] with its assigned column position in a multi-column layout.
+/// A [DayEvent] with its assigned column position in a multi-column layout.
 ///
-/// When events overlap in time, they are split into side-by-side columns.
-/// [column] is the 0-indexed column this event occupies.
-/// [totalColumns] is the total number of columns in this event's overlap cluster.
+/// When events overlap in time in [MultiColumnCalendarDayView], they are
+/// distributed into side-by-side columns. Each [ColumnEvent] records the
+/// 0-indexed [column] this event occupies and the [totalColumns] of its
+/// overlap cluster — all events transitively overlapping with each other
+/// share the same [totalColumns] value.
+///
+/// Custom [OverlapStrategy] implementations produce lists of [ColumnEvent]
+/// to drive the layout.
 class ColumnEvent<T extends Object> {
+  /// The underlying event.
   final DayEvent<T> event;
+
+  /// 0-indexed column this event occupies within its overlap cluster.
   final int column;
+
+  /// Total number of columns in the overlap cluster this event belongs to.
+  ///
+  /// Used by the view to size each event as
+  /// `eventColumnWidth / totalColumns`.
   final int totalColumns;
 
+  /// Creates a [ColumnEvent].
   const ColumnEvent({
     required this.event,
     required this.column,

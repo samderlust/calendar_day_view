@@ -2,14 +2,27 @@ import 'dart:math';
 
 import '../../calendar_day_view.dart';
 
+/// Default duration in minutes for events with a null `end`.
 const _defaultDurationMinutes = 30;
 
 /// Assigns events to columns for a multi-column overlap layout.
 ///
-/// Events that overlap in time are placed side-by-side in separate columns.
-/// Events that transitively overlap share the same [ColumnEvent.totalColumns].
+/// This is the default implementation used by [MultiColumnCalendarDayView].
+/// It runs a two-phase algorithm:
 ///
-/// Returns a list of [ColumnEvent] with column assignments.
+/// 1. **Greedy column assignment.** Events are sorted by start time (with
+///    longer events winning ties) and assigned to the lowest-indexed
+///    column whose previously-assigned event has already ended.
+/// 2. **Cluster grouping.** Transitively-overlapping events are grouped
+///    into clusters so they all share the same [ColumnEvent.totalColumns]
+///    value, producing uniform widths within each cluster.
+///
+/// Events outside `[startOfDay, endOfDay]` are filtered out. Events with a
+/// null [DayEvent.end] are treated as 30 minutes long.
+///
+/// This function is the default behavior when
+/// [MultiColumnDayViewConfig.overlapStrategy] is null — provide a custom
+/// [OverlapStrategy] to replace it.
 List<ColumnEvent<T>> assignColumns<T extends Object>(
   List<DayEvent<T>> events, {
   DateTime? startOfDay,

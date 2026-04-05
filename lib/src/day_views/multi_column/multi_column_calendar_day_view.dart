@@ -8,8 +8,44 @@ import '../../utils/multi_column_utils.dart';
 import '../../widgets/background_ignore_pointer.dart';
 import '../../widgets/current_time_line_widget.dart';
 
-class MultiColumnCalendarDayView<T extends Object> extends StatefulWidget
-    implements CalendarDayView<T> {
+/// A day view that lays out overlapping events side-by-side in columns,
+/// similar to Google Calendar or Outlook.
+///
+/// When events overlap in time, they are automatically placed in separate
+/// columns that share the available horizontal space. Events that do not
+/// directly overlap reclaim column slots — for example, if event A ends
+/// before event C starts, C can reuse A's column even when both transitively
+/// overlap through event B.
+///
+/// The default layout algorithm is a greedy interval graph coloring with
+/// cluster-based total-column assignment (see [assignColumns]). To implement
+/// a custom layout, provide [MultiColumnDayViewConfig.overlapStrategy].
+///
+/// Prefer using the factory [CalendarDayView.multiColumn] rather than
+/// constructing this widget directly.
+///
+/// Example:
+/// ```dart
+/// CalendarDayView.multiColumn<String>(
+///   config: MultiColumnDayViewConfig<String>(
+///     currentDate: DateTime.now(),
+///     timeGap: 60,
+///     heightPerMin: 2,
+///     scrollToCurrentTime: true,
+///   ),
+///   events: events,
+///   onTimeTap: (time) => handleTap(time),
+///   itemBuilder: (context, constraints, event, column, totalColumns) {
+///     return MyEventTile(event: event);
+///   },
+/// );
+/// ```
+class MultiColumnCalendarDayView<T extends Object> extends StatefulWidget implements CalendarDayView<T> {
+  /// Creates a multi-column calendar day view.
+  ///
+  /// [events], [itemBuilder] and [config] are required. [onTimeTap] is
+  /// optional — when provided, tapping empty space in the time grid fires
+  /// the callback with the tapped time (rounded to the nearest 5 minutes).
   const MultiColumnCalendarDayView({
     super.key,
     required this.events,
@@ -18,20 +54,32 @@ class MultiColumnCalendarDayView<T extends Object> extends StatefulWidget
     required this.config,
   });
 
+  /// Behavior and visual configuration for this view.
+  ///
+  /// Use [MultiColumnDayViewConfig.overlapStrategy] to supply a custom
+  /// layout algorithm for overlapping events.
   final MultiColumnDayViewConfig<T> config;
 
-  /// List of events to be displayed in the day view
+  /// The events to display in the day view.
+  ///
+  /// Events with a null `end` default to a 30-minute duration.
   final List<DayEvent<T>> events;
 
-  /// Builder for each event tile
+  /// Builder invoked for each event tile.
+  ///
+  /// The builder receives the constrained size of the tile, the event, and
+  /// its assigned `columnIndex` and `totalColumns` within its overlap cluster
+  /// — useful for styling events differently based on column position.
   final MultiColumnItemBuilder<T> itemBuilder;
 
-  /// Allow user to tap on day view time slots
+  /// Called when the user taps an empty time slot.
+  ///
+  /// The reported [DateTime] is rounded to the nearest 5 minutes. When null,
+  /// taps pass through to underlying events.
   final OnTimeTap? onTimeTap;
 
   @override
-  State<MultiColumnCalendarDayView> createState() =>
-      _MultiColumnCalendarDayViewState<T>();
+  State<MultiColumnCalendarDayView> createState() => _MultiColumnCalendarDayViewState<T>();
 }
 
 class _MultiColumnCalendarDayViewState<T extends Object>
