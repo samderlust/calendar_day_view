@@ -2,7 +2,7 @@
 
 ## New Day View
 
-### Multi-Column Overlap View (like Google Calendar / Outlook)
+### ✅ Multi-Column Overlap View (like Google Calendar / Outlook) — DONE in v6.0.0
 - The #1 missing view type
 - When events overlap in time, auto-split into side-by-side columns within the same time area
 - Auto-calculates how many columns are needed and sizes each event proportionally
@@ -19,9 +19,11 @@
 
 ## Customization Gaps
 
-### 1. Time row background builder
-- No way to shade specific time ranges (e.g., gray out lunch 12-1pm, highlight working hours, mark unavailable blocks)
-- Add a `timeRowBackgroundBuilder` on the base config
+### ✅ 1. Time row background builder — DONE in v6.0.0
+- Added `timeRowBackgroundBuilder` to base `DavViewConfig`
+- Supported in overflow, multi-column, and in-row views
+- Returns `Widget?` per row — return null to use default background
+- Note: not wired into category views (TableView uses `SpanDecoration` which takes BoxDecoration, not widgets)
 
 ### 2. Divider builder
 - `dividerColor` only sets color
@@ -48,12 +50,12 @@
 
 ## Priority
 
-| Priority | Item | Impact |
-|----------|------|--------|
-| High | Multi-column overlap view | Most requested missing view |
-| High | Time row background builder | Essential for real-world calendars |
-| Medium | Divider builder | Full visual control |
-| Medium | Day view header/footer | Embedability |
-| Medium | Time column position | Layout flexibility |
-| Low | Overlap strategy callback | Power user feature |
-| Low | Drag-to-create/resize | Complex but high value |
+| Priority | Item | Status | Impact |
+|----------|------|--------|--------|
+| High | Multi-column overlap view | ✅ Done (v6.0.0) | Most requested missing view |
+| High | Time row background builder | ✅ Done (v6.0.0) | Essential for real-world calendars |
+| Medium | Divider builder | | Full visual control |
+| Medium | Day view header/footer | | Embedability |
+| Medium | Time column position | | Layout flexibility |
+| Low | Overlap strategy callback | | Power user feature |
+| Low | Drag-to-create/resize | | Complex but high value |

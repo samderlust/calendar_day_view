@@ -231,6 +231,19 @@ class OverflowTimeRowWidget extends StatelessWidget {
         width: viewWidth,
         child: Stack(
           children: [
+            if (config.timeRowBackgroundBuilder != null)
+              Positioned.fill(
+                child: Builder(
+                  builder: (context) {
+                    final bg = config.timeRowBackgroundBuilder!(
+                      context,
+                      time,
+                      BoxConstraints.tightFor(width: viewWidth, height: config.rowHeight),
+                    );
+                    return bg ?? const SizedBox.shrink();
+                  },
+                ),
+              ),
             Divider(
               color: config.dividerColor ?? Colors.amber,
               height: 0,

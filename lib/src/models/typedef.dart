@@ -44,6 +44,17 @@ typedef TimeLabelBuilder = Widget Function(BuildContext context, DateTime time);
 /// allow custom current time line widget
 typedef CurrentTimeLineBuilder = Widget Function(double top, double width);
 
+/// time row background builder
+/// allow custom background per time row (e.g. shade lunch break or working hours)
+///
+/// [rowTime] is the start time of the row
+/// [constraints] provides the row's full size (width, height = rowHeight)
+typedef TimeRowBackgroundBuilder = Widget? Function(
+  BuildContext context,
+  DateTime rowTime,
+  BoxConstraints constraints,
+);
+
 /// builder for multi-column day view events
 typedef MultiColumnItemBuilder<T extends Object> = Widget Function(
   BuildContext context,

@@ -53,6 +53,12 @@ abstract class DavViewConfig {
   /// allow custom current time line widget
   final CurrentTimeLineBuilder? currentTimeLineBuilder;
 
+  /// allow custom background for each time row
+  ///
+  /// Return null to use the default (transparent) background for a row.
+  /// Useful for shading lunch break, working hours, unavailable blocks, etc.
+  final TimeRowBackgroundBuilder? timeRowBackgroundBuilder;
+
   /// if true, auto scroll to current time on initial render
   final bool scrollToCurrentTime;
 
@@ -77,6 +83,7 @@ abstract class DavViewConfig {
     this.dividerColor,
     this.timeLabelBuilder,
     this.currentTimeLineBuilder,
+    this.timeRowBackgroundBuilder,
     this.scrollToCurrentTime = false,
     this.cropBottomEvents = false,
   });
@@ -151,6 +158,7 @@ final class CategoryDavViewConfig extends DavViewConfig {
     super.showCurrentTimeLine,
     super.timeColumnWidth,
     super.timeLabelBuilder,
+    super.timeRowBackgroundBuilder,
     this.categoryTitleTextStyle,
   });
 }
@@ -186,6 +194,7 @@ final class OverFlowDayViewConfig extends DavViewConfig {
     super.timeTextStyle,
     super.timeLabelBuilder,
     super.currentTimeLineBuilder,
+    super.timeRowBackgroundBuilder,
     super.scrollToCurrentTime,
     super.currentTimeLineColor,
     super.cropBottomEvents,
@@ -220,6 +229,7 @@ final class EventDayViewConfig extends DavViewConfig {
     super.dividerColor,
     super.timeLabelBuilder,
     super.currentTimeLineBuilder,
+    super.timeRowBackgroundBuilder,
     super.scrollToCurrentTime,
     super.controller,
     this.rowPadding,
@@ -236,6 +246,7 @@ final class InRowDayViewConfig extends EventDayViewConfig {
     required super.currentDate,
     super.timeLabelBuilder,
     super.currentTimeLineBuilder,
+    super.timeRowBackgroundBuilder,
     super.scrollToCurrentTime,
     super.currentTimeLineColor,
     super.startOfDay,
@@ -273,6 +284,7 @@ final class MultiColumnDayViewConfig extends DavViewConfig {
     super.timeTextStyle,
     super.timeLabelBuilder,
     super.currentTimeLineBuilder,
+    super.timeRowBackgroundBuilder,
     super.scrollToCurrentTime,
     super.currentTimeLineColor,
     super.cropBottomEvents,
