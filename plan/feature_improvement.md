@@ -25,10 +25,11 @@
 - Returns `Widget?` per row — return null to use default background
 - Note: not wired into category views (TableView uses `SpanDecoration` which takes BoxDecoration, not widgets)
 
-### 2. Divider builder
-- `dividerColor` only sets color
-- Users can't customize thickness per row, use dashed lines, or hide specific dividers
-- Add a `dividerBuilder` for full control
+### ✅ 2. Divider builder — DONE in v6.0.0
+- Added `dividerBuilder` to base `DavViewConfig`
+- Returns `Widget?` per row — return null to skip the divider for that row
+- Supported in overflow, multi-column, in-row, and event-only views
+- Falls back to the default `Divider` if builder is not provided
 
 ### 3. Time column position
 - Time column is always on the left
@@ -54,7 +55,7 @@
 |----------|------|--------|--------|
 | High | Multi-column overlap view | ✅ Done (v6.0.0) | Most requested missing view |
 | High | Time row background builder | ✅ Done (v6.0.0) | Essential for real-world calendars |
-| Medium | Divider builder | | Full visual control |
+| Medium | Divider builder | ✅ Done (v6.0.0) | Full visual control |
 | Medium | Day view header/footer | | Embedability |
 | Medium | Time column position | | Layout flexibility |
 | Low | Overlap strategy callback | | Power user feature |

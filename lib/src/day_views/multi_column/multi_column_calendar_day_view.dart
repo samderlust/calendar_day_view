@@ -245,12 +245,17 @@ class _MultiColumnTimeRowWidget extends StatelessWidget {
                   },
                 ),
               ),
-            Divider(
-              color: config.dividerColor ?? Colors.amber,
-              height: 0,
-              thickness: time.minute == 0 ? 1 : .5,
-              indent: config.timeColumnWidth + 3,
-            ),
+            if (config.dividerBuilder != null)
+              Builder(
+                builder: (context) => config.dividerBuilder!(context, time) ?? const SizedBox.shrink(),
+              )
+            else
+              Divider(
+                color: config.dividerColor ?? Colors.amber,
+                height: 0,
+                thickness: time.minute == 0 ? 1 : .5,
+                indent: config.timeColumnWidth + 3,
+              ),
             Transform(
               transform: Matrix4.translationValues(0, -20, 0),
               child: SizedBox(

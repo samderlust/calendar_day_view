@@ -85,12 +85,17 @@ class _EventCalendarDayViewState<T extends Object> extends State<EventCalendarDa
                 child: Stack(
                   clipBehavior: Clip.none,
                   children: [
-                    Divider(
-                      color: widget.config.dividerColor ?? Colors.amber,
-                      height: 0,
-                      thickness: 1,
-                      indent: widget.config.timeColumnWidth + 3,
-                    ),
+                    if (widget.config.dividerBuilder != null)
+                      Builder(
+                        builder: (context) => widget.config.dividerBuilder!(context, time) ?? const SizedBox.shrink(),
+                      )
+                    else
+                      Divider(
+                        color: widget.config.dividerColor ?? Colors.amber,
+                        height: 0,
+                        thickness: 1,
+                        indent: widget.config.timeColumnWidth + 3,
+                      ),
                     Row(
                       mainAxisSize: MainAxisSize.max,
                       crossAxisAlignment: CrossAxisAlignment.start,

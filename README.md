@@ -38,6 +38,7 @@ A powerful and customizable Flutter library for displaying calendar events in da
 - **Multi-Column Day View** — new Google Calendar-style layout where overlapping events are placed side-by-side in columns with smart column reuse
 - **Config consolidation** — `currentTimeLineColor` and `cropBottomEvents` moved to base `DavViewConfig`, available to all views without duplication
 - **Time row background builder** — use `timeRowBackgroundBuilder` in config to shade specific time ranges (lunch break, working hours, unavailable blocks) in overflow, multi-column, and in-row views
+- **Divider builder** — use `dividerBuilder` in config for custom dividers per row (dashed lines, per-row thickness, hide specific dividers)
 
 For full details, see the [Changelog](CHANGELOG.md).
 

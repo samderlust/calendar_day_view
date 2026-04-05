@@ -23,6 +23,7 @@
 - add new `CalendarDayView.multiColumn()` — Google Calendar-style layout where overlapping events are placed side-by-side in columns with smart column reuse
 - move `currentTimeLineColor` and `cropBottomEvents` to base `DavViewConfig` — reduces duplication across `OverFlowDayViewConfig`, `InRowDayViewConfig`, and `MultiColumnDayViewConfig`
 - add `timeRowBackgroundBuilder` to config — allows custom background per time row (e.g., shade lunch break, highlight working hours, mark unavailable blocks). Supported in overflow, multi-column, and in-row views
+- add `dividerBuilder` to config — allows custom divider widget per time row (dashed lines, thickness variations, hide specific dividers, etc.). Supported in overflow, multi-column, in-row, and event-only views
 
 ## 5.0.0
 

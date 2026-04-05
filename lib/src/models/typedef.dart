@@ -55,6 +55,16 @@ typedef TimeRowBackgroundBuilder = Widget? Function(
   BoxConstraints constraints,
 );
 
+/// divider builder
+/// allow custom divider between time rows
+///
+/// [rowTime] is the start time of the row this divider precedes
+/// Return null to skip the divider for this row
+typedef DividerBuilder = Widget? Function(
+  BuildContext context,
+  DateTime rowTime,
+);
+
 /// builder for multi-column day view events
 typedef MultiColumnItemBuilder<T extends Object> = Widget Function(
   BuildContext context,
