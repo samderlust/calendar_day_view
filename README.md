@@ -7,9 +7,70 @@
 
 A powerful and customizable Flutter library for displaying calendar events in day view format. Perfect for applications requiring detailed daily event visualization.
 
-## 🚨 Breaking Changes
+## 🚨 Breaking Changes in v6.0.0
 
-Version 5.0.0 introduces significant changes. Please refer to the [Changelog](CHANGELOG.md) for detailed migration instructions.
+### Migration from v5.x
+
+**Renamed tap callbacks** — all tap callbacks are now consistently named `onTimeTap`:
+
+| View | Before (v5) | After (v6) |
+|------|-------------|------------|
+| `CalendarDayView.category()` | `onTileTap` | `onTimeTap` |
+| `CalendarDayView.categoryOverflow()` | `onTileTap` | `onTimeTap` |
+| `CalendarDayView.inRow()` | `onTap` | `onTimeTap` |
+| `CalendarDayView.overflow()` | `onTimeTap` | `onTimeTap` (no change) |
+| `CategoryDayView()` | `onTileTap` | `onTimeTap` |
+| `CategoryOverflowDayView()` | `onTileTap` | `onTimeTap` |
+
+**Removed parameters:**
+- `controlBarBuilder` removed from `CalendarDayView.category()` and `CalendarDayView.categoryOverflow()`
+- `backgroundTimeTileBuilder` removed from `CalendarDayView.categoryOverflow()`
+
+**Typedefs now exported** — all typedefs (e.g., `CategoryDayViewEventBuilder`, `DayViewItemBuilder`) are now accessible via the main `import 'package:calendar_day_view/calendar_day_view.dart'` import. No need to import `src/models/typedef.dart` directly.
+
+**Styling moved to `DayViewDecoration`** — all visual customization is now grouped in a separate `DayViewDecoration` object, passed via `config.decoration`:
+
+```dart
+// Before (v5.x)
+OverFlowDayViewConfig(
+  currentDate: DateTime.now(),
+  timeColumnWidth: 70,
+  dividerColor: Colors.black,
+  currentTimeLineColor: Colors.red,
+  timeLabelBuilder: (ctx, t) => Text(...),
+)
+
+// After (v6.x)
+OverFlowDayViewConfig(
+  currentDate: DateTime.now(),
+  decoration: DayViewDecoration(
+    timeColumnWidth: 70,
+    dividerColor: Colors.black,
+    currentTimeLineColor: Colors.red,
+    timeLabel: (ctx, t) => Text(...),
+  ),
+)
+```
+
+Properties moved to `DayViewDecoration`: `timeColumnWidth`, `timeTextStyle`, `timeTextColor`, `dividerColor`, `currentTimeLineColor`, `timeLabel` (was `timeLabelBuilder`), `currentTimeLine` (was `currentTimeLineBuilder`), `rowBackground` (was `timeRowBackgroundBuilder`), `divider` (was `dividerBuilder`). The same decoration can be reused across multiple views for consistent branding.
+
+### What's New in v6.0.0
+
+- **Auto-scroll to current time** — set `scrollToCurrentTime: true` in config to auto-scroll on load (overflow and in-row views)
+- **Custom current time line** — use `currentTimeLineBuilder` in config to fully customize the current time indicator
+- **Show all events in category cell** — set `showAllEventsInCell: true` in `CategoryDavViewConfig` to display all events horizontally instead of only the first
+- **Empty tile builder** — use `emptyTileBuilder` in category views to customize empty cells
+- **Null end time safety** — overflow views now default to 30 min duration for events without an end time instead of crashing
+- **Multi-Column Day View** — new Google Calendar-style layout where overlapping events are placed side-by-side in columns with smart column reuse
+- **Config consolidation** — `currentTimeLineColor` and `cropBottomEvents` moved to base `DavViewConfig`, available to all views without duplication
+- **Time row background builder** — use `timeRowBackgroundBuilder` in config to shade specific time ranges (lunch break, working hours, unavailable blocks) in overflow, multi-column, and in-row views
+- **Divider builder** — use `divider` in `DayViewDecoration` for custom dividers per row (dashed lines, per-row thickness, hide specific dividers)
+- **`DayViewDecoration`** — new visual decoration class groups all styling and builder callbacks. Reusable across view types for shared theming
+- **Time column position** — `timeColumnPosition: TimeColumnPosition.left | .right | .none` in decoration for flexible layouts
+- **Header / footer builders** — `header` and `footer` in decoration for custom widgets above/below the time grid
+- **Custom overlap strategy** — `overlapStrategy` on `MultiColumnDayViewConfig<T>` for custom multi-column layout algorithms
+
+For full details, see the [Changelog](CHANGELOG.md).
 
 ## 📱 Live Demo
 
@@ -19,6 +80,7 @@ Check out the live demo at: [https://samderlust.github.io/calendardayview](https
 
 ### View Types
 
+- **Multi-Column Day View**: Google Calendar-style layout — overlapping events are placed side-by-side in columns with smart column reuse
 - **Category Overflow Day View**: Display events across multiple time slots within categorized columns
 - **Category Day View**: Organize events by categories (e.g., meeting rooms, resources)
 - **Overflow Day View**: Traditional calendar view with events spanning multiple time slots
@@ -29,10 +91,13 @@ Check out the live demo at: [https://samderlust.github.io/calendardayview](https
 
 - ⏰ Customizable day start and end times
 - ⏱️ Adjustable time slot duration
-- 🕒 Current time indicator
+- 🕒 Current time indicator with custom builder support
 - 👆 Interactive time slot tapping
 - 🎨 Fully customizable event widgets
 - 📱 Responsive design support
+- 🔄 Auto-scroll to current time on load
+- 📋 Show all events or first-only in category cells
+- 🏷️ Custom empty tile builder for category views
 
 ## 📦 Installation
 
@@ -51,6 +116,69 @@ import 'package:calendar_day_view/calendar_day_view.dart';
 
 ## 🚀 Usage
 
+### Shared Decoration (v6.0+)
+
+All visual customization is done via `DayViewDecoration`, which can be reused across view types:
+
+```dart
+final myDecoration = DayViewDecoration(
+  timeColumnWidth: 70,
+  dividerColor: Colors.grey.shade300,
+  currentTimeLineColor: Colors.red,
+  timeLabel: (context, time) => Text(
+    DateFormat('HH:mm').format(time),
+    style: const TextStyle(fontWeight: FontWeight.bold),
+  ),
+  rowBackground: (context, rowTime, constraints) {
+    // Shade lunch break
+    if (rowTime.hour == 12) {
+      return Container(color: Colors.grey.withValues(alpha: 0.1));
+    }
+    return null;
+  },
+  divider: (context, rowTime) {
+    // Thicker line at the hour
+    if (rowTime.minute == 0) {
+      return Divider(color: Colors.grey.shade400, thickness: 1.5, height: 0);
+    }
+    return null; // skip divider
+  },
+);
+
+// Reuse the same decoration across different views
+OverFlowDayViewConfig(currentDate: DateTime.now(), decoration: myDecoration);
+MultiColumnDayViewConfig(currentDate: DateTime.now(), decoration: myDecoration);
+```
+
+### Multi-Column Day View
+
+Google Calendar-style layout. Overlapping events are automatically placed side-by-side in columns. Column count is determined by the overlap pattern — solo events get full width.
+
+```dart
+CalendarDayView.multiColumn(
+  config: MultiColumnDayViewConfig(
+    currentDate: DateTime.now(),
+    timeGap: 60,
+    heightPerMin: 2,
+    startOfDay: const TimeOfDay(hour: 7, minute: 0),
+    endOfDay: const TimeOfDay(hour: 20, minute: 0),
+    scrollToCurrentTime: true,
+  ),
+  events: events,
+  onTimeTap: (time) => handleTimeTap(time),
+  itemBuilder: (context, constraints, event, columnIndex, totalColumns) {
+    return Container(
+      margin: const EdgeInsets.all(1),
+      decoration: BoxDecoration(
+        color: Colors.blue.shade100,
+        borderRadius: BorderRadius.circular(4),
+      ),
+      child: Text(event.value),
+    );
+  },
+);
+```
+
 ### Category Day View
 
 Perfect for displaying events across multiple categories (e.g., meeting rooms, resources).
@@ -64,22 +192,16 @@ CalendarDayView.category(
     currentDate: DateTime.now(),
     timeGap: 60,
     heightPerMin: 1,
-    evenRowColor: Colors.white,
-    oddRowColor: Colors.grey[200],
-    headerDecoration: BoxDecoration(
-      color: Colors.lightBlueAccent.withOpacity(.5),
-    ),
-    logo: const Padding(
-      padding: EdgeInsets.all(8.0),
-      child: CircleAvatar(child: Text("C")),
-    ),
+    showAllEventsInCell: true, // show all events in cell horizontally
   ),
   categories: categories,
   events: events,
-  onTileTap: (category, time) {
+  onTimeTap: (category, time) {
     // Handle time slot tap
   },
-  controlBarBuilder: (goToPreviousTab, goToNextTab) => YourControlBar(),
+  emptyTileBuilder: (constraints, category, time) {
+    return Center(child: Text('Available'));
+  },
   eventBuilder: (constraints, category, _, event) => YourEventWidget(),
 );
 ```
@@ -98,6 +220,7 @@ CalendarDayView.overflow(
     startOfDay: const TimeOfDay(hour: 4, minute: 0),
     renderRowAsListView: true,
     time12: true,
+    scrollToCurrentTime: true, // auto-scroll to current time
   ),
   onTimeTap: (time) => handleTimeTap(time),
   events: UnmodifiableListView(events),
@@ -133,11 +256,13 @@ CalendarDayView.inRow(
     timeGap: 60,
     showWithEventOnly: true,
     currentDate: DateTime.now(),
-    startOfDay: TimeOfDay(hour: 3, minute: 00),
-    endOfDay: TimeOfDay(hour: 22, minute: 00),
+    startOfDay: const TimeOfDay(hour: 3, minute: 00),
+    endOfDay: const TimeOfDay(hour: 22, minute: 00),
+    scrollToCurrentTime: true, // auto-scroll to current time
   ),
   events: UnmodifiableListView(events),
-  itemBuilder: (context, constraints, event) => YourEventWidget(),
+  onTimeTap: (time) => handleTimeTap(time),
+  itemBuilder: (context, constraints, itemIndex, event) => YourEventWidget(),
 );
 ```
 

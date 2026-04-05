@@ -21,10 +21,10 @@ import 'package:flutter/rendering.dart';
 
 class BackgroundIgnorePointer extends SingleChildRenderObjectWidget {
   const BackgroundIgnorePointer({
-    Key? key,
-    required Widget child,
+    super.key,
+    required super.child,
     this.ignored = true,
-  }) : super(key: key, child: child);
+  });
   final bool ignored;
 
   @override

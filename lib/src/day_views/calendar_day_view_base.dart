@@ -1,15 +1,32 @@
 import 'package:flutter/material.dart';
 
 import '../../calendar_day_view.dart';
-import '../models/typedef.dart';
 
-/// Abstract base class for all calendar day view implementations
+/// Abstract base class and factory for all calendar day view widgets.
+///
+/// Do not extend this class directly. Use the named static constructors to
+/// create a specific view type:
+///
+/// - [CalendarDayView.overflow] — events span across time slots
+/// - [CalendarDayView.multiColumn] — overlapping events laid out side-by-side
+/// - [CalendarDayView.category] — fixed grid of category columns
+/// - [CalendarDayView.categoryOverflow] — category columns with overflow events
+/// - [CalendarDayView.inRow] — events in the same time gap grouped in one row
+/// - [CalendarDayView.eventOnly] — chronological list of events (no time grid)
 abstract class CalendarDayView<T extends Object> extends Widget {
+  /// Const constructor for subclasses.
   const CalendarDayView({super.key});
 
-  /// Create [OverFlowCalendarDayView]
+  /// Creates an [OverFlowCalendarDayView] — a time-grid view where events
+  /// visually overflow across multiple time rows based on their duration.
   ///
-  /// where event widget can be display overflowed to other time row
+  /// Events with overlapping time ranges are grouped into rows that render
+  /// either as fixed-width columns or as horizontally scrollable lists
+  /// (see [OverFlowDayViewConfig.renderRowAsListView]).
+  ///
+  /// [overflowItemBuilder] is required in practice — it is called for each
+  /// event tile. [onTimeTap] is optional and fires when the user taps an
+  /// empty area of the time grid.
   static CalendarDayView<T> overflow<T extends Object>({
     required List<DayEvent<T>> events,
     DayViewItemBuilder<T>? overflowItemBuilder,
@@ -23,40 +40,47 @@ abstract class CalendarDayView<T extends Object> extends Widget {
         config: config,
       );
 
-  /// Create [CategoryDayView]
+  /// Creates a [CategoryDayView] — a 2D grid where each column represents
+  /// an [EventCategory] and each row is a fixed time slot.
   ///
-  /// where day view is divided into multiple category with fixed time slot.
-  /// event will be showed within the correspond event tile only.
+  /// Events are placed into the cell matching their category and time slot.
+  /// Only events whose [CategorizedDayEvent.categoryId] matches one of
+  /// [categories] are rendered.
+  ///
+  /// Use [CategoryDavViewConfig.showAllEventsInCell] to render multiple
+  /// events per cell side-by-side, and [emptyTileBuilder] to customize
+  /// empty cells.
   static CalendarDayView<T> category<T extends Object>({
     required CategoryDavViewConfig config,
     required List<CategorizedDayEvent<T>> events,
     required List<EventCategory> categories,
     required CategoryDayViewEventBuilder<T> eventBuilder,
     CategoryDayViewController? controller,
-    CategoryDayViewTileTap? onTileTap,
-    CategoryDayViewControlBarBuilder? controlBarBuilder,
+    CategoryDayViewTileTap? onTimeTap,
+    CategoryEmptyTileBuilder? emptyTileBuilder,
   }) =>
       CategoryDayView(
         config: config,
         events: events,
         categories: categories,
         eventBuilder: eventBuilder,
-        onTileTap: onTileTap,
+        onTimeTap: onTimeTap,
+        emptyTileBuilder: emptyTileBuilder,
         controller: controller,
       );
 
-  /// Create [CategoryOverflowDayView]
+  /// Creates a [CategoryOverflowDayView] — like [category], but events may
+  /// visually overflow into adjacent time slots within the same category
+  /// column.
   ///
-  /// where day view is divided into multiple category with fixed time slot.
-  /// event can be display overflowed into different time slot but within the same category column
+  /// Useful when events have longer durations than a single time slot.
   static CalendarDayView<T> categoryOverflow<T extends Object>({
     CategoryDayViewController? controller,
     required List<CategorizedDayEvent<T>> events,
     required List<EventCategory> categories,
     required CategoryDayViewEventBuilder<T> eventBuilder,
-    CategoryDayViewTileTap? onTileTap,
-    CategoryDayViewControlBarBuilder? controlBarBuilder,
-    CategoryBackgroundTimeTileBuilder? backgroundTimeTileBuilder,
+    CategoryDayViewTileTap? onTimeTap,
+    CategoryEmptyTileBuilder? emptyTileBuilder,
     required CategoryDavViewConfig config,
   }) =>
       CategoryOverflowDayView(
@@ -65,31 +89,36 @@ abstract class CalendarDayView<T extends Object> extends Widget {
         events: events,
         categories: categories,
         eventBuilder: eventBuilder,
-        onTileTap: onTileTap,
+        onTimeTap: onTimeTap,
+        emptyTileBuilder: emptyTileBuilder,
       );
 
-  /// Create [InRowCalendarDayView]
+  /// Creates an [InRowCalendarDayView] — a time-grid view where all events
+  /// whose start falls within the same time gap are grouped into a single
+  /// horizontal row.
   ///
-  /// Show all events that are happened in the same time gap window in a single row
+  /// Provide either [itemBuilder] (one event at a time) or [timeRowBuilder]
+  /// (all events in the row at once) — not both.
   static CalendarDayView<T> inRow<T extends Object>({
     required List<DayEvent<T>> events,
     DayViewItemBuilder<T>? itemBuilder,
     DayViewTimeRowBuilder<T>? timeRowBuilder,
-    OnTimeTap? onTap,
+    OnTimeTap? onTimeTap,
     required InRowDayViewConfig config,
   }) =>
       InRowCalendarDayView(
         events: events,
         itemBuilder: itemBuilder,
         timeRowBuilder: timeRowBuilder,
-        onTap: onTap,
+        onTimeTap: onTimeTap,
         config: config,
       );
 
-  /// Create [EventCalendarDayView]
+  /// Creates an [EventCalendarDayView] — a chronological list of events
+  /// without a fixed time grid.
   ///
-  /// this day view doesn't display with a fixed time gap
-  /// it listed and sorted by the time that the events start
+  /// Only time slots that contain at least one event are rendered, sorted
+  /// by start time. Set [EventDayViewConfig.showHourly] to group by hour.
   static CalendarDayView<T> eventOnly<T extends Object>({
     required List<DayEvent<T>> events,
     required EventDayViewItemBuilder<T> eventDayViewItemBuilder,
@@ -100,6 +129,26 @@ abstract class CalendarDayView<T extends Object> extends Widget {
         itemSeparatorBuilder: itemSeparatorBuilder,
         events: events,
         eventDayViewItemBuilder: eventDayViewItemBuilder,
+        config: config,
+      );
+
+  /// Creates a [MultiColumnCalendarDayView] — a Google Calendar-style
+  /// layout where overlapping events are placed side-by-side in columns.
+  ///
+  /// The number of columns is automatically determined per overlap cluster
+  /// by the default greedy interval graph coloring algorithm. Provide
+  /// [MultiColumnDayViewConfig.overlapStrategy] to supply a custom layout
+  /// algorithm.
+  static CalendarDayView<T> multiColumn<T extends Object>({
+    required List<DayEvent<T>> events,
+    required MultiColumnItemBuilder<T> itemBuilder,
+    OnTimeTap? onTimeTap,
+    required MultiColumnDayViewConfig<T> config,
+  }) =>
+      MultiColumnCalendarDayView<T>(
+        events: events,
+        itemBuilder: itemBuilder,
+        onTimeTap: onTimeTap,
         config: config,
       );
 }

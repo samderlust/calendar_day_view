@@ -1,3 +1,62 @@
+## 6.0.0
+
+### New day view
+
+- add `CalendarDayView.multiColumn()` — Google Calendar-style layout where overlapping events are placed side-by-side in columns with smart column reuse (transitively-overlapping events share the same cluster width while non-overlapping events reclaim columns).
+
+### Visual customization: `DayViewDecoration`
+
+- [BREAKING] introduce `DayViewDecoration` — all visual/styling properties and builders moved out of the config classes into a single reusable `decoration` field. Config classes now focus on behavior (time range, scroll, event handling); decoration handles visual customization and can be reused across view types for shared theming.
+- properties on `DayViewDecoration`:
+  - `timeColumnWidth`, `timeColumnPosition` (`left`, `right`, `none`) — position the time column on the left, right, or hide it entirely
+  - `timeTextStyle`, `timeTextColor`, `dividerColor`, `currentTimeLineColor` — styling primitives
+  - `timeLabel` builder — custom time label widget per row
+  - `currentTimeLine` builder — fully custom current time line widget
+  - `rowBackground` builder — custom background per time row (shade lunch break, highlight working hours, mark unavailable blocks, etc.)
+  - `divider` builder — custom divider per row (dashed lines, thickness variations, hide specific dividers)
+  - `header` / `footer` builders — render custom widgets above/below the scrollable time grid (date headers, legends, action bars, etc.)
+
+### New features
+
+- add `scrollToCurrentTime` option to auto-scroll to current time on initial render (overflow, multi-column, and in-row views)
+- add `showAllEventsInCell` to `CategoryDavViewConfig` — show all events in a category cell horizontally instead of only the first
+- add `emptyTileBuilder` to category views for customizing empty cells
+- add `categoryTitleTextStyle` support to non-overflow `CategoryDayView`
+- add `overlapStrategy` to `MultiColumnDayViewConfig<T>` — lets users provide a custom overlap layout algorithm instead of the default greedy interval coloring
+- consolidate `cropBottomEvents` onto the base `DavViewConfig` so it's available to all relevant views without duplication
+
+### Breaking changes
+
+- [BREAKING] `DayViewDecoration` introduction — visual properties must be moved from the config into a `decoration:` field (see above)
+- [BREAKING] standardize tap callback naming: `onTileTap` and `onTap` renamed to `onTimeTap` across all views
+- [BREAKING] `MultiColumnDayViewConfig` is now generic: `MultiColumnDayViewConfig<T>`
+- remove unused `controlBarBuilder` and `backgroundTimeTileBuilder` params from factory constructors (they were accepted but never forwarded to the underlying views)
+- remove unused typedefs (`CategoryBackgroundTimeRowBuilder`, `CategoryDayViewRowBuilder`, `OverflowEventsSorter`, `CategoryDayViewHeaderTileBuilder`, `CategoryDayViewControlBarBuilder`, `CategoryBackgroundTimeTileBuilder`)
+
+### Bug fixes
+
+- fix `CategorizedDayEvent.operator==` to compare all fields instead of only `categoryId`
+- handle null `end` in overflow views gracefully (defaults to 30 min duration instead of crashing)
+- add `mounted` check in timer callbacks for `OverFlowCalendarDayView` and `InRowCalendarDayView`
+
+### Internal refactor
+
+- consolidate `CategoryDayView` and `CategoryOverflowDayView` into a shared internal widget
+- remove unused internal widgets (`TimeAndLogoWidget`, `TimeRowBackground`, `CategoryTitleRow`, `DayViewRow`, `OverflowDayViewRow`)
+- remove unused `DayViewProvider` and `DayViewState`
+- replace custom `firstWhereOrNull` extension with Dart 3 built-in `.firstOrNull`
+- inline `earlierThan`/`laterThan` extensions with standard `isBefore`/`isAfter`
+- remove commented-out code and unused fields
+- export `typedef.dart` and `column_event.dart` from the barrel file so public typedefs are accessible via the main import
+- clean all analyzer warnings and lint issues
+
+### Example app
+
+- complete overhaul: every day view now has a Floating Action Button (tune icon) that opens a settings bottom sheet exposing all configurable options (time gap, height per min, time column position, current time line, scroll to current time, and view-specific flags)
+- uses `NavigationBar` with 6 tabs (Overflow, Category Overflow, Category, In Row, Events, Multi Column)
+- multi-column tab demonstrates `overlapStrategy` with 3 modes: Default, Stack, ½ Width
+- category tabs: prev/next tab controls moved to a dedicated toolbar above the day view
+
 ## 5.0.0
 
 - refactor category day view to use `two_dimensional_scrollables` for better performance and clearer code

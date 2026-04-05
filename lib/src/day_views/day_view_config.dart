@@ -3,56 +3,78 @@ import 'package:flutter/material.dart';
 import '../extensions/date_time_extension.dart';
 import '../models/typedef.dart';
 import '../utils/date_time_utils.dart';
+import 'day_view_decoration.dart';
 
+/// Base configuration shared by all calendar day views.
+///
+/// Subclasses add view-specific options: [CategoryDavViewConfig],
+/// [OverFlowDayViewConfig], [EventDayViewConfig], [InRowDayViewConfig],
+/// [MultiColumnDayViewConfig].
+///
+/// Visual customization (time label, divider, row background, current time
+/// line, header, footer, etc.) is grouped in [decoration] so it can be
+/// reused across view types.
 abstract class DavViewConfig {
-  /// width of the first column where times are displayed
-  final double timeColumnWidth;
-
-  /// the date that this dayView is presenting
+  /// The date that this day view is presenting.
+  ///
+  /// Only the date portion is used — [startOfDay] and [endOfDay] are
+  /// combined with this date to compute [timeStart] and [timeEnd].
   final DateTime currentDate;
 
-  /// To set the start time of the day view
+  /// The first time-of-day shown in the view. Defaults to 07:00.
   final TimeOfDay startOfDay;
 
-  /// To set the end time of the day view
+  /// The last time-of-day shown in the view. Defaults to 18:59.
   final TimeOfDay endOfDay;
 
-  /// time label text style
-  final TextStyle? timeTextStyle;
-
-  /// time gap/duration of a row.
+  /// Duration of each time row in minutes.
   ///
-  /// This will determine the minimum height of a row
-  /// row height is calculated by `rowHeight = heightPerMin * timeGap`
+  /// The row height is `heightPerMin * timeGap`.
   final int timeGap;
 
-  /// show time in 12 hour format
+  /// Whether time labels are formatted in 12-hour mode. Defaults to true.
   final bool time12;
 
-  /// height in pixel per minute
+  /// Vertical pixels rendered per minute.
+  ///
+  /// Together with [timeGap] this determines row height.
   final double heightPerMin;
 
-  /// To show a line that indicate current hour and minute;
+  /// Whether to render a horizontal line at the current time.
   final bool showCurrentTimeLine;
 
-  /// time slot divider color
-  final Color? dividerColor;
-
+  /// Forwarded to the view's internal scrollable. See
+  /// [ScrollView.primary].
   final bool? primary;
+
+  /// Forwarded to the view's internal scrollable. See
+  /// [ScrollView.physics].
   final ScrollPhysics? physics;
+
+  /// Optional scroll controller for the view's internal scrollable.
+  ///
+  /// When null and [scrollToCurrentTime] is true, an internal controller is
+  /// created automatically so the view can auto-scroll on first render.
   final ScrollController? controller;
 
-  /// allow custom time label
-  /// if not provided, the time will be display as default time format
-  /// either 12 hour or 24 hour format based on [time12]
-  final TimeLabelBuilder? timeLabelBuilder;
+  /// Whether to automatically scroll to the current time on initial render.
+  final bool scrollToCurrentTime;
 
+  /// Whether events extending past [endOfDay] should be cropped at that
+  /// boundary, or allowed to render their full length past it.
+  final bool cropBottomEvents;
+
+  /// All visual styling and builder callbacks for the view.
+  ///
+  /// A single [DayViewDecoration] can be shared across multiple views to
+  /// enforce consistent branding.
+  final DayViewDecoration decoration;
+
+  /// Creates a base day view config.
   const DavViewConfig({
-    this.timeColumnWidth = 70,
     this.startOfDay = const TimeOfDay(hour: 7, minute: 0),
     this.endOfDay = const TimeOfDay(hour: 18, minute: 59),
     required this.currentDate,
-    this.timeTextStyle,
     this.timeGap = 60,
     this.time12 = true,
     this.heightPerMin = 1,
@@ -60,59 +82,76 @@ abstract class DavViewConfig {
     this.primary,
     this.physics,
     this.controller,
-    this.dividerColor,
-    this.timeLabelBuilder,
+    this.scrollToCurrentTime = false,
+    this.cropBottomEvents = false,
+    this.decoration = const DayViewDecoration(),
   });
 
+  /// The computed height of a single time row
+  /// (`heightPerMin * timeGap`).
   double get rowHeight => heightPerMin * timeGap;
 
-  /// number of time rows to display
+  /// The ordered list of row start times between [timeStart] and [timeEnd],
+  /// spaced [timeGap] minutes apart.
   List<DateTime> get timeList => getTimeList(
         currentDate.copyTimeAndMinClean(startOfDay),
         currentDate.copyTimeAndMinClean(endOfDay),
         timeGap,
       );
 
+  /// Absolute start [DateTime] — [currentDate] combined with [startOfDay].
   DateTime get timeStart => currentDate.copyTimeAndMinClean(startOfDay);
+
+  /// Absolute end [DateTime] — [currentDate] combined with [endOfDay].
   DateTime get timeEnd => currentDate.copyTimeAndMinClean(endOfDay);
 }
 
-/// Configuration for [CategoryDayView] and [CategoryOverflowDayView]
+/// Configuration for [CategoryDayView] and [CategoryOverflowDayView].
+///
+/// Adds category-specific options such as header decoration, logo, column
+/// layout, and alternating row colors.
 final class CategoryDavViewConfig extends DavViewConfig {
-  /// build category header
-  // final CategoryDayViewHeaderTileBuilder? headerTileBuilder;
-
-  /// header row decoration
+  /// Decoration applied to the header row (the row showing category names).
   final BoxDecoration? headerDecoration;
 
-  /// The widget that will be place at top left corner tile of this day view
+  /// Widget placed in the top-left corner (above the time column).
   final Widget? logo;
 
-  /// if true the day view can be scrolled horizontally to show more categories
+  /// If true, the view can be scrolled horizontally to reveal more
+  /// categories; only [columnsPerPage] are visible at a time.
   final bool allowHorizontalScroll;
 
-  /// number of columns per page, only affect when [allowHorizontalScroll] = true
+  /// Number of category columns visible per page.
+  ///
+  /// Only has effect when [allowHorizontalScroll] is true.
   final int columnsPerPage;
 
-  /// background color of the even-indexed row
+  /// Background color applied to even-indexed time rows (0, 2, 4, ...).
   final Color? evenRowColor;
 
-  /// background color of the odd-indexed row
+  /// Background color applied to odd-indexed time rows (1, 3, 5, ...).
   final Color? oddRowColor;
 
-  /// dividers that run vertically in the day view
+  /// Custom vertical divider between category columns.
   final VerticalDivider? verticalDivider;
 
-  /// dividers that run horizontally in the day view
+  /// Custom horizontal divider between time rows.
   final Divider? horizontalDivider;
 
-  /// if true, the category view will be frozen when scrolling
+  /// Whether the header row stays pinned to the top while scrolling.
   ///
-  /// default to true
+  /// Defaults to true.
   final bool freezeCategoryTitleRow;
 
+  /// Text style applied to the category name in the header row.
   final TextStyle? categoryTitleTextStyle;
 
+  /// When true, all events that fall in the same category cell are rendered
+  /// horizontally side-by-side. When false (default), only the first event
+  /// is shown.
+  final bool showAllEventsInCell;
+
+  /// Creates a [CategoryDavViewConfig].
   const CategoryDavViewConfig({
     this.headerDecoration,
     this.logo,
@@ -123,6 +162,7 @@ final class CategoryDavViewConfig extends DavViewConfig {
     this.allowHorizontalScroll = false,
     this.columnsPerPage = 3,
     this.freezeCategoryTitleRow = true,
+    this.showAllEventsInCell = false,
     required super.currentDate,
     super.startOfDay,
     super.endOfDay,
@@ -130,33 +170,31 @@ final class CategoryDavViewConfig extends DavViewConfig {
     super.time12,
     super.heightPerMin,
     super.showCurrentTimeLine,
-    super.timeColumnWidth,
-    super.timeLabelBuilder,
+    super.decoration,
     this.categoryTitleTextStyle,
   });
 }
 
+/// Configuration for [OverFlowCalendarDayView].
+///
+/// The overflow view groups overlapping events into rows. Row contents
+/// can be rendered as a horizontal [ListView] (via [renderRowAsListView])
+/// or as fixed-width columns.
 final class OverFlowDayViewConfig extends DavViewConfig {
-  /// color of time point label
-  final Color? timeTextColor;
-
-  /// allow render an events row as a ListView
+  /// Render each overflow row as a horizontal [ListView] rather than as a
+  /// set of fixed-width columns.
   final bool renderRowAsListView;
 
-  /// allow render button indicate there are more events on the row
-  /// also tap to scroll the list to the right
+  /// Show a button at the right edge of rows that have more events than
+  /// fit on screen. Tapping the button scrolls the list to the right.
+  ///
+  /// Only relevant when [renderRowAsListView] is true.
   final bool showMoreOnRowButton;
 
-  /// customized button that indicate there are more events on the row
+  /// Custom widget for the "more" button. If null, a default icon is used.
   final Widget? moreOnRowButton;
 
-  /// if true, the bottom events' end time will be cropped by the end time of day view
-  /// if false, events that have end time after day view end time will have the show the length that pass through day view end time
-  final bool cropBottomEvents;
-
-  /// Color of the current time line
-  final Color? currentTimeLineColor;
-
+  /// Creates an [OverFlowDayViewConfig].
   const OverFlowDayViewConfig({
     required super.currentDate,
     super.startOfDay,
@@ -165,32 +203,33 @@ final class OverFlowDayViewConfig extends DavViewConfig {
     super.time12,
     super.heightPerMin,
     super.showCurrentTimeLine,
-    super.timeColumnWidth,
     super.primary,
     super.physics,
     super.controller,
-    this.timeTextColor,
-    super.dividerColor,
-    super.timeTextStyle,
-    super.timeLabelBuilder,
+    super.scrollToCurrentTime,
+    super.cropBottomEvents,
+    super.decoration,
     this.renderRowAsListView = false,
     this.showMoreOnRowButton = false,
-    this.cropBottomEvents = false,
     this.moreOnRowButton,
-    this.currentTimeLineColor,
   });
 }
 
+/// Configuration for [EventCalendarDayView].
+///
+/// The event-only view lists events chronologically without a fixed time
+/// grid. Only time rows that have at least one event are displayed.
 final class EventDayViewConfig extends DavViewConfig {
-  /// padding for event row
+  /// Padding around each event row.
   final EdgeInsetsGeometry? rowPadding;
 
-  ///padding for time slot
+  /// Padding around each time slot label.
   final EdgeInsetsGeometry? timeSlotPadding;
 
-  /// show event by hour only
+  /// When true, events are grouped by hour only (minute component ignored).
   final bool showHourly;
 
+  /// Creates an [EventDayViewConfig].
   const EventDayViewConfig({
     required super.currentDate,
     super.startOfDay,
@@ -199,41 +238,74 @@ final class EventDayViewConfig extends DavViewConfig {
     super.time12,
     super.heightPerMin,
     super.showCurrentTimeLine,
-    super.timeColumnWidth,
     super.primary,
     super.physics,
-    super.dividerColor,
-    super.timeLabelBuilder,
+    super.scrollToCurrentTime,
     super.controller,
+    super.decoration,
     this.rowPadding,
     this.timeSlotPadding,
     this.showHourly = false,
   });
 }
 
+/// Configuration for [InRowCalendarDayView].
+///
+/// Extends [EventDayViewConfig] with an option to hide time rows that
+/// contain no events.
 final class InRowDayViewConfig extends EventDayViewConfig {
-  /// if true, only display row with events. Default to false
+  /// When true, rows that contain no events are hidden.
   final bool showWithEventOnly;
 
-  final Color? currentTimeLineColor;
+  /// Creates an [InRowDayViewConfig].
   InRowDayViewConfig({
     required super.currentDate,
-    super.timeLabelBuilder,
+    super.scrollToCurrentTime,
     super.startOfDay,
     super.endOfDay,
     super.timeGap,
     super.time12,
     super.heightPerMin,
     super.showCurrentTimeLine,
-    super.timeColumnWidth,
     super.primary,
     super.physics,
-    super.dividerColor,
     super.controller,
     super.rowPadding,
     super.timeSlotPadding,
     super.showHourly,
+    super.decoration,
     this.showWithEventOnly = false,
-    this.currentTimeLineColor,
+  });
+}
+
+/// Configuration for [MultiColumnCalendarDayView].
+///
+/// The `<T>` type parameter matches the event's [DayEvent] value type and
+/// is required because [overlapStrategy] returns typed [ColumnEvent]s.
+final class MultiColumnDayViewConfig<T extends Object> extends DavViewConfig {
+  /// Custom overlap layout strategy.
+  ///
+  /// When null (default), the built-in greedy interval graph coloring
+  /// algorithm is used. Provide a custom [OverlapStrategy] to implement an
+  /// alternative layout — for example, stacking all overlapping events
+  /// into a single column, or using different tie-breaking rules.
+  final OverlapStrategy<T>? overlapStrategy;
+
+  /// Creates a [MultiColumnDayViewConfig].
+  const MultiColumnDayViewConfig({
+    required super.currentDate,
+    super.startOfDay,
+    super.endOfDay,
+    super.timeGap,
+    super.time12,
+    super.heightPerMin,
+    super.showCurrentTimeLine,
+    super.primary,
+    super.physics,
+    super.controller,
+    super.scrollToCurrentTime,
+    super.cropBottomEvents,
+    super.decoration,
+    this.overlapStrategy,
   });
 }

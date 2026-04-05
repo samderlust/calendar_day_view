@@ -1,8 +1,6 @@
 import 'package:calendar_day_view/calendar_day_view.dart';
-import 'package:calendar_day_view/src/models/typedef.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:two_dimensional_scrollables/two_dimensional_scrollables.dart';
 
 void main() {
   group('CategoryDayView Tests', () {
@@ -19,7 +17,7 @@ void main() {
         allowHorizontalScroll: true,
         columnsPerPage: 2,
         endOfDay: const TimeOfDay(hour: 23, minute: 59),
-        timeColumnWidth: 100,
+        decoration: const DayViewDecoration(timeColumnWidth: 100),
       );
 
       categories = [
@@ -57,7 +55,8 @@ void main() {
       controller = CategoryDayViewController();
     });
 
-    testWidgets('CategoryDayView renders correctly with basic configuration', (WidgetTester tester) async {
+    testWidgets('CategoryDayView renders correctly with basic configuration',
+        (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -67,7 +66,7 @@ void main() {
               events: events,
               eventBuilder: eventBuilder,
               controller: controller,
-              onTileTap: (_, __) {},
+              onTimeTap: (_, __) {},
             ),
           ),
         ),
@@ -82,7 +81,8 @@ void main() {
       expect(find.byType(Text), findsWidgets);
     });
 
-    testWidgets('CategoryDayView displays events in correct categories', (WidgetTester tester) async {
+    testWidgets('CategoryDayView displays events in correct categories',
+        (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -92,7 +92,7 @@ void main() {
               events: events,
               eventBuilder: eventBuilder,
               controller: controller,
-              onTileTap: (_, __) {},
+              onTimeTap: (_, __) {},
             ),
           ),
         ),
@@ -103,7 +103,8 @@ void main() {
       expect(find.text('Event 2'), findsOneWidget);
     });
 
-    testWidgets('CategoryDayView handles empty events list', (WidgetTester tester) async {
+    testWidgets('CategoryDayView handles empty events list',
+        (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -113,7 +114,7 @@ void main() {
               events: [],
               eventBuilder: eventBuilder,
               controller: controller,
-              onTileTap: (_, __) {},
+              onTimeTap: (_, __) {},
             ),
           ),
         ),
@@ -124,7 +125,8 @@ void main() {
       expect(find.text('Event 2'), findsNothing);
     });
 
-    testWidgets('CategoryDayView handles onTileTap callback', (WidgetTester tester) async {
+    testWidgets('CategoryDayView handles onTileTap callback',
+        (WidgetTester tester) async {
       bool tileTapped = false;
       EventCategory? tappedCategory;
       DateTime? tappedTime;
@@ -138,7 +140,7 @@ void main() {
               events: events,
               eventBuilder: eventBuilder,
               controller: controller,
-              onTileTap: (category, time) {
+              onTimeTap: (category, time) {
                 tileTapped = true;
                 tappedCategory = category;
                 tappedTime = time;

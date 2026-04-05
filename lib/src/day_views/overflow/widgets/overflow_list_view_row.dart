@@ -62,7 +62,7 @@ class OverFlowListViewRowView<T extends Object> extends StatelessWidget {
 
 class OverflowListViewRow<T extends Object> extends StatefulWidget {
   const OverflowListViewRow({
-    Key? key,
+    super.key,
     required this.oEvents,
     required this.overflowItemBuilder,
     required this.heightUnit,
@@ -72,7 +72,7 @@ class OverflowListViewRow<T extends Object> extends StatefulWidget {
     required this.ignored,
     required this.totalHeight,
     required this.cropBottomEvents,
-  }) : super(key: key);
+  });
 
   final OverflowEventsRow<T> oEvents;
   final DayViewItemBuilder<T> overflowItemBuilder;
@@ -203,7 +203,7 @@ class _OverflowListViewRowState<T extends Object> extends State<OverflowListView
                       Container(
                         height: 30,
                         width: 30,
-                        decoration: BoxDecoration(color: Colors.black38.withOpacity(.8), shape: BoxShape.circle),
+                        decoration: BoxDecoration(color: Colors.black38.withValues(alpha: .8), shape: BoxShape.circle),
                         child: const Icon(
                           Icons.arrow_right,
                           color: Colors.white,
