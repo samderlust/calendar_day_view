@@ -111,7 +111,7 @@ abstract class CalendarDayView<T extends Object> extends Widget {
     required List<DayEvent<T>> events,
     required MultiColumnItemBuilder<T> itemBuilder,
     OnTimeTap? onTimeTap,
-    required MultiColumnDayViewConfig config,
+    required MultiColumnDayViewConfig<T> config,
   }) =>
       MultiColumnCalendarDayView<T>(
         events: events,

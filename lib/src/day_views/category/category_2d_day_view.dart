@@ -106,7 +106,7 @@ class _CategoryTableView<T extends Object> extends StatelessWidget {
       config.columnsPerPage,
     );
 
-    return TableView.builder(
+    final tableView = TableView.builder(
       columnCount: categories.length + 1,
       rowCount: config.timeList.length + 1,
       pinnedColumnCount: 1,
@@ -186,6 +186,18 @@ class _CategoryTableView<T extends Object> extends StatelessWidget {
           tileWidth: columnWidth,
         );
       },
+    );
+
+    final decoration = config.decoration;
+    if (decoration.header == null && decoration.footer == null) {
+      return tableView;
+    }
+    return Column(
+      children: [
+        if (decoration.header != null) decoration.header!(context),
+        Expanded(child: tableView),
+        if (decoration.footer != null) decoration.footer!(context),
+      ],
     );
   }
 

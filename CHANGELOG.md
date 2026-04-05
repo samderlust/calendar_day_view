@@ -25,6 +25,10 @@
 - add `timeRowBackgroundBuilder` to config — allows custom background per time row (e.g., shade lunch break, highlight working hours, mark unavailable blocks). Supported in overflow, multi-column, and in-row views
 - add `dividerBuilder` to config — allows custom divider widget per time row (dashed lines, thickness variations, hide specific dividers, etc.). Supported in overflow, multi-column, in-row, and event-only views
 - [BREAKING] introduce `DayViewDecoration` — all visual/styling props and builders (`timeLabel`, `currentTimeLine`, `rowBackground`, `divider`, `timeColumnWidth`, `timeTextStyle`, `timeTextColor`, `dividerColor`, `currentTimeLineColor`) moved out of the config classes into a single reusable `decoration` field. Config classes now focus on behavior (time range, scroll, event handling) while decoration handles visual customization. Decorations are reusable across different view types, enabling shared theming.
+- add `timeColumnPosition` (`left`, `right`, `none`) to `DayViewDecoration` — position the time column on the left, right, or hide it entirely. Supported in overflow, multi-column, in-row, and event-only views.
+- add `header` and `footer` builders to `DayViewDecoration` — render custom widgets above/below the scrollable time grid. Useful for date headers, legends, action bars, etc. Supported in all views.
+- add `overlapStrategy` to `MultiColumnDayViewConfig` — lets users provide a custom overlap layout algorithm instead of the default greedy interval coloring. `MultiColumnDayViewConfig` is now generic (`MultiColumnDayViewConfig<T>`).
+- example app overhaul: every day view now has a Floating Action Button (tune icon) that opens a settings bottom sheet exposing all configurable options (time gap, height per min, time column position, current time line, scroll to current time, and view-specific flags). Uses `NavigationBar` with 6 tabs (Overflow, Category Overflow, Category, In Row, Events, Multi Column).
 
 ## 5.0.0
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../extensions/date_time_extension.dart';
+import '../models/typedef.dart';
 import '../utils/date_time_utils.dart';
 import 'day_view_decoration.dart';
 
@@ -216,7 +217,11 @@ final class InRowDayViewConfig extends EventDayViewConfig {
   });
 }
 
-final class MultiColumnDayViewConfig extends DavViewConfig {
+final class MultiColumnDayViewConfig<T extends Object> extends DavViewConfig {
+  /// Custom overlap layout strategy — if null, the default greedy interval graph
+  /// coloring algorithm is used.
+  final OverlapStrategy<T>? overlapStrategy;
+
   const MultiColumnDayViewConfig({
     required super.currentDate,
     super.startOfDay,
@@ -231,5 +236,6 @@ final class MultiColumnDayViewConfig extends DavViewConfig {
     super.scrollToCurrentTime,
     super.cropBottomEvents,
     super.decoration,
+    this.overlapStrategy,
   });
 }

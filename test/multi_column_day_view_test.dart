@@ -19,8 +19,8 @@ void main() {
 
     testWidgets('renders correctly with basic configuration', (tester) async {
       await tester.pumpWidget(MaterialApp(
-        home: CalendarDayView.multiColumn(
-          config: MultiColumnDayViewConfig(
+        home: CalendarDayView.multiColumn<String>(
+          config: MultiColumnDayViewConfig<String>(
             currentDate: DateTime(2024, 1, 1),
             timeGap: 60,
             heightPerMin: 1,
@@ -45,8 +45,8 @@ void main() {
 
     testWidgets('handles empty events list', (tester) async {
       await tester.pumpWidget(MaterialApp(
-        home: CalendarDayView.multiColumn(
-          config: MultiColumnDayViewConfig(
+        home: CalendarDayView.multiColumn<String>(
+          config: MultiColumnDayViewConfig<String>(
             currentDate: DateTime(2024, 1, 1),
             timeGap: 60,
             heightPerMin: 1,
@@ -68,8 +68,8 @@ void main() {
       DateTime? tappedTime;
 
       await tester.pumpWidget(MaterialApp(
-        home: CalendarDayView.multiColumn(
-          config: MultiColumnDayViewConfig(
+        home: CalendarDayView.multiColumn<String>(
+          config: MultiColumnDayViewConfig<String>(
             currentDate: DateTime(2024, 1, 1),
             timeGap: 60,
             heightPerMin: 1,
@@ -100,8 +100,8 @@ void main() {
       final columnInfos = <MapEntry<int, int>>[];
 
       await tester.pumpWidget(MaterialApp(
-        home: CalendarDayView.multiColumn(
-          config: MultiColumnDayViewConfig(
+        home: CalendarDayView.multiColumn<String>(
+          config: MultiColumnDayViewConfig<String>(
             currentDate: DateTime(2024, 1, 1),
             timeGap: 60,
             heightPerMin: 1,

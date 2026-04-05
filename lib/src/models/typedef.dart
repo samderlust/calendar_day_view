@@ -36,9 +36,24 @@ typedef CategoryDayViewTileTap<T extends Object> = Function(
   DateTime time,
 );
 
+/// Where the time column should be positioned in the day view
+enum TimeColumnPosition {
+  /// Time column on the left (default)
+  left,
+
+  /// Time column on the right
+  right,
+
+  /// No time column (labels hidden, events take full width)
+  none,
+}
+
 /// time label builder
 /// allow custom time label
 typedef TimeLabelBuilder = Widget Function(BuildContext context, DateTime time);
+
+/// Simple section builder for headers and footers
+typedef DayViewSectionBuilder = Widget Function(BuildContext context);
 
 /// current time line builder
 /// allow custom current time line widget
@@ -73,6 +88,17 @@ typedef MultiColumnItemBuilder<T extends Object> = Widget Function(
   int columnIndex,
   int totalColumns,
 );
+
+/// Custom overlap layout strategy for multi-column view.
+///
+/// Takes a list of events and returns a list of [ColumnEvent] with column assignments.
+/// Users can implement their own layout algorithm (e.g., prefer wider events,
+/// different cluster boundaries, custom tie-breaking).
+typedef OverlapStrategy<T extends Object> = List<ColumnEvent<T>> Function(
+  List<DayEvent<T>> events, {
+  DateTime? startOfDay,
+  DateTime? endOfDay,
+});
 
 /// empty tile builder for category views
 /// allow custom empty cell widget

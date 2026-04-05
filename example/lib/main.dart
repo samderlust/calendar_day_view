@@ -14,6 +14,9 @@ import 'package:intl/intl.dart';
 import 'tabs/category_day_view_tab.dart';
 
 final timeFormat = DateFormat('HH:mm');
+final timeFormat12 = DateFormat('h:mm a');
+
+String formatTime(DateTime t, {required bool use12}) => (use12 ? timeFormat12 : timeFormat).format(t);
 
 final rd = Random();
 void main() {
@@ -93,75 +96,52 @@ class CalendarDayViewExample extends HookWidget {
 
     final currentIndex = useState<int>(0);
 
-    return DefaultTabController(
-      length: 4,
-      child: SafeArea(
-        child: Scaffold(
-          // extendBodyBehindAppBar: true,
-          backgroundColor: Theme.of(context).colorScheme.surface,
-          bottomNavigationBar: BottomNavigationBar(
-            showUnselectedLabels: true,
-            showSelectedLabels: true,
-            unselectedFontSize: 14,
-            unselectedItemColor: Colors.black,
-            selectedItemColor: Colors.blue,
-            items: const [
-              BottomNavigationBarItem(icon: Icon(Icons.calendar_month), label: "Overflow"),
-              BottomNavigationBarItem(icon: Icon(Icons.calendar_view_day), label: "Category Overflow"),
-              BottomNavigationBarItem(icon: Icon(Icons.calendar_view_day), label: "Category"),
-              BottomNavigationBarItem(icon: Icon(Icons.calendar_today_outlined), label: "In Row"),
-              BottomNavigationBarItem(icon: Icon(Icons.calendar_view_month), label: "Events"),
-              BottomNavigationBarItem(icon: Icon(Icons.view_column), label: "Multi Column"),
-            ],
-            onTap: (value) => currentIndex.value = value,
-            currentIndex: currentIndex.value,
+    final isCategoryTab = currentIndex.value == 1 || currentIndex.value == 2;
+
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        bottomNavigationBar: NavigationBar(
+          selectedIndex: currentIndex.value,
+          onDestinationSelected: (v) => currentIndex.value = v,
+          destinations: const [
+            NavigationDestination(icon: Icon(Icons.calendar_month), label: 'Overflow'),
+            NavigationDestination(icon: Icon(Icons.calendar_view_day), label: 'Cat. Overflow'),
+            NavigationDestination(icon: Icon(Icons.calendar_view_day), label: 'Category'),
+            NavigationDestination(icon: Icon(Icons.calendar_today_outlined), label: 'In Row'),
+            NavigationDestination(icon: Icon(Icons.calendar_view_month), label: 'Events'),
+            NavigationDestination(icon: Icon(Icons.view_column), label: 'Multi Col'),
+          ],
+        ),
+        appBar: AppBar(
+          title: Text(
+            '${getTitle(currentIndex.value)} — ${isCategoryTab ? categoryEvents.value.length : dayEvents.value.length} events',
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
           ),
-          appBar: AppBar(
-            title: Text(
-              "${getTitle(currentIndex.value)} - ${switch (currentIndex.value) {
-                var i when (i == 1 || i == 2) => categoryEvents.value.length,
-                _ => dayEvents.value.length,
-              }} events",
-              style: const TextStyle(color: Colors.teal, fontSize: 30),
+          centerTitle: false,
+          actions: [
+            IconButton(
+              tooltip: 'Refresh events',
+              icon: const Icon(Icons.refresh),
+              onPressed: () {
+                if (isCategoryTab) {
+                  categoryEvents.value = genEvents(categories.value.length);
+                } else {
+                  dayEvents.value = fakeEvents();
+                }
+              },
             ),
-            // toolbarHeight: 100,
-            centerTitle: false,
-            actions: [
-              Row(
-                children: [
-                  switch (currentIndex.value) {
-                    var i when (i == 1 || i == 2) => Row(
-                        children: [
-                          TextButton.icon(
-                            style: TextButton.styleFrom(backgroundColor: Colors.white),
-                            onPressed: () => categoryEvents.value = genEvents(categories.value.length),
-                            icon: const Icon(Icons.refresh),
-                            label: const Text("events"),
-                          ),
-                          const SizedBox(width: 10),
-                          TextButton.icon(
-                            style: TextButton.styleFrom(
-                              backgroundColor: Colors.white,
-                            ),
-                            onPressed: addCategory,
-                            icon: const Icon(Icons.add),
-                            label: const Text("category"),
-                          ),
-                        ],
-                      ),
-                    _ => TextButton.icon(
-                        style: TextButton.styleFrom(backgroundColor: Colors.white),
-                        onPressed: () => dayEvents.value = fakeEvents(),
-                        icon: const Icon(Icons.refresh),
-                        label: const Text("events"),
-                      ),
-                  },
-                  const SizedBox(width: 10),
-                ],
-              )
-            ],
-          ),
-          body: bodyItems[currentIndex.value],
+            if (isCategoryTab)
+              IconButton(
+                tooltip: 'Add category',
+                icon: const Icon(Icons.add),
+                onPressed: addCategory,
+              ),
+          ],
+        ),
+        body: IndexedStack(
+          index: currentIndex.value,
+          children: bodyItems,
         ),
       ),
     );

@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import '../../calendar_day_view.dart';
-import '../models/column_event.dart';
 
 const _defaultDurationMinutes = 30;
 

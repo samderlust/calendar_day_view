@@ -114,66 +114,77 @@ class _OverFlowCalendarDayViewState<T extends Object> extends State<OverFlowCale
 
   @override
   Widget build(BuildContext context) {
+    final decoration = widget.config.decoration;
     final totalHeight = widget.config.timeList.length * widget.config.rowHeight;
     final viewWidth = MediaQuery.sizeOf(context).width;
 
-    final eventColumnWith = viewWidth - widget.config.decoration.timeColumnWidth;
+    final effectiveTimeColumnWidth = decoration.effectiveTimeColumnWidth;
+    final eventColumnWith = viewWidth - effectiveTimeColumnWidth;
+    final eventColumnLeft = decoration.timeColumnPosition == TimeColumnPosition.left ? effectiveTimeColumnWidth : 0.0;
+
+    final scrollView = SingleChildScrollView(
+      primary: widget.config.primary,
+      controller: widget.config.controller ?? _autoScrollController,
+      physics: widget.config.physics ?? const ClampingScrollPhysics(),
+      padding: const EdgeInsets.only(top: 10, bottom: 10),
+      child: SizedBox(
+        height: totalHeight,
+        child: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            ListView.builder(
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: widget.config.timeList.length,
+              itemBuilder: (context, index) {
+                final time = widget.config.timeList.elementAt(index);
+                return OverflowTimeRowWidget(
+                  time: time,
+                  viewWidth: viewWidth,
+                  config: widget.config,
+                  onTimeTap: widget.onTimeTap,
+                  timeLabelBuilder: decoration.timeLabel,
+                );
+              },
+            ),
+            BackgroundIgnorePointer(
+              ignored: widget.onTimeTap == null,
+              child: widget.config.renderRowAsListView
+                  ? OverFlowListViewRowView(
+                      overflowEvents: _overflowEvents,
+                      overflowItemBuilder: widget.overflowItemBuilder!,
+                      heightUnit: widget.config.heightPerMin,
+                      eventColumnWith: eventColumnWith,
+                      showMoreOnRowButton: widget.config.showMoreOnRowButton,
+                      cropBottomEvents: widget.config.cropBottomEvents,
+                      timeStart: widget.config.timeStart,
+                      totalHeight: totalHeight,
+                      timeTitleColumnWidth: eventColumnLeft,
+                    )
+                  : OverflowFixedWidthEventsWidget(
+                      heightUnit: widget.config.heightPerMin,
+                      eventColumnWidth: eventColumnWith,
+                      timeTitleColumnWidth: eventColumnLeft,
+                      timeStart: widget.config.timeStart,
+                      overflowEvents: _overflowEvents,
+                      overflowItemBuilder: widget.overflowItemBuilder!,
+                      cropBottomEvents: widget.config.cropBottomEvents,
+                      timeEnd: widget.config.timeEnd,
+                    ),
+            ),
+            if (widget.config.showCurrentTimeLine && _currentTime.isAfter(widget.config.timeStart) && _currentTime.isBefore(widget.config.timeEnd))
+              _buildCurrentTimeLine(viewWidth),
+          ],
+        ),
+      ),
+    );
 
     return SafeArea(
-      child: SingleChildScrollView(
-        primary: widget.config.primary,
-        controller: widget.config.controller ?? _autoScrollController,
-        physics: widget.config.physics ?? const ClampingScrollPhysics(),
-        padding: const EdgeInsets.only(top: 10, bottom: 10),
-        child: SizedBox(
-          height: totalHeight,
-          child: Stack(
-            clipBehavior: Clip.none,
-            children: [
-              ListView.builder(
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: widget.config.timeList.length,
-                itemBuilder: (context, index) {
-                  final time = widget.config.timeList.elementAt(index);
-                  return OverflowTimeRowWidget(
-                    time: time,
-                    viewWidth: viewWidth,
-                    config: widget.config,
-                    onTimeTap: widget.onTimeTap,
-                    timeLabelBuilder: widget.config.decoration.timeLabel,
-                  );
-                },
-              ),
-              BackgroundIgnorePointer(
-                ignored: widget.onTimeTap == null,
-                child: widget.config.renderRowAsListView
-                    ? OverFlowListViewRowView(
-                        overflowEvents: _overflowEvents,
-                        overflowItemBuilder: widget.overflowItemBuilder!,
-                        heightUnit: widget.config.heightPerMin,
-                        eventColumnWith: eventColumnWith,
-                        showMoreOnRowButton: widget.config.showMoreOnRowButton,
-                        cropBottomEvents: widget.config.cropBottomEvents,
-                        timeStart: widget.config.timeStart,
-                        totalHeight: totalHeight,
-                        timeTitleColumnWidth: widget.config.decoration.timeColumnWidth,
-                      )
-                    : OverflowFixedWidthEventsWidget(
-                        heightUnit: widget.config.heightPerMin,
-                        eventColumnWidth: eventColumnWith,
-                        timeTitleColumnWidth: widget.config.decoration.timeColumnWidth,
-                        timeStart: widget.config.timeStart,
-                        overflowEvents: _overflowEvents,
-                        overflowItemBuilder: widget.overflowItemBuilder!,
-                        cropBottomEvents: widget.config.cropBottomEvents,
-                        timeEnd: widget.config.timeEnd,
-                      ),
-              ),
-              if (widget.config.showCurrentTimeLine && _currentTime.isAfter(widget.config.timeStart) && _currentTime.isBefore(widget.config.timeEnd))
-                _buildCurrentTimeLine(viewWidth),
-            ],
-          ),
-        ),
+      child: Column(
+        children: [
+          if (decoration.header != null) decoration.header!(context),
+          Expanded(child: scrollView),
+          if (decoration.footer != null) decoration.footer!(context),
+        ],
       ),
     );
   }
@@ -244,38 +255,60 @@ class OverflowTimeRowWidget extends StatelessWidget {
                   },
                 ),
               ),
-            if (config.decoration.divider != null)
-              Builder(
-                builder: (context) => config.decoration.divider!(context, time) ?? const SizedBox.shrink(),
-              )
-            else
-              Divider(
-                color: config.decoration.dividerColor ?? Colors.amber,
-                height: 0,
-                thickness: time.minute == 0 ? 1 : .5,
-                indent: config.decoration.timeColumnWidth + 3,
-              ),
-            Transform(
-              transform: Matrix4.translationValues(0, -20, 0),
-              child: SizedBox(
-                height: 40,
-                width: config.decoration.timeColumnWidth,
-                child: Center(
-                  child: timeLabelBuilder?.call(context, time) ??
-                      FittedBox(
-                        fit: BoxFit.scaleDown,
-                        child: Text(
-                          config.time12 ? time.hourDisplay12 : time.hourDisplay24,
-                          style: config.decoration.timeTextStyle ?? TextStyle(color: config.decoration.timeTextColor),
-                          maxLines: 1,
-                        ),
-                      ),
-                ),
-              ),
-            ),
+            _buildDivider(config, time),
+            if (config.decoration.timeColumnPosition != TimeColumnPosition.none) _buildTimeLabel(context),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildDivider(OverFlowDayViewConfig config, DateTime time) {
+    final decoration = config.decoration;
+    if (decoration.divider != null) {
+      return Builder(
+        builder: (context) => decoration.divider!(context, time) ?? const SizedBox.shrink(),
+      );
+    }
+    final leftIndent = decoration.timeColumnPosition == TimeColumnPosition.left ? decoration.effectiveTimeColumnWidth + 3 : 0.0;
+    final rightIndent = decoration.timeColumnPosition == TimeColumnPosition.right ? decoration.effectiveTimeColumnWidth + 3 : 0.0;
+    return Divider(
+      color: decoration.dividerColor ?? Colors.amber,
+      height: 0,
+      thickness: time.minute == 0 ? 1 : .5,
+      indent: leftIndent,
+      endIndent: rightIndent,
+    );
+  }
+
+  Widget _buildTimeLabel(BuildContext context) {
+    final decoration = config.decoration;
+    final label = timeLabelBuilder?.call(context, time) ??
+        FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Text(
+            config.time12 ? time.hourDisplay12 : time.hourDisplay24,
+            style: decoration.timeTextStyle ?? TextStyle(color: decoration.timeTextColor),
+            maxLines: 1,
+          ),
+        );
+
+    final labelBox = SizedBox(
+      height: 40,
+      width: decoration.timeColumnWidth,
+      child: Center(child: label),
+    );
+
+    if (decoration.timeColumnPosition == TimeColumnPosition.right) {
+      return Positioned(
+        right: 0,
+        top: -20,
+        child: labelBox,
+      );
+    }
+    return Transform(
+      transform: Matrix4.translationValues(0, -20, 0),
+      child: labelBox,
     );
   }
 }

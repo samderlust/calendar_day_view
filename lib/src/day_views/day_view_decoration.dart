@@ -10,8 +10,11 @@ import '../models/typedef.dart';
 /// A single decoration can be reused across different day view types (overflow,
 /// multi-column, in-row, event-only), making it easy to define branded themes.
 class DayViewDecoration {
-  /// Width of the first column where times are displayed
+  /// Width of the time column where times are displayed
   final double timeColumnWidth;
+
+  /// Position of the time column relative to event content
+  final TimeColumnPosition timeColumnPosition;
 
   /// Time label text style
   final TextStyle? timeTextStyle;
@@ -49,8 +52,15 @@ class DayViewDecoration {
   /// If this builder itself is null, the default divider is used.
   final DividerBuilder? divider;
 
+  /// Builder for a header widget shown above the scrollable time grid
+  final DayViewSectionBuilder? header;
+
+  /// Builder for a footer widget shown below the scrollable time grid
+  final DayViewSectionBuilder? footer;
+
   const DayViewDecoration({
     this.timeColumnWidth = 70,
+    this.timeColumnPosition = TimeColumnPosition.left,
     this.timeTextStyle,
     this.timeTextColor,
     this.dividerColor,
@@ -59,10 +69,16 @@ class DayViewDecoration {
     this.currentTimeLine,
     this.rowBackground,
     this.divider,
+    this.header,
+    this.footer,
   });
+
+  /// Effective time column width — 0 when [timeColumnPosition] is [TimeColumnPosition.none]
+  double get effectiveTimeColumnWidth => timeColumnPosition == TimeColumnPosition.none ? 0 : timeColumnWidth;
 
   DayViewDecoration copyWith({
     double? timeColumnWidth,
+    TimeColumnPosition? timeColumnPosition,
     TextStyle? timeTextStyle,
     Color? timeTextColor,
     Color? dividerColor,
@@ -71,9 +87,12 @@ class DayViewDecoration {
     CurrentTimeLineBuilder? currentTimeLine,
     TimeRowBackgroundBuilder? rowBackground,
     DividerBuilder? divider,
+    DayViewSectionBuilder? header,
+    DayViewSectionBuilder? footer,
   }) {
     return DayViewDecoration(
       timeColumnWidth: timeColumnWidth ?? this.timeColumnWidth,
+      timeColumnPosition: timeColumnPosition ?? this.timeColumnPosition,
       timeTextStyle: timeTextStyle ?? this.timeTextStyle,
       timeTextColor: timeTextColor ?? this.timeTextColor,
       dividerColor: dividerColor ?? this.dividerColor,
@@ -82,6 +101,8 @@ class DayViewDecoration {
       currentTimeLine: currentTimeLine ?? this.currentTimeLine,
       rowBackground: rowBackground ?? this.rowBackground,
       divider: divider ?? this.divider,
+      header: header ?? this.header,
+      footer: footer ?? this.footer,
     );
   }
 }

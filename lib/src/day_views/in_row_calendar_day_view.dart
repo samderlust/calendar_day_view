@@ -95,38 +95,47 @@ class _InRowCalendarDayViewState<T extends Object> extends State<InRowCalendarDa
 
   @override
   Widget build(BuildContext context) {
+    final decoration = widget.config.decoration;
     return LayoutBuilder(builder: (context, constraints) {
       final viewWidth = constraints.maxWidth;
 
+      final listView = ListView.builder(
+        clipBehavior: Clip.none,
+        primary: widget.config.primary,
+        controller: widget.config.controller ?? _autoScrollController,
+        physics: widget.config.physics ?? const ClampingScrollPhysics(),
+        padding: const EdgeInsets.only(top: 20, bottom: 20),
+        itemCount: widget.config.timeList.length,
+        itemBuilder: (context, index) {
+          final time = widget.config.timeList.elementAt(index);
+          final rowEvents = widget.events.where(
+            (event) => event.isInThisGap(time, widget.config.timeGap),
+          );
+
+          if (rowEvents.isEmpty && widget.config.showWithEventOnly) {
+            return const SizedBox.shrink();
+          }
+
+          return InRowEventRowWidget(
+            viewWidth: viewWidth,
+            time: time,
+            rowEvents: rowEvents,
+            onTimeTap: widget.onTimeTap,
+            itemBuilder: widget.itemBuilder,
+            timeRowBuilder: widget.timeRowBuilder,
+            config: widget.config,
+            currentTime: _currentTime,
+          );
+        },
+      );
+
       return SafeArea(
-        child: ListView.builder(
-          clipBehavior: Clip.none,
-          primary: widget.config.primary,
-          controller: widget.config.controller ?? _autoScrollController,
-          physics: widget.config.physics ?? const ClampingScrollPhysics(),
-          padding: const EdgeInsets.only(top: 20, bottom: 20),
-          itemCount: widget.config.timeList.length,
-          itemBuilder: (context, index) {
-            final time = widget.config.timeList.elementAt(index);
-            final rowEvents = widget.events.where(
-              (event) => event.isInThisGap(time, widget.config.timeGap),
-            );
-
-            if (rowEvents.isEmpty && widget.config.showWithEventOnly) {
-              return const SizedBox.shrink();
-            }
-
-            return InRowEventRowWidget(
-              viewWidth: viewWidth,
-              time: time,
-              rowEvents: rowEvents,
-              onTimeTap: widget.onTimeTap,
-              itemBuilder: widget.itemBuilder,
-              timeRowBuilder: widget.timeRowBuilder,
-              config: widget.config,
-              currentTime: _currentTime,
-            );
-          },
+        child: Column(
+          children: [
+            if (decoration.header != null) decoration.header!(context),
+            Expanded(child: listView),
+            if (decoration.footer != null) decoration.footer!(context),
+          ],
         ),
       );
     });
@@ -180,78 +189,11 @@ class InRowEventRowWidget<T extends Object> extends StatelessWidget {
                 },
               ),
             ),
-          if (config.decoration.divider != null)
-            Builder(
-              builder: (context) => config.decoration.divider!(context, time) ?? const SizedBox.shrink(),
-            )
-          else
-            Divider(
-              color: config.decoration.dividerColor ?? Colors.amber,
-              height: 0,
-              thickness: time.minute == 0 ? 1 : .5,
-              indent: config.decoration.timeColumnWidth + 3,
-            ),
+          _buildDivider(),
           Row(
             mainAxisSize: MainAxisSize.max,
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Transform(
-                transform: Matrix4.translationValues(0, -20, 0),
-                child: SizedBox(
-                  height: 40,
-                  width: config.decoration.timeColumnWidth,
-                  child: config.decoration.timeLabel?.call(context, time) ??
-                      FittedBox(
-                        fit: BoxFit.scaleDown,
-                        child: Text(
-                          config.time12 ? time.hourDisplay12 : time.hourDisplay24,
-                          style: config.decoration.timeTextStyle,
-                          maxLines: 1,
-                        ),
-                      ),
-                ),
-              ),
-              Expanded(
-                child: GestureDetector(
-                  onTap: onTimeTap == null ? null : () => onTimeTap!(time),
-                  child: LayoutBuilder(
-                    builder: (context, constrains) {
-                      final tileConstraints = BoxConstraints(
-                        maxHeight: config.rowHeight,
-                        maxWidth: constrains.maxWidth / rowEvents.length,
-                      );
-
-                      return SizedBox(
-                        height: config.rowHeight,
-                        child: Builder(
-                          builder: (context) {
-                            if (timeRowBuilder != null) {
-                              return timeRowBuilder!(
-                                context,
-                                constrains,
-                                rowEvents.toList(),
-                              );
-                            } else {
-                              return Row(
-                                children: [
-                                  for (var i = 0; i < rowEvents.length; i++)
-                                    itemBuilder!(
-                                      context,
-                                      tileConstraints,
-                                      i,
-                                      rowEvents.elementAt(i),
-                                    )
-                                ],
-                              );
-                            }
-                          },
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ),
-            ],
+            children: _buildRowChildren(context),
           ),
           if (config.showCurrentTimeLine && currentTime.inTheGap(time, config.timeGap)) _buildCurrentTimeLine(),
         ],
@@ -269,5 +211,99 @@ class InRowEventRowWidget<T extends Object> extends StatelessWidget {
       color: config.decoration.currentTimeLineColor,
       width: viewWidth,
     );
+  }
+
+  Widget _buildDivider() {
+    final decoration = config.decoration;
+    if (decoration.divider != null) {
+      return Builder(
+        builder: (context) => decoration.divider!(context, time) ?? const SizedBox.shrink(),
+      );
+    }
+    final leftIndent = decoration.timeColumnPosition == TimeColumnPosition.left ? decoration.effectiveTimeColumnWidth + 3 : 0.0;
+    final rightIndent = decoration.timeColumnPosition == TimeColumnPosition.right ? decoration.effectiveTimeColumnWidth + 3 : 0.0;
+    return Divider(
+      color: decoration.dividerColor ?? Colors.amber,
+      height: 0,
+      thickness: time.minute == 0 ? 1 : .5,
+      indent: leftIndent,
+      endIndent: rightIndent,
+    );
+  }
+
+  Widget _buildTimeLabel(BuildContext context) {
+    final decoration = config.decoration;
+    return Transform(
+      transform: Matrix4.translationValues(0, -20, 0),
+      child: SizedBox(
+        height: 40,
+        width: decoration.timeColumnWidth,
+        child: decoration.timeLabel?.call(context, time) ??
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                config.time12 ? time.hourDisplay12 : time.hourDisplay24,
+                style: decoration.timeTextStyle,
+                maxLines: 1,
+              ),
+            ),
+      ),
+    );
+  }
+
+  Widget _buildEventsArea(BuildContext context) {
+    return Expanded(
+      child: GestureDetector(
+        onTap: onTimeTap == null ? null : () => onTimeTap!(time),
+        child: LayoutBuilder(
+          builder: (context, constrains) {
+            final tileConstraints = BoxConstraints(
+              maxHeight: config.rowHeight,
+              maxWidth: constrains.maxWidth / rowEvents.length,
+            );
+
+            return SizedBox(
+              height: config.rowHeight,
+              child: Builder(
+                builder: (context) {
+                  if (timeRowBuilder != null) {
+                    return timeRowBuilder!(
+                      context,
+                      constrains,
+                      rowEvents.toList(),
+                    );
+                  } else {
+                    return Row(
+                      children: [
+                        for (var i = 0; i < rowEvents.length; i++)
+                          itemBuilder!(
+                            context,
+                            tileConstraints,
+                            i,
+                            rowEvents.elementAt(i),
+                          )
+                      ],
+                    );
+                  }
+                },
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  List<Widget> _buildRowChildren(BuildContext context) {
+    final position = config.decoration.timeColumnPosition;
+    final eventsArea = _buildEventsArea(context);
+    switch (position) {
+      case TimeColumnPosition.left:
+        return [_buildTimeLabel(context), eventsArea];
+      case TimeColumnPosition.right:
+        return [eventsArea, _buildTimeLabel(context)];
+      case TimeColumnPosition.none:
+        return [eventsArea];
+    }
   }
 }

@@ -66,6 +66,9 @@ Properties moved to `DayViewDecoration`: `timeColumnWidth`, `timeTextStyle`, `ti
 - **Time row background builder** — use `timeRowBackgroundBuilder` in config to shade specific time ranges (lunch break, working hours, unavailable blocks) in overflow, multi-column, and in-row views
 - **Divider builder** — use `divider` in `DayViewDecoration` for custom dividers per row (dashed lines, per-row thickness, hide specific dividers)
 - **`DayViewDecoration`** — new visual decoration class groups all styling and builder callbacks. Reusable across view types for shared theming
+- **Time column position** — `timeColumnPosition: TimeColumnPosition.left | .right | .none` in decoration for flexible layouts
+- **Header / footer builders** — `header` and `footer` in decoration for custom widgets above/below the time grid
+- **Custom overlap strategy** — `overlapStrategy` on `MultiColumnDayViewConfig<T>` for custom multi-column layout algorithms
 
 For full details, see the [Changelog](CHANGELOG.md).
 

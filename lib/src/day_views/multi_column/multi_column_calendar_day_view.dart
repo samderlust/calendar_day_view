@@ -4,12 +4,12 @@ import 'package:flutter/material.dart';
 
 import '../../../calendar_day_view.dart';
 import '../../extensions/date_time_extension.dart';
-import '../../models/column_event.dart';
 import '../../utils/multi_column_utils.dart';
 import '../../widgets/background_ignore_pointer.dart';
 import '../../widgets/current_time_line_widget.dart';
 
-class MultiColumnCalendarDayView<T extends Object> extends StatefulWidget implements CalendarDayView<T> {
+class MultiColumnCalendarDayView<T extends Object> extends StatefulWidget
+    implements CalendarDayView<T> {
   const MultiColumnCalendarDayView({
     super.key,
     required this.events,
@@ -18,7 +18,7 @@ class MultiColumnCalendarDayView<T extends Object> extends StatefulWidget implem
     required this.config,
   });
 
-  final MultiColumnDayViewConfig config;
+  final MultiColumnDayViewConfig<T> config;
 
   /// List of events to be displayed in the day view
   final List<DayEvent<T>> events;
@@ -30,10 +30,12 @@ class MultiColumnCalendarDayView<T extends Object> extends StatefulWidget implem
   final OnTimeTap? onTimeTap;
 
   @override
-  State<MultiColumnCalendarDayView> createState() => _MultiColumnCalendarDayViewState<T>();
+  State<MultiColumnCalendarDayView> createState() =>
+      _MultiColumnCalendarDayViewState<T>();
 }
 
-class _MultiColumnCalendarDayViewState<T extends Object> extends State<MultiColumnCalendarDayView<T>> {
+class _MultiColumnCalendarDayViewState<T extends Object>
+    extends State<MultiColumnCalendarDayView<T>> {
   List<ColumnEvent<T>> _columnEvents = [];
   DateTime _currentTime = DateTime.now();
   Timer? _timer;
@@ -65,17 +67,28 @@ class _MultiColumnCalendarDayViewState<T extends Object> extends State<MultiColu
   }
 
   void _processEvents() {
-    _columnEvents = assignColumns(
-      widget.events,
-      startOfDay: widget.config.timeStart,
-      endOfDay: widget.config.timeEnd,
-    );
+    final strategy = widget.config.overlapStrategy;
+    if (strategy != null) {
+      _columnEvents = strategy(
+        widget.events,
+        startOfDay: widget.config.timeStart,
+        endOfDay: widget.config.timeEnd,
+      );
+    } else {
+      _columnEvents = assignColumns(
+        widget.events,
+        startOfDay: widget.config.timeStart,
+        endOfDay: widget.config.timeEnd,
+      );
+    }
   }
 
   void _scrollToCurrentTime() {
     final now = DateTime.now();
-    if (now.isAfter(widget.config.timeStart) && now.isBefore(widget.config.timeEnd)) {
-      final offset = now.minuteFrom(widget.config.timeStart).toDouble() * widget.config.heightPerMin;
+    if (now.isAfter(widget.config.timeStart) &&
+        now.isBefore(widget.config.timeEnd)) {
+      final offset = now.minuteFrom(widget.config.timeStart).toDouble() *
+          widget.config.heightPerMin;
       final scrollOffset = (offset - 50).clamp(0.0, double.infinity);
       final ctrl = widget.config.controller ?? _autoScrollController;
       if (ctrl != null && ctrl.hasClients) {
@@ -103,66 +116,84 @@ class _MultiColumnCalendarDayViewState<T extends Object> extends State<MultiColu
 
   @override
   Widget build(BuildContext context) {
+    final decoration = widget.config.decoration;
     final totalHeight = widget.config.timeList.length * widget.config.rowHeight;
     final viewWidth = MediaQuery.sizeOf(context).width;
-    final eventColumnWidth = viewWidth - widget.config.decoration.timeColumnWidth;
+    final effectiveTimeColumnWidth = decoration.effectiveTimeColumnWidth;
+    final eventColumnWidth = viewWidth - effectiveTimeColumnWidth;
+    final eventColumnLeft =
+        decoration.timeColumnPosition == TimeColumnPosition.left
+            ? effectiveTimeColumnWidth
+            : 0.0;
+
+    final scrollView = SingleChildScrollView(
+      primary: widget.config.primary,
+      controller: widget.config.controller ?? _autoScrollController,
+      physics: widget.config.physics ?? const ClampingScrollPhysics(),
+      padding: const EdgeInsets.only(top: 10, bottom: 10),
+      child: SizedBox(
+        height: totalHeight,
+        child: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            ListView.builder(
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: widget.config.timeList.length,
+              itemBuilder: (context, index) {
+                final time = widget.config.timeList.elementAt(index);
+                return _MultiColumnTimeRowWidget<T>(
+                  time: time,
+                  viewWidth: viewWidth,
+                  config: widget.config,
+                  onTimeTap: widget.onTimeTap,
+                );
+              },
+            ),
+            BackgroundIgnorePointer(
+              ignored: widget.onTimeTap == null,
+              child: Stack(
+                clipBehavior: Clip.none,
+                children: _buildEventWidgets(
+                    context, eventColumnWidth, eventColumnLeft),
+              ),
+            ),
+            if (widget.config.showCurrentTimeLine &&
+                _currentTime.isAfter(widget.config.timeStart) &&
+                _currentTime.isBefore(widget.config.timeEnd))
+              _buildCurrentTimeLine(viewWidth),
+          ],
+        ),
+      ),
+    );
 
     return SafeArea(
-      child: SingleChildScrollView(
-        primary: widget.config.primary,
-        controller: widget.config.controller ?? _autoScrollController,
-        physics: widget.config.physics ?? const ClampingScrollPhysics(),
-        padding: const EdgeInsets.only(top: 10, bottom: 10),
-        child: SizedBox(
-          height: totalHeight,
-          child: Stack(
-            clipBehavior: Clip.none,
-            children: [
-              // Time rows background
-              ListView.builder(
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: widget.config.timeList.length,
-                itemBuilder: (context, index) {
-                  final time = widget.config.timeList.elementAt(index);
-                  return _MultiColumnTimeRowWidget(
-                    time: time,
-                    viewWidth: viewWidth,
-                    config: widget.config,
-                    onTimeTap: widget.onTimeTap,
-                  );
-                },
-              ),
-              // Events layer
-              BackgroundIgnorePointer(
-                ignored: widget.onTimeTap == null,
-                child: Stack(
-                  clipBehavior: Clip.none,
-                  children: _buildEventWidgets(context, eventColumnWidth),
-                ),
-              ),
-              // Current time line
-              if (widget.config.showCurrentTimeLine && _currentTime.isAfter(widget.config.timeStart) && _currentTime.isBefore(widget.config.timeEnd))
-                _buildCurrentTimeLine(viewWidth),
-            ],
-          ),
-        ),
+      child: Column(
+        children: [
+          if (decoration.header != null) decoration.header!(context),
+          Expanded(child: scrollView),
+          if (decoration.footer != null) decoration.footer!(context),
+        ],
       ),
     );
   }
 
-  List<Widget> _buildEventWidgets(BuildContext context, double eventColumnWidth) {
+  List<Widget> _buildEventWidgets(
+      BuildContext context, double eventColumnWidth, double eventColumnLeft) {
     return _columnEvents.map((ce) {
       final event = ce.event;
-      final top = event.minutesFrom(widget.config.timeStart) * widget.config.heightPerMin;
+      final top = event.minutesFrom(widget.config.timeStart) *
+          widget.config.heightPerMin;
 
       final columnWidth = eventColumnWidth / ce.totalColumns;
-      final left = widget.config.decoration.timeColumnWidth + ce.column * columnWidth;
+      final left = eventColumnLeft + ce.column * columnWidth;
 
       var height = event.durationInMins * widget.config.heightPerMin;
       if (widget.config.cropBottomEvents) {
-        final eventEnd = event.end ?? event.start.add(const Duration(minutes: 30));
+        final eventEnd =
+            event.end ?? event.start.add(const Duration(minutes: 30));
         if (eventEnd.isAfter(widget.config.timeEnd)) {
-          final maxMinutes = widget.config.timeEnd.difference(event.start).inMinutes;
+          final maxMinutes =
+              widget.config.timeEnd.difference(event.start).inMinutes;
           height = maxMinutes * widget.config.heightPerMin;
         }
       }
@@ -177,13 +208,15 @@ class _MultiColumnCalendarDayViewState<T extends Object> extends State<MultiColu
       return Positioned(
         top: top,
         left: left,
-        child: widget.itemBuilder(context, constraints, event, ce.column, ce.totalColumns),
+        child: widget.itemBuilder(
+            context, constraints, event, ce.column, ce.totalColumns),
       );
     }).toList();
   }
 
   Widget _buildCurrentTimeLine(double viewWidth) {
-    final top = _currentTime.minuteFrom(widget.config.timeStart).toDouble() * widget.config.heightPerMin;
+    final top = _currentTime.minuteFrom(widget.config.timeStart).toDouble() *
+        widget.config.heightPerMin;
     if (widget.config.decoration.currentTimeLine != null) {
       return widget.config.decoration.currentTimeLine!(top, viewWidth);
     }
@@ -195,7 +228,7 @@ class _MultiColumnCalendarDayViewState<T extends Object> extends State<MultiColu
   }
 }
 
-class _MultiColumnTimeRowWidget extends StatelessWidget {
+class _MultiColumnTimeRowWidget<T extends Object> extends StatelessWidget {
   const _MultiColumnTimeRowWidget({
     required this.time,
     required this.viewWidth,
@@ -205,7 +238,7 @@ class _MultiColumnTimeRowWidget extends StatelessWidget {
 
   final DateTime time;
   final double viewWidth;
-  final MultiColumnDayViewConfig config;
+  final MultiColumnDayViewConfig<T> config;
   final OnTimeTap? onTimeTap;
 
   @override
@@ -223,7 +256,8 @@ class _MultiColumnTimeRowWidget extends StatelessWidget {
               final minuteFraction = (localYPosition / rowHeight) * timeGap;
               final roundedMinute = (minuteFraction / 5).round() * 5;
               final currentMinute = time.minute;
-              final roundedTime = time.copyWith(minute: currentMinute + roundedMinute);
+              final roundedTime =
+                  time.copyWith(minute: currentMinute + roundedMinute);
 
               onTimeTap!(roundedTime);
             },
@@ -239,43 +273,71 @@ class _MultiColumnTimeRowWidget extends StatelessWidget {
                     final bg = config.decoration.rowBackground!(
                       context,
                       time,
-                      BoxConstraints.tightFor(width: viewWidth, height: config.rowHeight),
+                      BoxConstraints.tightFor(
+                          width: viewWidth, height: config.rowHeight),
                     );
                     return bg ?? const SizedBox.shrink();
                   },
                 ),
               ),
-            if (config.decoration.divider != null)
-              Builder(
-                builder: (context) => config.decoration.divider!(context, time) ?? const SizedBox.shrink(),
-              )
-            else
-              Divider(
-                color: config.decoration.dividerColor ?? Colors.amber,
-                height: 0,
-                thickness: time.minute == 0 ? 1 : .5,
-                indent: config.decoration.timeColumnWidth + 3,
-              ),
-            Transform(
-              transform: Matrix4.translationValues(0, -20, 0),
-              child: SizedBox(
-                height: 40,
-                width: config.decoration.timeColumnWidth,
-                child: Center(
-                  child: config.decoration.timeLabel?.call(context, time) ??
-                      FittedBox(
-                        fit: BoxFit.scaleDown,
-                        child: Text(
-                          config.time12 ? time.hourDisplay12 : time.hourDisplay24,
-                          style: config.decoration.timeTextStyle,
-                          maxLines: 1,
-                        ),
-                      ),
-                ),
-              ),
-            ),
+            _buildDivider(),
+            if (config.decoration.timeColumnPosition != TimeColumnPosition.none)
+              _buildTimeLabel(context),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildDivider() {
+    final decoration = config.decoration;
+    if (decoration.divider != null) {
+      return Builder(
+        builder: (context) =>
+            decoration.divider!(context, time) ?? const SizedBox.shrink(),
+      );
+    }
+    final leftIndent = decoration.timeColumnPosition == TimeColumnPosition.left
+        ? decoration.effectiveTimeColumnWidth + 3
+        : 0.0;
+    final rightIndent =
+        decoration.timeColumnPosition == TimeColumnPosition.right
+            ? decoration.effectiveTimeColumnWidth + 3
+            : 0.0;
+    return Divider(
+      color: decoration.dividerColor ?? Colors.amber,
+      height: 0,
+      thickness: time.minute == 0 ? 1 : .5,
+      indent: leftIndent,
+      endIndent: rightIndent,
+    );
+  }
+
+  Widget _buildTimeLabel(BuildContext context) {
+    final decoration = config.decoration;
+    final label = decoration.timeLabel?.call(context, time) ??
+        FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Text(
+            config.time12 ? time.hourDisplay12 : time.hourDisplay24,
+            style: decoration.timeTextStyle,
+            maxLines: 1,
+          ),
+        );
+
+    final labelBox = SizedBox(
+      height: 40,
+      width: decoration.timeColumnWidth,
+      child: Center(child: label),
+    );
+
+    return Positioned(
+      left: decoration.timeColumnPosition == TimeColumnPosition.left ? 0 : null,
+      right:
+          decoration.timeColumnPosition == TimeColumnPosition.right ? 0 : null,
+      child: Transform(
+        transform: Matrix4.translationValues(0, -20, 0),
+        child: labelBox,
       ),
     );
   }
