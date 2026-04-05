@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
 
 import '../extensions/date_time_extension.dart';
-import '../models/typedef.dart';
 import '../utils/date_time_utils.dart';
+import 'day_view_decoration.dart';
 
 abstract class DavViewConfig {
-  /// width of the first column where times are displayed
-  final double timeColumnWidth;
-
   /// the date that this dayView is presenting
   final DateTime currentDate;
 
@@ -16,9 +13,6 @@ abstract class DavViewConfig {
 
   /// To set the end time of the day view
   final TimeOfDay endOfDay;
-
-  /// time label text style
-  final TextStyle? timeTextStyle;
 
   /// time gap/duration of a row.
   ///
@@ -35,35 +29,9 @@ abstract class DavViewConfig {
   /// To show a line that indicate current hour and minute;
   final bool showCurrentTimeLine;
 
-  /// Color of the current time line
-  final Color? currentTimeLineColor;
-
-  /// time slot divider color
-  final Color? dividerColor;
-
   final bool? primary;
   final ScrollPhysics? physics;
   final ScrollController? controller;
-
-  /// allow custom time label
-  /// if not provided, the time will be display as default time format
-  /// either 12 hour or 24 hour format based on [time12]
-  final TimeLabelBuilder? timeLabelBuilder;
-
-  /// allow custom current time line widget
-  final CurrentTimeLineBuilder? currentTimeLineBuilder;
-
-  /// allow custom background for each time row
-  ///
-  /// Return null to use the default (transparent) background for a row.
-  /// Useful for shading lunch break, working hours, unavailable blocks, etc.
-  final TimeRowBackgroundBuilder? timeRowBackgroundBuilder;
-
-  /// allow custom divider between time rows
-  ///
-  /// Return null to skip the divider for a specific row.
-  /// If this builder itself is null, the default divider is used.
-  final DividerBuilder? dividerBuilder;
 
   /// if true, auto scroll to current time on initial render
   final bool scrollToCurrentTime;
@@ -72,27 +40,23 @@ abstract class DavViewConfig {
   /// if false, events that have end time after day view end time will show the length that passes through day view end time
   final bool cropBottomEvents;
 
+  /// Visual decoration — all styling and builder callbacks for the view's look
+  final DayViewDecoration decoration;
+
   const DavViewConfig({
-    this.timeColumnWidth = 70,
     this.startOfDay = const TimeOfDay(hour: 7, minute: 0),
     this.endOfDay = const TimeOfDay(hour: 18, minute: 59),
     required this.currentDate,
-    this.timeTextStyle,
     this.timeGap = 60,
     this.time12 = true,
     this.heightPerMin = 1,
     this.showCurrentTimeLine = true,
-    this.currentTimeLineColor,
     this.primary,
     this.physics,
     this.controller,
-    this.dividerColor,
-    this.timeLabelBuilder,
-    this.currentTimeLineBuilder,
-    this.timeRowBackgroundBuilder,
-    this.dividerBuilder,
     this.scrollToCurrentTime = false,
     this.cropBottomEvents = false,
+    this.decoration = const DayViewDecoration(),
   });
 
   double get rowHeight => heightPerMin * timeGap;
@@ -163,18 +127,12 @@ final class CategoryDavViewConfig extends DavViewConfig {
     super.time12,
     super.heightPerMin,
     super.showCurrentTimeLine,
-    super.timeColumnWidth,
-    super.timeLabelBuilder,
-    super.timeRowBackgroundBuilder,
-    super.dividerBuilder,
+    super.decoration,
     this.categoryTitleTextStyle,
   });
 }
 
 final class OverFlowDayViewConfig extends DavViewConfig {
-  /// color of time point label
-  final Color? timeTextColor;
-
   /// allow render an events row as a ListView
   final bool renderRowAsListView;
 
@@ -193,20 +151,12 @@ final class OverFlowDayViewConfig extends DavViewConfig {
     super.time12,
     super.heightPerMin,
     super.showCurrentTimeLine,
-    super.timeColumnWidth,
     super.primary,
     super.physics,
     super.controller,
-    this.timeTextColor,
-    super.dividerColor,
-    super.timeTextStyle,
-    super.timeLabelBuilder,
-    super.currentTimeLineBuilder,
-    super.timeRowBackgroundBuilder,
-    super.dividerBuilder,
     super.scrollToCurrentTime,
-    super.currentTimeLineColor,
     super.cropBottomEvents,
+    super.decoration,
     this.renderRowAsListView = false,
     this.showMoreOnRowButton = false,
     this.moreOnRowButton,
@@ -231,17 +181,11 @@ final class EventDayViewConfig extends DavViewConfig {
     super.time12,
     super.heightPerMin,
     super.showCurrentTimeLine,
-    super.currentTimeLineColor,
-    super.timeColumnWidth,
     super.primary,
     super.physics,
-    super.dividerColor,
-    super.timeLabelBuilder,
-    super.currentTimeLineBuilder,
-    super.timeRowBackgroundBuilder,
-    super.dividerBuilder,
     super.scrollToCurrentTime,
     super.controller,
+    super.decoration,
     this.rowPadding,
     this.timeSlotPadding,
     this.showHourly = false,
@@ -254,26 +198,20 @@ final class InRowDayViewConfig extends EventDayViewConfig {
 
   InRowDayViewConfig({
     required super.currentDate,
-    super.timeLabelBuilder,
-    super.currentTimeLineBuilder,
-    super.timeRowBackgroundBuilder,
-    super.dividerBuilder,
     super.scrollToCurrentTime,
-    super.currentTimeLineColor,
     super.startOfDay,
     super.endOfDay,
     super.timeGap,
     super.time12,
     super.heightPerMin,
     super.showCurrentTimeLine,
-    super.timeColumnWidth,
     super.primary,
     super.physics,
-    super.dividerColor,
     super.controller,
     super.rowPadding,
     super.timeSlotPadding,
     super.showHourly,
+    super.decoration,
     this.showWithEventOnly = false,
   });
 }
@@ -287,18 +225,11 @@ final class MultiColumnDayViewConfig extends DavViewConfig {
     super.time12,
     super.heightPerMin,
     super.showCurrentTimeLine,
-    super.timeColumnWidth,
     super.primary,
     super.physics,
     super.controller,
-    super.dividerColor,
-    super.timeTextStyle,
-    super.timeLabelBuilder,
-    super.currentTimeLineBuilder,
-    super.timeRowBackgroundBuilder,
-    super.dividerBuilder,
     super.scrollToCurrentTime,
-    super.currentTimeLineColor,
     super.cropBottomEvents,
+    super.decoration,
   });
 }

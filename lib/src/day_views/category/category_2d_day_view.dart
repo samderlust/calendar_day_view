@@ -98,7 +98,7 @@ class _CategoryTableView<T extends Object> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final eventPartLength = MediaQuery.sizeOf(context).width - config.timeColumnWidth;
+    final eventPartLength = MediaQuery.sizeOf(context).width - config.decoration.timeColumnWidth;
     final columnWidth = config.allowHorizontalScroll ? eventPartLength / config.columnsPerPage : eventPartLength / (overflow ? categories.length : config.columnsPerPage);
 
     controller?.calibrate(
@@ -139,7 +139,7 @@ class _CategoryTableView<T extends Object> extends StatelessWidget {
                   ),
                 )
               : null,
-          extent: FixedTableSpanExtent(index == 0 ? config.timeColumnWidth : columnWidth),
+          extent: FixedTableSpanExtent(index == 0 ? config.decoration.timeColumnWidth : columnWidth),
         );
       },
       rowBuilder: (rowIndex) {
@@ -193,12 +193,12 @@ class _CategoryTableView<T extends Object> extends StatelessWidget {
     final time = config.timeList[rowIndex - 1];
     final timeLabel = Padding(
       padding: const EdgeInsets.all(5),
-      child: config.timeLabelBuilder?.call(context, time) ??
+      child: config.decoration.timeLabel?.call(context, time) ??
           FittedBox(
             fit: BoxFit.fitWidth,
             child: Text(
               config.time12 ? time.hourDisplay12 : time.hourDisplay24,
-              style: config.timeTextStyle,
+              style: config.decoration.timeTextStyle,
               maxLines: 1,
             ),
           ),

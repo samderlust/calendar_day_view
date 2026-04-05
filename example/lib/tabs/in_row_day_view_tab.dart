@@ -23,15 +23,17 @@ class InRowDayViewTab extends HookWidget {
             config: InRowDayViewConfig(
               heightPerMin: 1,
               showCurrentTimeLine: true,
-              dividerColor: Colors.black,
               timeGap: timeGap.value,
               showWithEventOnly: withEventOnly.value,
               currentDate: DateTime.now(),
               startOfDay: const TimeOfDay(hour: 3, minute: 00),
               endOfDay: const TimeOfDay(hour: 22, minute: 00),
-              timeLabelBuilder: (context, time) => Text(
-                timeFormat.format(time),
-                style: const TextStyle(fontWeight: FontWeight.bold),
+              decoration: DayViewDecoration(
+                dividerColor: Colors.black,
+                timeLabel: (context, time) => Text(
+                  timeFormat.format(time),
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
               ),
             ),
             events: UnmodifiableListView(events),

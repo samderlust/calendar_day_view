@@ -85,16 +85,16 @@ class _EventCalendarDayViewState<T extends Object> extends State<EventCalendarDa
                 child: Stack(
                   clipBehavior: Clip.none,
                   children: [
-                    if (widget.config.dividerBuilder != null)
+                    if (widget.config.decoration.divider != null)
                       Builder(
-                        builder: (context) => widget.config.dividerBuilder!(context, time) ?? const SizedBox.shrink(),
+                        builder: (context) => widget.config.decoration.divider!(context, time) ?? const SizedBox.shrink(),
                       )
                     else
                       Divider(
-                        color: widget.config.dividerColor ?? Colors.amber,
+                        color: widget.config.decoration.dividerColor ?? Colors.amber,
                         height: 0,
                         thickness: 1,
-                        indent: widget.config.timeColumnWidth + 3,
+                        indent: widget.config.decoration.timeColumnWidth + 3,
                       ),
                     Row(
                       mainAxisSize: MainAxisSize.max,
@@ -104,8 +104,8 @@ class _EventCalendarDayViewState<T extends Object> extends State<EventCalendarDa
                           transform: Matrix4.translationValues(0, -20, 0),
                           child: SizedBox(
                             height: 40,
-                            width: widget.config.timeColumnWidth,
-                            child: widget.config.timeLabelBuilder?.call(
+                            width: widget.config.decoration.timeColumnWidth,
+                            child: widget.config.decoration.timeLabel?.call(
                                   context,
                                   time,
                                 ) ??
@@ -113,7 +113,7 @@ class _EventCalendarDayViewState<T extends Object> extends State<EventCalendarDa
                                   fit: BoxFit.scaleDown,
                                   child: Text(
                                     widget.config.time12 ? time.hourDisplay12 : time.hourDisplay24,
-                                    style: widget.config.timeTextStyle,
+                                    style: widget.config.decoration.timeTextStyle,
                                     maxLines: 1,
                                   ),
                                 ),

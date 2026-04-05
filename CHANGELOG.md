@@ -24,6 +24,7 @@
 - move `currentTimeLineColor` and `cropBottomEvents` to base `DavViewConfig` — reduces duplication across `OverFlowDayViewConfig`, `InRowDayViewConfig`, and `MultiColumnDayViewConfig`
 - add `timeRowBackgroundBuilder` to config — allows custom background per time row (e.g., shade lunch break, highlight working hours, mark unavailable blocks). Supported in overflow, multi-column, and in-row views
 - add `dividerBuilder` to config — allows custom divider widget per time row (dashed lines, thickness variations, hide specific dividers, etc.). Supported in overflow, multi-column, in-row, and event-only views
+- [BREAKING] introduce `DayViewDecoration` — all visual/styling props and builders (`timeLabel`, `currentTimeLine`, `rowBackground`, `divider`, `timeColumnWidth`, `timeTextStyle`, `timeTextColor`, `dividerColor`, `currentTimeLineColor`) moved out of the config classes into a single reusable `decoration` field. Config classes now focus on behavior (time range, scroll, event handling) while decoration handles visual customization. Decorations are reusable across different view types, enabling shared theming.
 
 ## 5.0.0
 

@@ -105,7 +105,7 @@ class _MultiColumnCalendarDayViewState<T extends Object> extends State<MultiColu
   Widget build(BuildContext context) {
     final totalHeight = widget.config.timeList.length * widget.config.rowHeight;
     final viewWidth = MediaQuery.sizeOf(context).width;
-    final eventColumnWidth = viewWidth - widget.config.timeColumnWidth;
+    final eventColumnWidth = viewWidth - widget.config.decoration.timeColumnWidth;
 
     return SafeArea(
       child: SingleChildScrollView(
@@ -156,7 +156,7 @@ class _MultiColumnCalendarDayViewState<T extends Object> extends State<MultiColu
       final top = event.minutesFrom(widget.config.timeStart) * widget.config.heightPerMin;
 
       final columnWidth = eventColumnWidth / ce.totalColumns;
-      final left = widget.config.timeColumnWidth + ce.column * columnWidth;
+      final left = widget.config.decoration.timeColumnWidth + ce.column * columnWidth;
 
       var height = event.durationInMins * widget.config.heightPerMin;
       if (widget.config.cropBottomEvents) {
@@ -184,13 +184,13 @@ class _MultiColumnCalendarDayViewState<T extends Object> extends State<MultiColu
 
   Widget _buildCurrentTimeLine(double viewWidth) {
     final top = _currentTime.minuteFrom(widget.config.timeStart).toDouble() * widget.config.heightPerMin;
-    if (widget.config.currentTimeLineBuilder != null) {
-      return widget.config.currentTimeLineBuilder!(top, viewWidth);
+    if (widget.config.decoration.currentTimeLine != null) {
+      return widget.config.decoration.currentTimeLine!(top, viewWidth);
     }
     return CurrentTimeLineWidget(
       top: top,
       width: viewWidth,
-      color: widget.config.currentTimeLineColor,
+      color: widget.config.decoration.currentTimeLineColor,
     );
   }
 }
@@ -232,11 +232,11 @@ class _MultiColumnTimeRowWidget extends StatelessWidget {
         width: viewWidth,
         child: Stack(
           children: [
-            if (config.timeRowBackgroundBuilder != null)
+            if (config.decoration.rowBackground != null)
               Positioned.fill(
                 child: Builder(
                   builder: (context) {
-                    final bg = config.timeRowBackgroundBuilder!(
+                    final bg = config.decoration.rowBackground!(
                       context,
                       time,
                       BoxConstraints.tightFor(width: viewWidth, height: config.rowHeight),
@@ -245,29 +245,29 @@ class _MultiColumnTimeRowWidget extends StatelessWidget {
                   },
                 ),
               ),
-            if (config.dividerBuilder != null)
+            if (config.decoration.divider != null)
               Builder(
-                builder: (context) => config.dividerBuilder!(context, time) ?? const SizedBox.shrink(),
+                builder: (context) => config.decoration.divider!(context, time) ?? const SizedBox.shrink(),
               )
             else
               Divider(
-                color: config.dividerColor ?? Colors.amber,
+                color: config.decoration.dividerColor ?? Colors.amber,
                 height: 0,
                 thickness: time.minute == 0 ? 1 : .5,
-                indent: config.timeColumnWidth + 3,
+                indent: config.decoration.timeColumnWidth + 3,
               ),
             Transform(
               transform: Matrix4.translationValues(0, -20, 0),
               child: SizedBox(
                 height: 40,
-                width: config.timeColumnWidth,
+                width: config.decoration.timeColumnWidth,
                 child: Center(
-                  child: config.timeLabelBuilder?.call(context, time) ??
+                  child: config.decoration.timeLabel?.call(context, time) ??
                       FittedBox(
                         fit: BoxFit.scaleDown,
                         child: Text(
                           config.time12 ? time.hourDisplay12 : time.hourDisplay24,
-                          style: config.timeTextStyle,
+                          style: config.decoration.timeTextStyle,
                           maxLines: 1,
                         ),
                       ),

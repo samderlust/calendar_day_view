@@ -31,7 +31,6 @@ class OverflowDayViewTab extends HookWidget {
         Expanded(
           child: CalendarDayView.overflow(
             config: OverFlowDayViewConfig(
-              dividerColor: Colors.black,
               currentDate: DateTime.now(),
               timeGap: timeGap.value,
               heightPerMin: 2,
@@ -43,9 +42,12 @@ class OverflowDayViewTab extends HookWidget {
               showMoreOnRowButton: true,
               time12: true,
               scrollToCurrentTime: true,
-              timeLabelBuilder: (context, time) => Text(
-                timeFormat.format(time),
-                style: const TextStyle(fontWeight: FontWeight.bold),
+              decoration: DayViewDecoration(
+                dividerColor: Colors.black,
+                timeLabel: (context, time) => Text(
+                  timeFormat.format(time),
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
               ),
             ),
             onTimeTap: (t) async {

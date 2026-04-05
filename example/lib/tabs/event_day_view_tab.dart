@@ -16,9 +16,11 @@ class EventDayViewTab extends StatelessWidget {
       config: EventDayViewConfig(
         showHourly: true,
         currentDate: DateTime.now(),
-        timeLabelBuilder: (context, time) => Text(
-          timeFormat.format(time),
-          style: const TextStyle(fontWeight: FontWeight.bold),
+        decoration: DayViewDecoration(
+          timeLabel: (context, time) => Text(
+            timeFormat.format(time),
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ),
         ),
       ),
       events: events,

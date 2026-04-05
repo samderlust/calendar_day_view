@@ -39,11 +39,13 @@ class MultiColumnDayViewTab extends HookWidget {
               showCurrentTimeLine: true,
               cropBottomEvents: cropBottomEvents.value,
               scrollToCurrentTime: true,
-              dividerColor: Colors.black,
               time12: true,
-              timeLabelBuilder: (context, time) => Text(
-                timeFormat.format(time),
-                style: const TextStyle(fontWeight: FontWeight.bold),
+              decoration: DayViewDecoration(
+                dividerColor: Colors.black,
+                timeLabel: (context, time) => Text(
+                  timeFormat.format(time),
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
               ),
             ),
             events: UnmodifiableListView(events),

@@ -17,7 +17,7 @@ void main() {
         allowHorizontalScroll: true,
         columnsPerPage: 2,
         endOfDay: const TimeOfDay(hour: 23, minute: 59),
-        timeColumnWidth: 100,
+        decoration: const DayViewDecoration(timeColumnWidth: 100),
       );
 
       categories = [
